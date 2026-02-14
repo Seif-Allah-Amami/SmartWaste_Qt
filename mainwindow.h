@@ -30,8 +30,13 @@ private:
     void showWastePage();
 <<<<<<< HEAD
     void showVehiclePage();
+    void showMachinePage();
+=======
+<<<<<<< HEAD
+    void showVehiclePage();
 =======
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 
     // Logic methods
     void onLoginClicked();
