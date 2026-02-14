@@ -195,6 +195,13 @@ public:
     QPushButton *btnClearSelection;
     QSpacerItem *verticalSpacer_3;
     QPushButton *btnExportPDF;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
     QWidget *vehiclePage;
     QGroupBox *sidebarGroup_3;
     QVBoxLayout *sidebarLayout_3;
@@ -242,6 +249,10 @@ public:
     QPushButton *btnClearSelection_2;
     QSpacerItem *verticalSpacer_6;
     QPushButton *btnExportPDF_2;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
     QWidget *machinePage;
     QWidget *mainContentWidget_3;
     QVBoxLayout *mainContentLayout_3;
@@ -286,6 +297,7 @@ public:
     QPushButton *btnSuppliers;
     QSpacerItem *verticalSpacer_9;
     QPushButton *btnLogout_3;
+<<<<<<< HEAD
     QWidget *supplier;
     QGroupBox *sidebarGroup_5;
     QVBoxLayout *sidebarLayout_5;
@@ -328,6 +340,12 @@ public:
     QPushButton *btnRateSupplier;
     QSpacerItem *verticalSpacer_11;
     QPushButton *btnExportPDF_4;
+=======
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -2256,6 +2274,13 @@ public:
         mainContentLayout->addLayout(tableActionsLayout);
 
         stackedwidget->addWidget(wastemanagement);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         vehiclePage = new QWidget();
         vehiclePage->setObjectName("vehiclePage");
         sidebarGroup_3 = new QGroupBox(vehiclePage);
@@ -2767,6 +2792,10 @@ public:
         mainContentLayout_2->addLayout(tableActionsLayout_2);
 
         stackedwidget->addWidget(vehiclePage);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         machinePage = new QWidget();
         machinePage->setObjectName("machinePage");
         mainContentWidget_3 = new QWidget(machinePage);
@@ -2783,6 +2812,7 @@ public:
         titleLayout_3->setObjectName("titleLayout_3");
         pageTitle_3 = new QLabel(mainContentWidget_3);
         pageTitle_3->setObjectName("pageTitle_3");
+<<<<<<< HEAD
         pageTitle_3->setStyleSheet(QString::fromUtf8("QLabel {\n"
 "    font-size: 28px;\n"
 "    font-weight: 700;\n"
@@ -2790,6 +2820,8 @@ public:
 "    background: transparent;\n"
 "    border: none;\n"
 "}"));
+=======
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
 
         titleLayout_3->addWidget(pageTitle_3);
 
@@ -3259,6 +3291,7 @@ public:
         sidebarLayout_4->addWidget(btnLogout_3);
 
         stackedwidget->addWidget(machinePage);
+<<<<<<< HEAD
         supplier = new QWidget();
         supplier->setObjectName("supplier");
         sidebarGroup_5 = new QGroupBox(supplier);
@@ -3743,6 +3776,12 @@ public:
         mainContentLayout_4->addLayout(tableActionsLayout_4);
 
         stackedwidget->addWidget(supplier);
+=======
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -3750,7 +3789,19 @@ public:
 
         retranslateUi(MainWindow);
 
+<<<<<<< HEAD
         stackedwidget->setCurrentIndex(8);
+=======
+<<<<<<< HEAD
+        stackedwidget->setCurrentIndex(7);
+=======
+<<<<<<< HEAD
+        stackedwidget->setCurrentIndex(6);
+=======
+        stackedwidget->setCurrentIndex(5);
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -3875,6 +3926,13 @@ public:
         btnRate->setText(QCoreApplication::translate("MainWindow", "Rate Service", nullptr));
         btnClearSelection->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         sidebarGroup_3->setTitle(QString());
         sidebarLogo_2->setText(QString());
         sidebarTitle_2->setText(QCoreApplication::translate("MainWindow", "ReGen", nullptr));
@@ -3916,6 +3974,10 @@ public:
         btnChatbot->setText(QCoreApplication::translate("MainWindow", "AI Chatbot \360\237\244\226", nullptr));
         btnClearSelection_2->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF_2->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         pageTitle_3->setText(QCoreApplication::translate("MainWindow", "Machines", nullptr));
         pageSubtitle_3->setText(QCoreApplication::translate("MainWindow", "Create, edit, search, sort, export, and analyze machines.", nullptr));
         btnViewMachines->setText(QCoreApplication::translate("MainWindow", "View Machines", nullptr));
@@ -3957,6 +4019,7 @@ public:
         btnMachines_3->setText(QCoreApplication::translate("MainWindow", "Machines Management", nullptr));
         btnSuppliers->setText(QCoreApplication::translate("MainWindow", "Supplier Management", nullptr));
         btnLogout_3->setText(QCoreApplication::translate("MainWindow", "Log Out \360\237\232\252", nullptr));
+<<<<<<< HEAD
         sidebarGroup_5->setTitle(QString());
         sidebarLogo_4->setText(QString());
         btnDashboard_4->setText(QCoreApplication::translate("MainWindow", "Dashboard", nullptr));
@@ -4001,6 +4064,12 @@ public:
         btnClearSelection_4->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnRateSupplier->setText(QCoreApplication::translate("MainWindow", "Rate Supplier", nullptr));
         btnExportPDF_4->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+=======
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
     } // retranslateUi
 
 };
