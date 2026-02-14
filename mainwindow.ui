@@ -344,7 +344,11 @@ QStatusBar {
      </rect>
     </property>
     <property name="currentIndex">
+<<<<<<< HEAD
      <number>0</number>
+=======
+     <number>5</number>
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
     </property>
     <widget class="QWidget" name="connection">
      <layout class="QVBoxLayout" name="loginLayout">
@@ -3061,6 +3065,7 @@ QPushButton:hover {
       </layout>
      </widget>
     </widget>
+<<<<<<< HEAD
     <widget class="QWidget" name="vehiclePage">
      <widget class="QGroupBox" name="sidebarGroup_3">
       <property name="geometry">
@@ -3910,6 +3915,8 @@ QPushButton:hover {
       </layout>
      </widget>
     </widget>
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

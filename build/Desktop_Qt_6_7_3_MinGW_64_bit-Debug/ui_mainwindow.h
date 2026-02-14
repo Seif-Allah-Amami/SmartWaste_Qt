@@ -195,6 +195,7 @@ public:
     QPushButton *btnClearSelection;
     QSpacerItem *verticalSpacer_3;
     QPushButton *btnExportPDF;
+<<<<<<< HEAD
     QWidget *vehiclePage;
     QGroupBox *sidebarGroup_3;
     QVBoxLayout *sidebarLayout_3;
@@ -242,6 +243,8 @@ public:
     QPushButton *btnClearSelection_2;
     QSpacerItem *verticalSpacer_6;
     QPushButton *btnExportPDF_2;
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -2170,6 +2173,7 @@ public:
         mainContentLayout->addLayout(tableActionsLayout);
 
         stackedwidget->addWidget(wastemanagement);
+<<<<<<< HEAD
         vehiclePage = new QWidget();
         vehiclePage->setObjectName("vehiclePage");
         sidebarGroup_3 = new QGroupBox(vehiclePage);
@@ -2681,6 +2685,8 @@ public:
         mainContentLayout_2->addLayout(tableActionsLayout_2);
 
         stackedwidget->addWidget(vehiclePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -2688,7 +2694,11 @@ public:
 
         retranslateUi(MainWindow);
 
+<<<<<<< HEAD
         stackedwidget->setCurrentIndex(6);
+=======
+        stackedwidget->setCurrentIndex(5);
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -2813,6 +2823,7 @@ public:
         btnRate->setText(QCoreApplication::translate("MainWindow", "Rate Service", nullptr));
         btnClearSelection->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+<<<<<<< HEAD
         sidebarGroup_3->setTitle(QString());
         sidebarLogo_2->setText(QString());
         sidebarTitle_2->setText(QCoreApplication::translate("MainWindow", "ReGen", nullptr));
@@ -2854,6 +2865,8 @@ public:
         btnChatbot->setText(QCoreApplication::translate("MainWindow", "AI Chatbot \360\237\244\226", nullptr));
         btnClearSelection_2->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF_2->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
     } // retranslateUi
 
 };
