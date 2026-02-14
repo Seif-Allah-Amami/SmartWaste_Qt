@@ -198,7 +198,10 @@ public:
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
     QWidget *vehiclePage;
     QGroupBox *sidebarGroup_3;
     QVBoxLayout *sidebarLayout_3;
@@ -247,6 +250,9 @@ public:
     QSpacerItem *verticalSpacer_6;
     QPushButton *btnExportPDF_2;
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
     QWidget *machinePage;
     QWidget *mainContentWidget_3;
     QVBoxLayout *mainContentLayout_3;
@@ -291,10 +297,55 @@ public:
     QPushButton *btnSuppliers;
     QSpacerItem *verticalSpacer_9;
     QPushButton *btnLogout_3;
+<<<<<<< HEAD
+    QWidget *supplier;
+    QGroupBox *sidebarGroup_5;
+    QVBoxLayout *sidebarLayout_5;
+    QLabel *sidebarLogo_4;
+    QPushButton *btnDashboard_4;
+    QPushButton *btnReports;
+    QPushButton *btnCustomers_2;
+    QPushButton *btnOrders;
+    QPushButton *btnInventory;
+    QPushButton *btnMachines_4;
+    QPushButton *btnSuppliers_2;
+    QSpacerItem *verticalSpacer_10;
+    QPushButton *btnLogout_4;
+    QWidget *mainContentWidget_4;
+    QVBoxLayout *mainContentLayout_4;
+    QHBoxLayout *headerLayout_4;
+    QVBoxLayout *titleLayout_4;
+    QLabel *pageTitle_4;
+    QLabel *pageSubtitle_4;
+    QSpacerItem *horizontalSpacer_7;
+    QHBoxLayout *topActionsLayout_4;
+    QPushButton *btnViewSuppliers;
+    QPushButton *btnAddSupplier;
+    QPushButton *btnSupplierStats;
+    QSpacerItem *horizontalSpacer_8;
+    QWidget *searchFilterWidget_4;
+    QVBoxLayout *searchFilterLayout_4;
+    QLabel *lblSuppliersList;
+    QHBoxLayout *searchLayout_4;
+    QLineEdit *searchBox_4;
+    QComboBox *sortComboBox_4;
+    QHBoxLayout *tableActionsLayout_4;
+    QTableWidget *suppliersTable;
+    QFrame *actionsPanel_4;
+    QVBoxLayout *actionsPanelLayout_4;
+    QLabel *lblActions_4;
+    QPushButton *btnEditSupplier;
+    QPushButton *btnDeleteSupplier;
+    QPushButton *btnClearSelection_4;
+    QPushButton *btnRateSupplier;
+    QSpacerItem *verticalSpacer_11;
+    QPushButton *btnExportPDF_4;
+=======
 =======
 =======
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -2226,7 +2277,10 @@ public:
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         vehiclePage = new QWidget();
         vehiclePage->setObjectName("vehiclePage");
         sidebarGroup_3 = new QGroupBox(vehiclePage);
@@ -2739,6 +2793,9 @@ public:
 
         stackedwidget->addWidget(vehiclePage);
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         machinePage = new QWidget();
         machinePage->setObjectName("machinePage");
         mainContentWidget_3 = new QWidget(machinePage);
@@ -2755,6 +2812,16 @@ public:
         titleLayout_3->setObjectName("titleLayout_3");
         pageTitle_3 = new QLabel(mainContentWidget_3);
         pageTitle_3->setObjectName("pageTitle_3");
+<<<<<<< HEAD
+        pageTitle_3->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    font-size: 28px;\n"
+"    font-weight: 700;\n"
+"    color: #ffffff;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"}"));
+=======
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
 
         titleLayout_3->addWidget(pageTitle_3);
 
@@ -3224,10 +3291,497 @@ public:
         sidebarLayout_4->addWidget(btnLogout_3);
 
         stackedwidget->addWidget(machinePage);
+<<<<<<< HEAD
+        supplier = new QWidget();
+        supplier->setObjectName("supplier");
+        sidebarGroup_5 = new QGroupBox(supplier);
+        sidebarGroup_5->setObjectName("sidebarGroup_5");
+        sidebarGroup_5->setGeometry(QRect(0, 10, 250, 701));
+        sidebarGroup_5->setMinimumSize(QSize(250, 0));
+        sidebarGroup_5->setMaximumSize(QSize(250, 16777215));
+        sidebarLayout_5 = new QVBoxLayout(sidebarGroup_5);
+        sidebarLayout_5->setSpacing(0);
+        sidebarLayout_5->setObjectName("sidebarLayout_5");
+        sidebarLayout_5->setContentsMargins(0, 0, 0, 0);
+        sidebarLogo_4 = new QLabel(sidebarGroup_5);
+        sidebarLogo_4->setObjectName("sidebarLogo_4");
+        sidebarLogo_4->setMinimumSize(QSize(0, 100));
+        sidebarLogo_4->setMaximumSize(QSize(16777215, 100));
+        sidebarLogo_4->setPixmap(QPixmap(QString::fromUtf8(":/image/images/logo.png")));
+        sidebarLogo_4->setScaledContents(false);
+        sidebarLogo_4->setAlignment(Qt::AlignmentFlag::AlignCenter);
+
+        sidebarLayout_5->addWidget(sidebarLogo_4);
+
+        btnDashboard_4 = new QPushButton(sidebarGroup_5);
+        btnDashboard_4->setObjectName("btnDashboard_4");
+        sizePolicy2.setHeightForWidth(btnDashboard_4->sizePolicy().hasHeightForWidth());
+        btnDashboard_4->setSizePolicy(sizePolicy2);
+        btnDashboard_4->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_5->addWidget(btnDashboard_4);
+
+        btnReports = new QPushButton(sidebarGroup_5);
+        btnReports->setObjectName("btnReports");
+        btnReports->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_5->addWidget(btnReports);
+
+        btnCustomers_2 = new QPushButton(sidebarGroup_5);
+        btnCustomers_2->setObjectName("btnCustomers_2");
+        btnCustomers_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_5->addWidget(btnCustomers_2);
+
+        btnOrders = new QPushButton(sidebarGroup_5);
+        btnOrders->setObjectName("btnOrders");
+        btnOrders->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_5->addWidget(btnOrders);
+
+        btnInventory = new QPushButton(sidebarGroup_5);
+        btnInventory->setObjectName("btnInventory");
+        btnInventory->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_5->addWidget(btnInventory);
+
+        btnMachines_4 = new QPushButton(sidebarGroup_5);
+        btnMachines_4->setObjectName("btnMachines_4");
+        btnMachines_4->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_5->addWidget(btnMachines_4);
+
+        btnSuppliers_2 = new QPushButton(sidebarGroup_5);
+        btnSuppliers_2->setObjectName("btnSuppliers_2");
+        btnSuppliers_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: rgba(0, 255, 156, 0.15);\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #00ff9c;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 600;\n"
+"    border-left: 3px solid #00ff9c;\n"
+"}"));
+
+        sidebarLayout_5->addWidget(btnSuppliers_2);
+
+        verticalSpacer_10 = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        sidebarLayout_5->addItem(verticalSpacer_10);
+
+        btnLogout_4 = new QPushButton(sidebarGroup_5);
+        btnLogout_4->setObjectName("btnLogout_4");
+        btnLogout_4->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #ff6666;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 20px;\n"
+"    color: #ff6666;\n"
+"    font-weight: 600;\n"
+"    margin: 0px 15px 15px 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(255, 102, 102, 0.1);\n"
+"}"));
+
+        sidebarLayout_5->addWidget(btnLogout_4);
+
+        mainContentWidget_4 = new QWidget(supplier);
+        mainContentWidget_4->setObjectName("mainContentWidget_4");
+        mainContentWidget_4->setGeometry(QRect(250, 10, 1107, 701));
+        mainContentLayout_4 = new QVBoxLayout(mainContentWidget_4);
+        mainContentLayout_4->setSpacing(20);
+        mainContentLayout_4->setObjectName("mainContentLayout_4");
+        mainContentLayout_4->setContentsMargins(30, 30, 30, 30);
+        headerLayout_4 = new QHBoxLayout();
+        headerLayout_4->setObjectName("headerLayout_4");
+        titleLayout_4 = new QVBoxLayout();
+        titleLayout_4->setSpacing(5);
+        titleLayout_4->setObjectName("titleLayout_4");
+        pageTitle_4 = new QLabel(mainContentWidget_4);
+        pageTitle_4->setObjectName("pageTitle_4");
+        pageTitle_4->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    font-size: 28px;\n"
+"    font-weight: 700;\n"
+"    color: #ffffff;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"}"));
+
+        titleLayout_4->addWidget(pageTitle_4);
+
+        pageSubtitle_4 = new QLabel(mainContentWidget_4);
+        pageSubtitle_4->setObjectName("pageSubtitle_4");
+
+        titleLayout_4->addWidget(pageSubtitle_4);
+
+
+        headerLayout_4->addLayout(titleLayout_4);
+
+        horizontalSpacer_7 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        headerLayout_4->addItem(horizontalSpacer_7);
+
+
+        mainContentLayout_4->addLayout(headerLayout_4);
+
+        topActionsLayout_4 = new QHBoxLayout();
+        topActionsLayout_4->setSpacing(10);
+        topActionsLayout_4->setObjectName("topActionsLayout_4");
+        btnViewSuppliers = new QPushButton(mainContentWidget_4);
+        btnViewSuppliers->setObjectName("btnViewSuppliers");
+        btnViewSuppliers->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: rgba(0, 255, 156, 0.15);\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}"));
+
+        topActionsLayout_4->addWidget(btnViewSuppliers);
+
+        btnAddSupplier = new QPushButton(mainContentWidget_4);
+        btnAddSupplier->setObjectName("btnAddSupplier");
+        btnAddSupplier->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"}"));
+
+        topActionsLayout_4->addWidget(btnAddSupplier);
+
+        btnSupplierStats = new QPushButton(mainContentWidget_4);
+        btnSupplierStats->setObjectName("btnSupplierStats");
+        btnSupplierStats->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"}"));
+
+        topActionsLayout_4->addWidget(btnSupplierStats);
+
+        horizontalSpacer_8 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        topActionsLayout_4->addItem(horizontalSpacer_8);
+
+
+        mainContentLayout_4->addLayout(topActionsLayout_4);
+
+        searchFilterWidget_4 = new QWidget(mainContentWidget_4);
+        searchFilterWidget_4->setObjectName("searchFilterWidget_4");
+        searchFilterLayout_4 = new QVBoxLayout(searchFilterWidget_4);
+        searchFilterLayout_4->setSpacing(10);
+        searchFilterLayout_4->setObjectName("searchFilterLayout_4");
+        searchFilterLayout_4->setContentsMargins(0, 0, 0, 0);
+        lblSuppliersList = new QLabel(searchFilterWidget_4);
+        lblSuppliersList->setObjectName("lblSuppliersList");
+        lblSuppliersList->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    font-size: 14px;\n"
+"    font-weight: 600;\n"
+"    color: #ffffff;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"    padding: 5px 0px;\n"
+"}"));
+
+        searchFilterLayout_4->addWidget(lblSuppliersList);
+
+        searchLayout_4 = new QHBoxLayout();
+        searchLayout_4->setSpacing(10);
+        searchLayout_4->setObjectName("searchLayout_4");
+        searchBox_4 = new QLineEdit(searchFilterWidget_4);
+        searchBox_4->setObjectName("searchBox_4");
+        searchBox_4->setMinimumSize(QSize(0, 40));
+
+        searchLayout_4->addWidget(searchBox_4);
+
+        sortComboBox_4 = new QComboBox(searchFilterWidget_4);
+        sortComboBox_4->addItem(QString());
+        sortComboBox_4->addItem(QString());
+        sortComboBox_4->addItem(QString());
+        sortComboBox_4->addItem(QString());
+        sortComboBox_4->setObjectName("sortComboBox_4");
+        sortComboBox_4->setMinimumSize(QSize(200, 40));
+        sortComboBox_4->setMaximumSize(QSize(250, 16777215));
+
+        searchLayout_4->addWidget(sortComboBox_4);
+
+
+        searchFilterLayout_4->addLayout(searchLayout_4);
+
+
+        mainContentLayout_4->addWidget(searchFilterWidget_4);
+
+        tableActionsLayout_4 = new QHBoxLayout();
+        tableActionsLayout_4->setSpacing(20);
+        tableActionsLayout_4->setObjectName("tableActionsLayout_4");
+        suppliersTable = new QTableWidget(mainContentWidget_4);
+        if (suppliersTable->columnCount() < 8)
+            suppliersTable->setColumnCount(8);
+        QTableWidgetItem *__qtablewidgetitem27 = new QTableWidgetItem();
+        suppliersTable->setHorizontalHeaderItem(0, __qtablewidgetitem27);
+        QTableWidgetItem *__qtablewidgetitem28 = new QTableWidgetItem();
+        suppliersTable->setHorizontalHeaderItem(1, __qtablewidgetitem28);
+        QTableWidgetItem *__qtablewidgetitem29 = new QTableWidgetItem();
+        suppliersTable->setHorizontalHeaderItem(2, __qtablewidgetitem29);
+        QTableWidgetItem *__qtablewidgetitem30 = new QTableWidgetItem();
+        suppliersTable->setHorizontalHeaderItem(3, __qtablewidgetitem30);
+        QTableWidgetItem *__qtablewidgetitem31 = new QTableWidgetItem();
+        suppliersTable->setHorizontalHeaderItem(4, __qtablewidgetitem31);
+        QTableWidgetItem *__qtablewidgetitem32 = new QTableWidgetItem();
+        suppliersTable->setHorizontalHeaderItem(5, __qtablewidgetitem32);
+        QTableWidgetItem *__qtablewidgetitem33 = new QTableWidgetItem();
+        suppliersTable->setHorizontalHeaderItem(6, __qtablewidgetitem33);
+        QTableWidgetItem *__qtablewidgetitem34 = new QTableWidgetItem();
+        suppliersTable->setHorizontalHeaderItem(7, __qtablewidgetitem34);
+        suppliersTable->setObjectName("suppliersTable");
+        sizePolicy.setHeightForWidth(suppliersTable->sizePolicy().hasHeightForWidth());
+        suppliersTable->setSizePolicy(sizePolicy);
+        suppliersTable->setMinimumSize(QSize(600, 0));
+        suppliersTable->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+        suppliersTable->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+
+        tableActionsLayout_4->addWidget(suppliersTable);
+
+        actionsPanel_4 = new QFrame(mainContentWidget_4);
+        actionsPanel_4->setObjectName("actionsPanel_4");
+        sizePolicy1.setHeightForWidth(actionsPanel_4->sizePolicy().hasHeightForWidth());
+        actionsPanel_4->setSizePolicy(sizePolicy1);
+        actionsPanel_4->setMinimumSize(QSize(200, 0));
+        actionsPanel_4->setMaximumSize(QSize(220, 16777215));
+        actionsPanel_4->setFrameShape(QFrame::Shape::StyledPanel);
+        actionsPanel_4->setFrameShadow(QFrame::Shadow::Raised);
+        actionsPanelLayout_4 = new QVBoxLayout(actionsPanel_4);
+        actionsPanelLayout_4->setSpacing(15);
+        actionsPanelLayout_4->setObjectName("actionsPanelLayout_4");
+        lblActions_4 = new QLabel(actionsPanel_4);
+        lblActions_4->setObjectName("lblActions_4");
+        lblActions_4->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    font-size: 16px;\n"
+"    font-weight: 600;\n"
+"    color: #ffffff;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"    padding: 0px;\n"
+"}"));
+
+        actionsPanelLayout_4->addWidget(lblActions_4);
+
+        btnEditSupplier = new QPushButton(actionsPanel_4);
+        btnEditSupplier->setObjectName("btnEditSupplier");
+        btnEditSupplier->setMinimumSize(QSize(0, 45));
+        btnEditSupplier->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 500;\n"
+"    text-align: center;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    border: 1px solid #33ffcc;\n"
+"}"));
+
+        actionsPanelLayout_4->addWidget(btnEditSupplier);
+
+        btnDeleteSupplier = new QPushButton(actionsPanel_4);
+        btnDeleteSupplier->setObjectName("btnDeleteSupplier");
+        btnDeleteSupplier->setMinimumSize(QSize(0, 45));
+        btnDeleteSupplier->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #ff6666;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #ff6666;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(255, 102, 102, 0.1);\n"
+"}"));
+
+        actionsPanelLayout_4->addWidget(btnDeleteSupplier);
+
+        btnClearSelection_4 = new QPushButton(actionsPanel_4);
+        btnClearSelection_4->setObjectName("btnClearSelection_4");
+        btnClearSelection_4->setMinimumSize(QSize(0, 45));
+        btnClearSelection_4->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 500;\n"
+"    text-align: center;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    border: 1px solid #33ffcc;\n"
+"}"));
+
+        actionsPanelLayout_4->addWidget(btnClearSelection_4);
+
+        btnRateSupplier = new QPushButton(actionsPanel_4);
+        btnRateSupplier->setObjectName("btnRateSupplier");
+        btnRateSupplier->setMinimumSize(QSize(0, 45));
+        btnRateSupplier->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 500;\n"
+"    text-align: center;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    border: 1px solid #33ffcc;\n"
+"}"));
+
+        actionsPanelLayout_4->addWidget(btnRateSupplier);
+
+        verticalSpacer_11 = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        actionsPanelLayout_4->addItem(verticalSpacer_11);
+
+        btnExportPDF_4 = new QPushButton(actionsPanel_4);
+        btnExportPDF_4->setObjectName("btnExportPDF_4");
+        btnExportPDF_4->setMinimumSize(QSize(0, 45));
+        btnExportPDF_4->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: #00ff9c;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #050d0a;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #33ffcc;\n"
+"}"));
+
+        actionsPanelLayout_4->addWidget(btnExportPDF_4);
+
+
+        tableActionsLayout_4->addWidget(actionsPanel_4);
+
+
+        mainContentLayout_4->addLayout(tableActionsLayout_4);
+
+        stackedwidget->addWidget(supplier);
+=======
 =======
 =======
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -3235,6 +3789,9 @@ public:
 
         retranslateUi(MainWindow);
 
+<<<<<<< HEAD
+        stackedwidget->setCurrentIndex(8);
+=======
 <<<<<<< HEAD
         stackedwidget->setCurrentIndex(7);
 =======
@@ -3244,6 +3801,7 @@ public:
         stackedwidget->setCurrentIndex(5);
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -3371,7 +3929,10 @@ public:
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         sidebarGroup_3->setTitle(QString());
         sidebarLogo_2->setText(QString());
         sidebarTitle_2->setText(QCoreApplication::translate("MainWindow", "ReGen", nullptr));
@@ -3414,6 +3975,9 @@ public:
         btnClearSelection_2->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF_2->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
         pageTitle_3->setText(QCoreApplication::translate("MainWindow", "Machines", nullptr));
         pageSubtitle_3->setText(QCoreApplication::translate("MainWindow", "Create, edit, search, sort, export, and analyze machines.", nullptr));
         btnViewMachines->setText(QCoreApplication::translate("MainWindow", "View Machines", nullptr));
@@ -3455,10 +4019,57 @@ public:
         btnMachines_3->setText(QCoreApplication::translate("MainWindow", "Machines Management", nullptr));
         btnSuppliers->setText(QCoreApplication::translate("MainWindow", "Supplier Management", nullptr));
         btnLogout_3->setText(QCoreApplication::translate("MainWindow", "Log Out \360\237\232\252", nullptr));
+<<<<<<< HEAD
+        sidebarGroup_5->setTitle(QString());
+        sidebarLogo_4->setText(QString());
+        btnDashboard_4->setText(QCoreApplication::translate("MainWindow", "Dashboard", nullptr));
+        btnReports->setText(QCoreApplication::translate("MainWindow", "Employee Management", nullptr));
+        btnCustomers_2->setText(QCoreApplication::translate("MainWindow", "Customer Management", nullptr));
+        btnOrders->setText(QCoreApplication::translate("MainWindow", "Waste Management", nullptr));
+        btnInventory->setText(QCoreApplication::translate("MainWindow", "Vehicle Management", nullptr));
+        btnMachines_4->setText(QCoreApplication::translate("MainWindow", "Machines Management", nullptr));
+        btnSuppliers_2->setText(QCoreApplication::translate("MainWindow", "Supplier Management", nullptr));
+        btnLogout_4->setText(QCoreApplication::translate("MainWindow", "Log Out \360\237\232\252", nullptr));
+        pageTitle_4->setText(QCoreApplication::translate("MainWindow", "Supplier", nullptr));
+        pageSubtitle_4->setText(QCoreApplication::translate("MainWindow", "Create, edit, search, sort, export, and analyze suppliers.", nullptr));
+        btnViewSuppliers->setText(QCoreApplication::translate("MainWindow", "View Suppliers", nullptr));
+        btnAddSupplier->setText(QCoreApplication::translate("MainWindow", "Add Supplier", nullptr));
+        btnSupplierStats->setText(QCoreApplication::translate("MainWindow", "Supplier Performance", nullptr));
+        lblSuppliersList->setText(QCoreApplication::translate("MainWindow", "Suppliers List", nullptr));
+        searchBox_4->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search by ID / Name / Phone...", nullptr));
+        sortComboBox_4->setItemText(0, QCoreApplication::translate("MainWindow", "Sort: Name (A-Z)", nullptr));
+        sortComboBox_4->setItemText(1, QCoreApplication::translate("MainWindow", "Sort: Name (Z-A)", nullptr));
+        sortComboBox_4->setItemText(2, QCoreApplication::translate("MainWindow", "Sort: Rating (High-Low)", nullptr));
+        sortComboBox_4->setItemText(3, QCoreApplication::translate("MainWindow", "Sort: Date (Newest)", nullptr));
+
+        QTableWidgetItem *___qtablewidgetitem27 = suppliersTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem27->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
+        QTableWidgetItem *___qtablewidgetitem28 = suppliersTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem28->setText(QCoreApplication::translate("MainWindow", "Name", nullptr));
+        QTableWidgetItem *___qtablewidgetitem29 = suppliersTable->horizontalHeaderItem(2);
+        ___qtablewidgetitem29->setText(QCoreApplication::translate("MainWindow", "Email", nullptr));
+        QTableWidgetItem *___qtablewidgetitem30 = suppliersTable->horizontalHeaderItem(3);
+        ___qtablewidgetitem30->setText(QCoreApplication::translate("MainWindow", "Phone", nullptr));
+        QTableWidgetItem *___qtablewidgetitem31 = suppliersTable->horizontalHeaderItem(4);
+        ___qtablewidgetitem31->setText(QCoreApplication::translate("MainWindow", "Product Type", nullptr));
+        QTableWidgetItem *___qtablewidgetitem32 = suppliersTable->horizontalHeaderItem(5);
+        ___qtablewidgetitem32->setText(QCoreApplication::translate("MainWindow", "Contract", nullptr));
+        QTableWidgetItem *___qtablewidgetitem33 = suppliersTable->horizontalHeaderItem(6);
+        ___qtablewidgetitem33->setText(QCoreApplication::translate("MainWindow", "Date", nullptr));
+        QTableWidgetItem *___qtablewidgetitem34 = suppliersTable->horizontalHeaderItem(7);
+        ___qtablewidgetitem34->setText(QCoreApplication::translate("MainWindow", "Rating", nullptr));
+        lblActions_4->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
+        btnEditSupplier->setText(QCoreApplication::translate("MainWindow", "Edit Supplier", nullptr));
+        btnDeleteSupplier->setText(QCoreApplication::translate("MainWindow", "Delete Supplier", nullptr));
+        btnClearSelection_4->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
+        btnRateSupplier->setText(QCoreApplication::translate("MainWindow", "Rate Supplier", nullptr));
+        btnExportPDF_4->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+=======
 =======
 =======
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
     } // retranslateUi
 
 };

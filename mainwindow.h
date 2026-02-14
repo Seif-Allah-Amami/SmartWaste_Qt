@@ -31,12 +31,18 @@ private:
 <<<<<<< HEAD
     void showVehiclePage();
     void showMachinePage();
+    void showSupplierPage();
+=======
+<<<<<<< HEAD
+    void showVehiclePage();
+    void showMachinePage();
 =======
 <<<<<<< HEAD
     void showVehiclePage();
 =======
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
 
     // Logic methods
     void onLoginClicked();
