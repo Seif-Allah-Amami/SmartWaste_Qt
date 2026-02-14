@@ -37,15 +37,32 @@ void MainWindow::setupConnections()
     connect(ui->btnMenuEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
     connect(ui->btnMenuCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
     connect(ui->btnMenuWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+<<<<<<< HEAD
+    connect(ui->btnMenuVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 
     // Employee Page Sidebar Navigation
     connect(ui->btnEmpDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnEmpLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmpCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
+<<<<<<< HEAD
+    connect(ui->btnEmpVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
     // Waste Management Sidebar Navigation
     connect(ui->btnDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
+<<<<<<< HEAD
+    connect(ui->btnVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    // Waste Vehicle Sidebar Navigation
+    connect(ui->btnDashboard_2, &QPushButton::clicked, this, &MainWindow::showMainMenu);
+    connect(ui->btnLogout_2, &QPushButton::clicked, this, &MainWindow::showLoginPage);
+    connect(ui->btnEmployee_2, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
+    connect(ui->btnWaste_2, &QPushButton::clicked, this, &MainWindow::showWastePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 
 
     // ✅ ADD THIS LINE ONLY
@@ -87,6 +104,13 @@ void MainWindow::showEmployeePage()
 {
     ui->stackedwidget->setCurrentWidget(ui->employe);
 }
+<<<<<<< HEAD
+void MainWindow::showVehiclePage()
+{
+    ui->stackedwidget->setCurrentWidget(ui->vehiclePage);
+}
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 
 void MainWindow::showCustomerPage()
 {

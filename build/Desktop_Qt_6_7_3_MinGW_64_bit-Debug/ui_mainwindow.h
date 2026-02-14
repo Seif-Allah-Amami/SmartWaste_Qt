@@ -195,6 +195,56 @@ public:
     QPushButton *btnClearSelection;
     QSpacerItem *verticalSpacer_3;
     QPushButton *btnExportPDF;
+<<<<<<< HEAD
+    QWidget *vehiclePage;
+    QGroupBox *sidebarGroup_3;
+    QVBoxLayout *sidebarLayout_3;
+    QHBoxLayout *logoContainerLayout_3;
+    QSpacerItem *horizontalSpacer_logoLeft_3;
+    QLabel *sidebarLogo_2;
+    QSpacerItem *horizontalSpacer_logoRight_3;
+    QLabel *sidebarTitle_2;
+    QSpacerItem *verticalSpacer_4;
+    QPushButton *btnDashboard_2;
+    QPushButton *btnEmployee_2;
+    QPushButton *btnCustomer_2;
+    QPushButton *btnWaste_2;
+    QPushButton *btnVehicle_2;
+    QPushButton *btnMachines_2;
+    QPushButton *btnSupplier_2;
+    QSpacerItem *verticalSpacer_5;
+    QPushButton *btnLogout_2;
+    QWidget *mainContentWidget_2;
+    QVBoxLayout *mainContentLayout_2;
+    QHBoxLayout *headerLayout_2;
+    QVBoxLayout *titleLayout_2;
+    QLabel *pageTitle_2;
+    QLabel *pageSubtitle_2;
+    QSpacerItem *horizontalSpacer_3;
+    QHBoxLayout *topActionsLayout_2;
+    QPushButton *btnViewVehicles;
+    QPushButton *btnAddVehicle;
+    QPushButton *btnCalendar;
+    QSpacerItem *horizontalSpacer_4;
+    QWidget *searchFilterWidget_2;
+    QVBoxLayout *searchFilterLayout_2;
+    QLabel *lblVehiclesList;
+    QHBoxLayout *searchLayout_2;
+    QLineEdit *searchBox_2;
+    QComboBox *sortComboBox_2;
+    QHBoxLayout *tableActionsLayout_2;
+    QTableWidget *vehiclesTable;
+    QFrame *actionsPanel_2;
+    QVBoxLayout *actionsPanelLayout_2;
+    QLabel *lblActions_2;
+    QPushButton *btnEditVehicle;
+    QPushButton *btnDeleteVehicle;
+    QPushButton *btnChatbot;
+    QPushButton *btnClearSelection_2;
+    QSpacerItem *verticalSpacer_6;
+    QPushButton *btnExportPDF_2;
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -2123,6 +2173,520 @@ public:
         mainContentLayout->addLayout(tableActionsLayout);
 
         stackedwidget->addWidget(wastemanagement);
+<<<<<<< HEAD
+        vehiclePage = new QWidget();
+        vehiclePage->setObjectName("vehiclePage");
+        sidebarGroup_3 = new QGroupBox(vehiclePage);
+        sidebarGroup_3->setObjectName("sidebarGroup_3");
+        sidebarGroup_3->setGeometry(QRect(0, 0, 250, 721));
+        sidebarGroup_3->setMinimumSize(QSize(250, 0));
+        sidebarGroup_3->setMaximumSize(QSize(250, 16777215));
+        sidebarLayout_3 = new QVBoxLayout(sidebarGroup_3);
+        sidebarLayout_3->setSpacing(0);
+        sidebarLayout_3->setObjectName("sidebarLayout_3");
+        sidebarLayout_3->setContentsMargins(0, 0, 0, 0);
+        logoContainerLayout_3 = new QHBoxLayout();
+        logoContainerLayout_3->setObjectName("logoContainerLayout_3");
+        horizontalSpacer_logoLeft_3 = new QSpacerItem(0, 0, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        logoContainerLayout_3->addItem(horizontalSpacer_logoLeft_3);
+
+        sidebarLogo_2 = new QLabel(sidebarGroup_3);
+        sidebarLogo_2->setObjectName("sidebarLogo_2");
+        sidebarLogo_2->setMinimumSize(QSize(180, 80));
+        sidebarLogo_2->setMaximumSize(QSize(180, 80));
+        sidebarLogo_2->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"}"));
+        sidebarLogo_2->setPixmap(QPixmap(QString::fromUtf8(":/image/images/logo.png")));
+        sidebarLogo_2->setScaledContents(false);
+        sidebarLogo_2->setAlignment(Qt::AlignmentFlag::AlignCenter);
+
+        logoContainerLayout_3->addWidget(sidebarLogo_2);
+
+        horizontalSpacer_logoRight_3 = new QSpacerItem(0, 0, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        logoContainerLayout_3->addItem(horizontalSpacer_logoRight_3);
+
+
+        sidebarLayout_3->addLayout(logoContainerLayout_3);
+
+        sidebarTitle_2 = new QLabel(sidebarGroup_3);
+        sidebarTitle_2->setObjectName("sidebarTitle_2");
+
+        sidebarLayout_3->addWidget(sidebarTitle_2);
+
+        verticalSpacer_4 = new QSpacerItem(20, 20, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
+
+        sidebarLayout_3->addItem(verticalSpacer_4);
+
+        btnDashboard_2 = new QPushButton(sidebarGroup_3);
+        btnDashboard_2->setObjectName("btnDashboard_2");
+        btnDashboard_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_3->addWidget(btnDashboard_2);
+
+        btnEmployee_2 = new QPushButton(sidebarGroup_3);
+        btnEmployee_2->setObjectName("btnEmployee_2");
+        btnEmployee_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_3->addWidget(btnEmployee_2);
+
+        btnCustomer_2 = new QPushButton(sidebarGroup_3);
+        btnCustomer_2->setObjectName("btnCustomer_2");
+        btnCustomer_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_3->addWidget(btnCustomer_2);
+
+        btnWaste_2 = new QPushButton(sidebarGroup_3);
+        btnWaste_2->setObjectName("btnWaste_2");
+        btnWaste_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_3->addWidget(btnWaste_2);
+
+        btnVehicle_2 = new QPushButton(sidebarGroup_3);
+        btnVehicle_2->setObjectName("btnVehicle_2");
+        btnVehicle_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: rgba(0, 255, 156, 0.15);\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #00ff9c;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 600;\n"
+"    border-left: 3px solid #00ff9c;\n"
+"}"));
+
+        sidebarLayout_3->addWidget(btnVehicle_2);
+
+        btnMachines_2 = new QPushButton(sidebarGroup_3);
+        btnMachines_2->setObjectName("btnMachines_2");
+        btnMachines_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_3->addWidget(btnMachines_2);
+
+        btnSupplier_2 = new QPushButton(sidebarGroup_3);
+        btnSupplier_2->setObjectName("btnSupplier_2");
+        btnSupplier_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 14px 20px;\n"
+"    color: #66ffcc;\n"
+"    text-align: left;\n"
+"    font-size: 14px;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    color: #00ff9c;\n"
+"}"));
+
+        sidebarLayout_3->addWidget(btnSupplier_2);
+
+        verticalSpacer_5 = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        sidebarLayout_3->addItem(verticalSpacer_5);
+
+        btnLogout_2 = new QPushButton(sidebarGroup_3);
+        btnLogout_2->setObjectName("btnLogout_2");
+        btnLogout_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #ff6666;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 20px;\n"
+"    color: #ff6666;\n"
+"    font-weight: 600;\n"
+"    margin: 0px 15px 15px 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(255, 102, 102, 0.1);\n"
+"}"));
+
+        sidebarLayout_3->addWidget(btnLogout_2);
+
+        mainContentWidget_2 = new QWidget(vehiclePage);
+        mainContentWidget_2->setObjectName("mainContentWidget_2");
+        mainContentWidget_2->setGeometry(QRect(250, 7, 1107, 711));
+        mainContentLayout_2 = new QVBoxLayout(mainContentWidget_2);
+        mainContentLayout_2->setSpacing(20);
+        mainContentLayout_2->setObjectName("mainContentLayout_2");
+        mainContentLayout_2->setContentsMargins(30, 30, 30, 30);
+        headerLayout_2 = new QHBoxLayout();
+        headerLayout_2->setObjectName("headerLayout_2");
+        titleLayout_2 = new QVBoxLayout();
+        titleLayout_2->setSpacing(5);
+        titleLayout_2->setObjectName("titleLayout_2");
+        pageTitle_2 = new QLabel(mainContentWidget_2);
+        pageTitle_2->setObjectName("pageTitle_2");
+        pageTitle_2->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    font-size: 28px;\n"
+"    font-weight: 700;\n"
+"    color: #ffffff;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"}"));
+
+        titleLayout_2->addWidget(pageTitle_2);
+
+        pageSubtitle_2 = new QLabel(mainContentWidget_2);
+        pageSubtitle_2->setObjectName("pageSubtitle_2");
+        pageSubtitle_2->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    font-size: 13px;\n"
+"    font-weight: 400;\n"
+"    color: #66ffcc;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"}"));
+
+        titleLayout_2->addWidget(pageSubtitle_2);
+
+
+        headerLayout_2->addLayout(titleLayout_2);
+
+        horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        headerLayout_2->addItem(horizontalSpacer_3);
+
+
+        mainContentLayout_2->addLayout(headerLayout_2);
+
+        topActionsLayout_2 = new QHBoxLayout();
+        topActionsLayout_2->setSpacing(10);
+        topActionsLayout_2->setObjectName("topActionsLayout_2");
+        btnViewVehicles = new QPushButton(mainContentWidget_2);
+        btnViewVehicles->setObjectName("btnViewVehicles");
+        btnViewVehicles->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: rgba(0, 255, 156, 0.15);\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}"));
+
+        topActionsLayout_2->addWidget(btnViewVehicles);
+
+        btnAddVehicle = new QPushButton(mainContentWidget_2);
+        btnAddVehicle->setObjectName("btnAddVehicle");
+        btnAddVehicle->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"}"));
+
+        topActionsLayout_2->addWidget(btnAddVehicle);
+
+        btnCalendar = new QPushButton(mainContentWidget_2);
+        btnCalendar->setObjectName("btnCalendar");
+        btnCalendar->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"}"));
+
+        topActionsLayout_2->addWidget(btnCalendar);
+
+        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        topActionsLayout_2->addItem(horizontalSpacer_4);
+
+
+        mainContentLayout_2->addLayout(topActionsLayout_2);
+
+        searchFilterWidget_2 = new QWidget(mainContentWidget_2);
+        searchFilterWidget_2->setObjectName("searchFilterWidget_2");
+        searchFilterLayout_2 = new QVBoxLayout(searchFilterWidget_2);
+        searchFilterLayout_2->setSpacing(10);
+        searchFilterLayout_2->setObjectName("searchFilterLayout_2");
+        searchFilterLayout_2->setContentsMargins(0, 0, 0, 0);
+        lblVehiclesList = new QLabel(searchFilterWidget_2);
+        lblVehiclesList->setObjectName("lblVehiclesList");
+        lblVehiclesList->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    font-size: 14px;\n"
+"    font-weight: 600;\n"
+"    color: #ffffff;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"    padding: 5px 0px;\n"
+"}"));
+
+        searchFilterLayout_2->addWidget(lblVehiclesList);
+
+        searchLayout_2 = new QHBoxLayout();
+        searchLayout_2->setSpacing(10);
+        searchLayout_2->setObjectName("searchLayout_2");
+        searchBox_2 = new QLineEdit(searchFilterWidget_2);
+        searchBox_2->setObjectName("searchBox_2");
+        searchBox_2->setMinimumSize(QSize(0, 40));
+
+        searchLayout_2->addWidget(searchBox_2);
+
+        sortComboBox_2 = new QComboBox(searchFilterWidget_2);
+        sortComboBox_2->addItem(QString());
+        sortComboBox_2->addItem(QString());
+        sortComboBox_2->addItem(QString());
+        sortComboBox_2->addItem(QString());
+        sortComboBox_2->setObjectName("sortComboBox_2");
+        sortComboBox_2->setMinimumSize(QSize(200, 40));
+        sortComboBox_2->setMaximumSize(QSize(250, 16777215));
+
+        searchLayout_2->addWidget(sortComboBox_2);
+
+
+        searchFilterLayout_2->addLayout(searchLayout_2);
+
+
+        mainContentLayout_2->addWidget(searchFilterWidget_2);
+
+        tableActionsLayout_2 = new QHBoxLayout();
+        tableActionsLayout_2->setSpacing(20);
+        tableActionsLayout_2->setObjectName("tableActionsLayout_2");
+        vehiclesTable = new QTableWidget(mainContentWidget_2);
+        if (vehiclesTable->columnCount() < 6)
+            vehiclesTable->setColumnCount(6);
+        QTableWidgetItem *__qtablewidgetitem15 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(0, __qtablewidgetitem15);
+        QTableWidgetItem *__qtablewidgetitem16 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(1, __qtablewidgetitem16);
+        QTableWidgetItem *__qtablewidgetitem17 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(2, __qtablewidgetitem17);
+        QTableWidgetItem *__qtablewidgetitem18 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(3, __qtablewidgetitem18);
+        QTableWidgetItem *__qtablewidgetitem19 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(4, __qtablewidgetitem19);
+        QTableWidgetItem *__qtablewidgetitem20 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(5, __qtablewidgetitem20);
+        vehiclesTable->setObjectName("vehiclesTable");
+        sizePolicy.setHeightForWidth(vehiclesTable->sizePolicy().hasHeightForWidth());
+        vehiclesTable->setSizePolicy(sizePolicy);
+        vehiclesTable->setMinimumSize(QSize(600, 0));
+        vehiclesTable->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+        vehiclesTable->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+
+        tableActionsLayout_2->addWidget(vehiclesTable);
+
+        actionsPanel_2 = new QFrame(mainContentWidget_2);
+        actionsPanel_2->setObjectName("actionsPanel_2");
+        sizePolicy1.setHeightForWidth(actionsPanel_2->sizePolicy().hasHeightForWidth());
+        actionsPanel_2->setSizePolicy(sizePolicy1);
+        actionsPanel_2->setMinimumSize(QSize(200, 0));
+        actionsPanel_2->setMaximumSize(QSize(220, 16777215));
+        actionsPanel_2->setFrameShape(QFrame::Shape::StyledPanel);
+        actionsPanel_2->setFrameShadow(QFrame::Shadow::Raised);
+        actionsPanelLayout_2 = new QVBoxLayout(actionsPanel_2);
+        actionsPanelLayout_2->setSpacing(15);
+        actionsPanelLayout_2->setObjectName("actionsPanelLayout_2");
+        lblActions_2 = new QLabel(actionsPanel_2);
+        lblActions_2->setObjectName("lblActions_2");
+        lblActions_2->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"    font-size: 16px;\n"
+"    font-weight: 600;\n"
+"    color: #ffffff;\n"
+"    background: transparent;\n"
+"    border: none;\n"
+"    padding: 0px;\n"
+"}"));
+
+        actionsPanelLayout_2->addWidget(lblActions_2);
+
+        btnEditVehicle = new QPushButton(actionsPanel_2);
+        btnEditVehicle->setObjectName("btnEditVehicle");
+        btnEditVehicle->setMinimumSize(QSize(0, 45));
+        btnEditVehicle->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 500;\n"
+"    text-align: center;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    border: 1px solid #33ffcc;\n"
+"}"));
+
+        actionsPanelLayout_2->addWidget(btnEditVehicle);
+
+        btnDeleteVehicle = new QPushButton(actionsPanel_2);
+        btnDeleteVehicle->setObjectName("btnDeleteVehicle");
+        btnDeleteVehicle->setMinimumSize(QSize(0, 45));
+        btnDeleteVehicle->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #ff6666;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #ff6666;\n"
+"    font-weight: 500;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(255, 102, 102, 0.1);\n"
+"}"));
+
+        actionsPanelLayout_2->addWidget(btnDeleteVehicle);
+
+        btnChatbot = new QPushButton(actionsPanel_2);
+        btnChatbot->setObjectName("btnChatbot");
+        btnChatbot->setMinimumSize(QSize(0, 45));
+        btnChatbot->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 500;\n"
+"    text-align: center;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    border: 1px solid #33ffcc;\n"
+"}"));
+
+        actionsPanelLayout_2->addWidget(btnChatbot);
+
+        btnClearSelection_2 = new QPushButton(actionsPanel_2);
+        btnClearSelection_2->setObjectName("btnClearSelection_2");
+        btnClearSelection_2->setMinimumSize(QSize(0, 45));
+        btnClearSelection_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 500;\n"
+"    text-align: center;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"    border: 1px solid #33ffcc;\n"
+"}"));
+
+        actionsPanelLayout_2->addWidget(btnClearSelection_2);
+
+        verticalSpacer_6 = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        actionsPanelLayout_2->addItem(verticalSpacer_6);
+
+        btnExportPDF_2 = new QPushButton(actionsPanel_2);
+        btnExportPDF_2->setObjectName("btnExportPDF_2");
+        btnExportPDF_2->setMinimumSize(QSize(0, 45));
+        btnExportPDF_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: #00ff9c;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 8px;\n"
+"    padding: 12px 15px;\n"
+"    color: #050d0a;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #33ffcc;\n"
+"}"));
+
+        actionsPanelLayout_2->addWidget(btnExportPDF_2);
+
+
+        tableActionsLayout_2->addWidget(actionsPanel_2);
+
+
+        mainContentLayout_2->addLayout(tableActionsLayout_2);
+
+        stackedwidget->addWidget(vehiclePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -2130,7 +2694,11 @@ public:
 
         retranslateUi(MainWindow);
 
+<<<<<<< HEAD
+        stackedwidget->setCurrentIndex(6);
+=======
         stackedwidget->setCurrentIndex(5);
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -2255,6 +2823,50 @@ public:
         btnRate->setText(QCoreApplication::translate("MainWindow", "Rate Service", nullptr));
         btnClearSelection->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+<<<<<<< HEAD
+        sidebarGroup_3->setTitle(QString());
+        sidebarLogo_2->setText(QString());
+        sidebarTitle_2->setText(QCoreApplication::translate("MainWindow", "ReGen", nullptr));
+        btnDashboard_2->setText(QCoreApplication::translate("MainWindow", "Dashboard", nullptr));
+        btnEmployee_2->setText(QCoreApplication::translate("MainWindow", "Employee Management", nullptr));
+        btnCustomer_2->setText(QCoreApplication::translate("MainWindow", "Customer Management", nullptr));
+        btnWaste_2->setText(QCoreApplication::translate("MainWindow", "Waste Management", nullptr));
+        btnVehicle_2->setText(QCoreApplication::translate("MainWindow", "Vehicle Management", nullptr));
+        btnMachines_2->setText(QCoreApplication::translate("MainWindow", "Machines Management", nullptr));
+        btnSupplier_2->setText(QCoreApplication::translate("MainWindow", "Supplier Management", nullptr));
+        btnLogout_2->setText(QCoreApplication::translate("MainWindow", "Log Out \360\237\232\252", nullptr));
+        pageTitle_2->setText(QCoreApplication::translate("MainWindow", "Vehicles", nullptr));
+        pageSubtitle_2->setText(QCoreApplication::translate("MainWindow", "Manage fleet, track maintenance, and monitor vehicle status.", nullptr));
+        btnViewVehicles->setText(QCoreApplication::translate("MainWindow", "View Vehicles", nullptr));
+        btnAddVehicle->setText(QCoreApplication::translate("MainWindow", "Add Vehicle", nullptr));
+        btnCalendar->setText(QCoreApplication::translate("MainWindow", "Maintenance Calendar", nullptr));
+        lblVehiclesList->setText(QCoreApplication::translate("MainWindow", "Vehicles List", nullptr));
+        searchBox_2->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search by ID / Plate / Model...", nullptr));
+        sortComboBox_2->setItemText(0, QCoreApplication::translate("MainWindow", "Sort: ID", nullptr));
+        sortComboBox_2->setItemText(1, QCoreApplication::translate("MainWindow", "Sort: Model", nullptr));
+        sortComboBox_2->setItemText(2, QCoreApplication::translate("MainWindow", "Sort: Type", nullptr));
+        sortComboBox_2->setItemText(3, QCoreApplication::translate("MainWindow", "Sort: Next Maintenance", nullptr));
+
+        QTableWidgetItem *___qtablewidgetitem15 = vehiclesTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem15->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
+        QTableWidgetItem *___qtablewidgetitem16 = vehiclesTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem16->setText(QCoreApplication::translate("MainWindow", "Num Plate", nullptr));
+        QTableWidgetItem *___qtablewidgetitem17 = vehiclesTable->horizontalHeaderItem(2);
+        ___qtablewidgetitem17->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
+        QTableWidgetItem *___qtablewidgetitem18 = vehiclesTable->horizontalHeaderItem(3);
+        ___qtablewidgetitem18->setText(QCoreApplication::translate("MainWindow", "Model", nullptr));
+        QTableWidgetItem *___qtablewidgetitem19 = vehiclesTable->horizontalHeaderItem(4);
+        ___qtablewidgetitem19->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
+        QTableWidgetItem *___qtablewidgetitem20 = vehiclesTable->horizontalHeaderItem(5);
+        ___qtablewidgetitem20->setText(QCoreApplication::translate("MainWindow", "Next Maintenance", nullptr));
+        lblActions_2->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
+        btnEditVehicle->setText(QCoreApplication::translate("MainWindow", "Edit Vehicle", nullptr));
+        btnDeleteVehicle->setText(QCoreApplication::translate("MainWindow", "Delete Vehicle", nullptr));
+        btnChatbot->setText(QCoreApplication::translate("MainWindow", "AI Chatbot \360\237\244\226", nullptr));
+        btnClearSelection_2->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
+        btnExportPDF_2->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
     } // retranslateUi
 
 };

@@ -28,6 +28,10 @@ private:
     void showEmployeePage();
     void showCustomerPage();
     void showWastePage();
+<<<<<<< HEAD
+    void showVehiclePage();
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 
     // Logic methods
     void onLoginClicked();
