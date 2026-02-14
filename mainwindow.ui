@@ -344,7 +344,15 @@ QStatusBar {
      </rect>
     </property>
     <property name="currentIndex">
+<<<<<<< HEAD
      <number>7</number>
+=======
+<<<<<<< HEAD
+     <number>0</number>
+=======
+     <number>5</number>
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
     </property>
     <widget class="QWidget" name="connection">
      <layout class="QVBoxLayout" name="loginLayout">
@@ -3061,6 +3069,10 @@ QPushButton:hover {
       </layout>
      </widget>
     </widget>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
     <widget class="QWidget" name="vehiclePage">
      <widget class="QGroupBox" name="sidebarGroup_3">
       <property name="geometry">
@@ -3910,6 +3922,7 @@ QPushButton:hover {
       </layout>
      </widget>
     </widget>
+<<<<<<< HEAD
     <widget class="QWidget" name="machinePage">
      <widget class="QWidget" name="mainContentWidget_3" native="true">
       <property name="geometry">
@@ -4720,6 +4733,10 @@ QPushButton:hover {
       </layout>
      </widget>
     </widget>
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

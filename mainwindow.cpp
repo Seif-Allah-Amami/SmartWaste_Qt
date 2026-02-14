@@ -37,27 +37,47 @@ void MainWindow::setupConnections()
     connect(ui->btnMenuEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
     connect(ui->btnMenuCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
     connect(ui->btnMenuWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+<<<<<<< HEAD
     connect(ui->btnMenuVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
     connect(ui->btnMenuMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnMenuVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 
     // Employee Page Sidebar Navigation
     connect(ui->btnEmpDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnEmpLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmpCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
+<<<<<<< HEAD
     connect(ui->btnEmpVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
     connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
     connect(ui->btnEmpMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnEmpVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
     // Waste Management Sidebar Navigation
     connect(ui->btnDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
+<<<<<<< HEAD
     connect(ui->btnVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
     connect(ui->btnMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
     // Waste Vehicle Sidebar Navigation
     connect(ui->btnDashboard_2, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnLogout_2, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmployee_2, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
     connect(ui->btnWaste_2, &QPushButton::clicked, this, &MainWindow::showWastePage);
+<<<<<<< HEAD
     connect(ui->btnMachines_2, &QPushButton::clicked, this, &MainWindow::showMachinePage);
     // Waste Machine Sidebar Navigation
     connect(ui->btnDashboard_3, &QPushButton::clicked, this, &MainWindow::showMainMenu);
@@ -69,6 +89,14 @@ void MainWindow::setupConnections()
 
     // ✅ ADD THIS LINE ONLY
 
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+
+
+    // ✅ ADD THIS LINE ONLY
+    connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 }
 
 
@@ -79,10 +107,14 @@ void MainWindow::showWastePage()
     ui->stackedwidget->setCurrentWidget(ui->wastemanagement);
 }
 
+<<<<<<< HEAD
 void MainWindow::showMachinePage()
 {
     ui->stackedwidget->setCurrentWidget(ui->machinePage);
 }
+=======
+
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 // ================= YOUR ORIGINAL FUNCTIONS =================
 
 void MainWindow::showLoginPage()
@@ -109,10 +141,19 @@ void MainWindow::showEmployeePage()
 {
     ui->stackedwidget->setCurrentWidget(ui->employe);
 }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 void MainWindow::showVehiclePage()
 {
     ui->stackedwidget->setCurrentWidget(ui->vehiclePage);
 }
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 
 void MainWindow::showCustomerPage()
 {

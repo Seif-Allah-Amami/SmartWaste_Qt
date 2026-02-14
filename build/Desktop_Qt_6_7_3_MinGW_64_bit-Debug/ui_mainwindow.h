@@ -195,6 +195,10 @@ public:
     QPushButton *btnClearSelection;
     QSpacerItem *verticalSpacer_3;
     QPushButton *btnExportPDF;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
     QWidget *vehiclePage;
     QGroupBox *sidebarGroup_3;
     QVBoxLayout *sidebarLayout_3;
@@ -242,6 +246,7 @@ public:
     QPushButton *btnClearSelection_2;
     QSpacerItem *verticalSpacer_6;
     QPushButton *btnExportPDF_2;
+<<<<<<< HEAD
     QWidget *machinePage;
     QWidget *mainContentWidget_3;
     QVBoxLayout *mainContentLayout_3;
@@ -286,6 +291,10 @@ public:
     QPushButton *btnSuppliers;
     QSpacerItem *verticalSpacer_9;
     QPushButton *btnLogout_3;
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -2214,6 +2223,10 @@ public:
         mainContentLayout->addLayout(tableActionsLayout);
 
         stackedwidget->addWidget(wastemanagement);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
         vehiclePage = new QWidget();
         vehiclePage->setObjectName("vehiclePage");
         sidebarGroup_3 = new QGroupBox(vehiclePage);
@@ -2725,6 +2738,7 @@ public:
         mainContentLayout_2->addLayout(tableActionsLayout_2);
 
         stackedwidget->addWidget(vehiclePage);
+<<<<<<< HEAD
         machinePage = new QWidget();
         machinePage->setObjectName("machinePage");
         mainContentWidget_3 = new QWidget(machinePage);
@@ -3210,6 +3224,10 @@ public:
         sidebarLayout_4->addWidget(btnLogout_3);
 
         stackedwidget->addWidget(machinePage);
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -3217,7 +3235,15 @@ public:
 
         retranslateUi(MainWindow);
 
+<<<<<<< HEAD
         stackedwidget->setCurrentIndex(7);
+=======
+<<<<<<< HEAD
+        stackedwidget->setCurrentIndex(6);
+=======
+        stackedwidget->setCurrentIndex(5);
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -3342,6 +3368,10 @@ public:
         btnRate->setText(QCoreApplication::translate("MainWindow", "Rate Service", nullptr));
         btnClearSelection->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
         sidebarGroup_3->setTitle(QString());
         sidebarLogo_2->setText(QString());
         sidebarTitle_2->setText(QCoreApplication::translate("MainWindow", "ReGen", nullptr));
@@ -3383,6 +3413,7 @@ public:
         btnChatbot->setText(QCoreApplication::translate("MainWindow", "AI Chatbot \360\237\244\226", nullptr));
         btnClearSelection_2->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF_2->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+<<<<<<< HEAD
         pageTitle_3->setText(QCoreApplication::translate("MainWindow", "Machines", nullptr));
         pageSubtitle_3->setText(QCoreApplication::translate("MainWindow", "Create, edit, search, sort, export, and analyze machines.", nullptr));
         btnViewMachines->setText(QCoreApplication::translate("MainWindow", "View Machines", nullptr));
@@ -3424,6 +3455,10 @@ public:
         btnMachines_3->setText(QCoreApplication::translate("MainWindow", "Machines Management", nullptr));
         btnSuppliers->setText(QCoreApplication::translate("MainWindow", "Supplier Management", nullptr));
         btnLogout_3->setText(QCoreApplication::translate("MainWindow", "Log Out \360\237\232\252", nullptr));
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
     } // retranslateUi
 
 };
