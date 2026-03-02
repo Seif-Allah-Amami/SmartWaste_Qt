@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+<<<<<<< HEAD
 #include "connection.h"
 #include "waste.h"
 
@@ -10,6 +11,10 @@ class QLabel;
 
 class QCloseEvent;
 
+=======
+#include <QMainWindow>
+
+>>>>>>> origin/waste
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -36,6 +41,7 @@ private:
     void showCustomerPage();
     void showWastePage();
 
+<<<<<<< HEAD
     // Waste CRUD helpers
     bool initializeDatabase();
     bool ensureWasteTable();
@@ -70,6 +76,11 @@ private:
     bool m_databaseReady;
     Connection m_connection;  // Keep connection alive
     QLabel *m_searchHintLabel;
+=======
+    // Logic methods
+    void onLoginClicked();
+    void onVerifyClicked();
+>>>>>>> origin/waste
 };
 
 #endif // MAINWINDOW_H

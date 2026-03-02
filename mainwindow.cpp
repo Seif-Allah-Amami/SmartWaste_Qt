@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+<<<<<<< HEAD
 #include <QCoreApplication>
 #include <QHeaderView>
 #include <QInputDialog>
@@ -47,6 +48,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
     , m_databaseReady(false)
     , m_searchHintLabel(nullptr)
+=======
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+>>>>>>> origin/waste
 {
     ui->setupUi(this);
 
@@ -55,10 +61,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Connect all navigation buttons
     setupConnections();
+<<<<<<< HEAD
 
     setupWasteTable();
     m_databaseReady = initializeDatabase() && ensureWasteTable();
     onViewWasteClicked();
+=======
+>>>>>>> origin/waste
 }
 
 MainWindow::~MainWindow()
@@ -88,14 +97,19 @@ void MainWindow::setupConnections()
     // Employee Page Sidebar Navigation
     connect(ui->btnEmpDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnEmpLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
+<<<<<<< HEAD
     connect(ui->btnEmpEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
     connect(ui->btnEmpCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
     connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
 
+=======
+    connect(ui->btnEmpCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
+>>>>>>> origin/waste
     // Waste Management Sidebar Navigation
     connect(ui->btnDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
+<<<<<<< HEAD
     connect(ui->btnWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
     connect(ui->btnViewWaste, &QPushButton::clicked, this, &MainWindow::onViewWasteClicked);
     connect(ui->btnAddWaste, &QPushButton::clicked, this, &MainWindow::onAddWasteClicked);
@@ -988,12 +1002,28 @@ void MainWindow::onWasteSortChanged(int index)
 
     applyWasteSearchAndSort();
 }
+=======
+
+
+    // ✅ ADD THIS LINE ONLY
+    connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+}
+
+
+// ================= ADD THIS FUNCTION ONLY =================
+>>>>>>> origin/waste
 
 void MainWindow::showWastePage()
 {
     ui->stackedwidget->setCurrentWidget(ui->wastemanagement);
 }
 
+<<<<<<< HEAD
+=======
+
+// ================= YOUR ORIGINAL FUNCTIONS =================
+
+>>>>>>> origin/waste
 void MainWindow::showLoginPage()
 {
     ui->stackedwidget->setCurrentWidget(ui->connection);

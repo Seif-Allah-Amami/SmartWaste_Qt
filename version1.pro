@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 QT       += core gui sql charts
+=======
+QT       += core gui
+>>>>>>> origin/waste
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +14,7 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
+<<<<<<< HEAD
     mainwindow.cpp \
     waste.cpp
 
@@ -17,6 +22,12 @@ HEADERS += \
     connection.h \
     mainwindow.h \
     waste.h
+=======
+    mainwindow.cpp
+
+HEADERS += \
+    mainwindow.h
+>>>>>>> origin/waste
 
 FORMS += \
     mainwindow.ui
