@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "customer.h"
+#include "advancedfeatures.h"
 #include <QAbstractItemView>
 #include <QDate>
 #include <QMessageBox>
@@ -97,7 +98,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnClearSelection_5, &QPushButton::clicked, this, &MainWindow::onClearSelection5Clicked);
     connect(ui->btnExportPDF_5, &QPushButton::clicked, this, &MainWindow::onExportPDFClicked);
     connect(ui->btnReportStatus, &QPushButton::clicked, this, &MainWindow::onReportStatusClicked);
+    connect(ui->btnCustomerAI, &QPushButton::clicked, this, &MainWindow::onCustomerAIClicked);
     loadCustomers();
+}
+
+void MainWindow::onCustomerAIClicked()
+{
+    AdvancedFeatures dialog(allCustomers_, this);
+    dialog.exec();
 }
 
 

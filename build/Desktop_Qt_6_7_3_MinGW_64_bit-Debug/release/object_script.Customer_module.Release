@@ -1,0 +1,10 @@
+release/advancedfeatures.o
+release/connexion.o
+release/customer.o
+release/main.o
+release/mainwindow.o
+release/qrc_resource.o
+release/qrc_source.o
+release/moc_advancedfeatures.o
+release/moc_customer.o
+release/moc_mainwindow.o

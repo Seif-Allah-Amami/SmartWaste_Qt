@@ -25,6 +25,7 @@ private slots:
     void onDeleteCustomer();
     void onExportPDFClicked();
     void onReportStatusClicked();
+    void onCustomerAIClicked();
 
 private:
     Ui::MainWindow *ui;

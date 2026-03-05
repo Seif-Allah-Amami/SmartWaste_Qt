@@ -1,0 +1,10 @@
+debug/advancedfeatures.o
+debug/connexion.o
+debug/customer.o
+debug/main.o
+debug/mainwindow.o
+debug/qrc_resource.o
+debug/qrc_source.o
+debug/moc_advancedfeatures.o
+debug/moc_customer.o
+debug/moc_mainwindow.o
