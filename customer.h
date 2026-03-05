@@ -13,6 +13,7 @@ class Customer
 {
 public:
     Customer();
+    // Backward-compatible constructor for legacy code
     Customer(int customerId,
              const QString &name,
              const QString &email,
@@ -22,6 +23,16 @@ public:
              const QDate &reportDate,
              double satisfactionScore,
              int employeeId);
+    Customer(int customerId,
+             const QString &name,
+             const QString &email,
+             const QString &phone,
+             const QString &address,
+             const QString &reportType,
+             const QDate &reportDate,
+             double satisfactionScore,
+             int employeeId,
+             const QString &status);
 
     int customerId() const;
     void setCustomerId(int customerId);
@@ -50,12 +61,14 @@ public:
     int employeeId() const;
     void setEmployeeId(int employeeId);
 
+    QString status() const;
+    void setStatus(const QString &status);
+
     bool add(QString *errorMessage = nullptr) const;
     bool update(QString *errorMessage = nullptr) const;
 
     static bool remove(int customerId, QString *errorMessage = nullptr);
     static bool fetchAll(QList<Customer> &out, QString *errorMessage = nullptr);
-
 
 private:
     int customerId_;
@@ -67,6 +80,8 @@ private:
     QDate reportDate_;
     double satisfactionScore_;
     int employeeId_;
+    // Status attribute: allowed values are "pending", "resolved", "in progress", "rejected"
+    QString status_;
 };
 
 class QLineEdit;
@@ -103,6 +118,7 @@ private:
     QDateEdit *reportDateEdit_;
     QDoubleSpinBox *satisfactionScoreEdit_;
     QSpinBox *employeeIdEdit_;
+    QComboBox *statusEdit_;
     QDialogButtonBox *buttonBox_;
     QPushButton *clearButton_;
 

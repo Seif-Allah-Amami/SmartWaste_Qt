@@ -1,4 +1,28 @@
+// Always include the header first
 #include "customer.h"
+
+// Backward-compatible constructor for legacy code
+Customer::Customer(int customerId,
+                   const QString &name,
+                   const QString &email,
+                   const QString &phone,
+                   const QString &address,
+                   const QString &reportType,
+                   const QDate &reportDate,
+                   double satisfactionScore,
+                   int employeeId)
+    : customerId_(customerId),
+    name_(name),
+    email_(email),
+    phone_(phone),
+    address_(address),
+    reportType_(reportType),
+    reportDate_(reportDate),
+    satisfactionScore_(satisfactionScore),
+    employeeId_(employeeId),
+    status_("pending")
+{
+}
 
 #include <QDateEdit>
 #include <QDialogButtonBox>
@@ -19,7 +43,8 @@
 Customer::Customer()
     : customerId_(0),
     satisfactionScore_(0.0),
-    employeeId_(0)
+    employeeId_(0),
+    status_("pending")
 {
 }
 
@@ -31,7 +56,8 @@ Customer::Customer(int customerId,
                    const QString &reportType,
                    const QDate &reportDate,
                    double satisfactionScore,
-                   int employeeId)
+                   int employeeId,
+                   const QString &status)
     : customerId_(customerId),
     name_(name),
     email_(email),
@@ -40,8 +66,24 @@ Customer::Customer(int customerId,
     reportType_(reportType),
     reportDate_(reportDate),
     satisfactionScore_(satisfactionScore),
-    employeeId_(employeeId)
+    employeeId_(employeeId),
+    status_(status)
 {
+}
+QString Customer::status() const
+{
+    return status_;
+}
+
+void Customer::setStatus(const QString &status)
+{
+    // Allowed values: "pending", "resolved", "in progress", "rejected"
+    static const QStringList allowed = {"pending", "resolved", "in progress", "rejected"};
+    if (allowed.contains(status)) {
+        status_ = status;
+    } else {
+        status_ = "pending"; // fallback to default if invalid
+    }
 }
 
 int Customer::customerId() const
@@ -139,9 +181,9 @@ bool Customer::add(QString *errorMessage) const
     QSqlQuery query;
     query.prepare(
         "INSERT INTO CUSTOMER (CUSTOMER_ID, NAME, EMAIL, PHONE, ADDRESS, REPORT_TYPE, REPORT_DATE, "
-        "SATISFACTION_SCORE, EMPLOYEE_ID) "
+        "SATISFACTION_SCORE, EMPLOYEE_ID, STATUS) "
         "VALUES (:customer_id, :name, :email, :phone, :address, :report_type, :report_date, "
-        ":satisfaction_score, :employee_id)");
+        ":satisfaction_score, :employee_id, :status)");
 
     query.bindValue(":customer_id", customerId_);
     query.bindValue(":name", name_);
@@ -156,6 +198,7 @@ bool Customer::add(QString *errorMessage) const
     } else {
         query.bindValue(":employee_id", QVariant(QVariant::Int));
     }
+    query.bindValue(":status", status_);
 
     if (!query.exec()) {
         if (errorMessage) {
@@ -173,7 +216,7 @@ bool Customer::update(QString *errorMessage) const
     query.prepare(
         "UPDATE CUSTOMER SET NAME = :name, EMAIL = :email, PHONE = :phone, ADDRESS = :address, "
         "REPORT_TYPE = :report_type, REPORT_DATE = :report_date, SATISFACTION_SCORE = :satisfaction_score, "
-        "EMPLOYEE_ID = :employee_id WHERE CUSTOMER_ID = :customer_id");
+        "EMPLOYEE_ID = :employee_id, STATUS = :status WHERE CUSTOMER_ID = :customer_id");
 
     query.bindValue(":name", name_);
     query.bindValue(":email", email_);
@@ -187,6 +230,7 @@ bool Customer::update(QString *errorMessage) const
     } else {
         query.bindValue(":employee_id", QVariant(QVariant::Int));
     }
+    query.bindValue(":status", status_);
     query.bindValue(":customer_id", customerId_);
 
     if (!query.exec()) {
@@ -221,7 +265,7 @@ bool Customer::fetchAll(QList<Customer> &out, QString *errorMessage)
     QSqlQuery query;
     query.prepare(
         "SELECT CUSTOMER_ID, NAME, EMAIL, PHONE, ADDRESS, REPORT_TYPE, REPORT_DATE, "
-        "SATISFACTION_SCORE, EMPLOYEE_ID FROM CUSTOMER");
+        "SATISFACTION_SCORE, EMPLOYEE_ID, STATUS FROM CUSTOMER");
 
     if (!query.exec()) {
         if (errorMessage) {
@@ -240,7 +284,8 @@ bool Customer::fetchAll(QList<Customer> &out, QString *errorMessage)
             query.value(5).toString(),
             query.value(6).toDate(),
             query.value(7).toDouble(),
-            query.value(8).toInt());
+            query.value(8).toInt(),
+            query.value(9).toString());
         out.append(customer);
     }
 
@@ -309,6 +354,9 @@ void AddCustomerDialog::buildUi()
     employeeIdEdit_->setRange(0, 1000000000);
     employeeIdEdit_->setSpecialValueText("(none)");
 
+    statusEdit_ = new QComboBox(this);
+    statusEdit_->addItems({"pending", "in progress", "resolved", "rejected"});
+
     formLayout->addRow("Customer ID", customerIdEdit_);
     formLayout->addRow("Name", nameEdit_);
     formLayout->addRow("Email", emailEdit_);
@@ -318,6 +366,7 @@ void AddCustomerDialog::buildUi()
     formLayout->addRow("Report Date", reportDateEdit_);
     formLayout->addRow("Satisfaction Score", satisfactionScoreEdit_);
     formLayout->addRow("Employee ID", employeeIdEdit_);
+    formLayout->addRow("Status", statusEdit_);
 
     buttonBox_ = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, this);
     connect(buttonBox_, &QDialogButtonBox::accepted, this, &AddCustomerDialog::onAccept);
@@ -347,6 +396,7 @@ void AddCustomerDialog::clearFields()
     reportDateEdit_->setDate(QDate::currentDate());
     satisfactionScoreEdit_->setValue(0.0);
     employeeIdEdit_->setValue(0);
+    statusEdit_->setCurrentIndex(0);
 }
 
 void AddCustomerDialog::setCustomer(const Customer &customer)
@@ -365,6 +415,13 @@ void AddCustomerDialog::setCustomer(const Customer &customer)
         reportTypeEdit_->setCurrentIndex(idx);
     } else {
         reportTypeEdit_->setCurrentIndex(0);
+    }
+
+    int statusIdx = statusEdit_->findText(customer.status());
+    if (statusIdx >= 0) {
+        statusEdit_->setCurrentIndex(statusIdx);
+    } else {
+        statusEdit_->setCurrentIndex(0);
     }
 
     if (customer.reportDate().isValid()) {
@@ -386,7 +443,8 @@ Customer AddCustomerDialog::customer() const
         reportTypeEdit_->currentText().trimmed(),
         reportDateEdit_->date(),
         satisfactionScoreEdit_->value(),
-        employeeIdEdit_->value());
+        employeeIdEdit_->value(),
+        statusEdit_->currentText().trimmed());
 }
 
 void AddCustomerDialog::onAccept()

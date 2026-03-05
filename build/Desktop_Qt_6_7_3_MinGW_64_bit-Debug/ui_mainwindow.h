@@ -169,7 +169,8 @@ public:
     QHBoxLayout *topActionsLayout_5;
     QPushButton *btnViewCustomers;
     QPushButton *btnAddCustomer;
-    QPushButton *btnCustomerAnalytics;
+    QPushButton *btnCustomerSMS;
+    QPushButton *btnCustomerAI;
     QSpacerItem *horizontalSpacer_10;
     QWidget *searchFilterWidget_5;
     QVBoxLayout *searchFilterLayout_5;
@@ -186,7 +187,7 @@ public:
     QPushButton *btnDeleteCustomer;
     QPushButton *btnReportStatus;
     QPushButton *btnClearSelection_5;
-    QSpacerItem *verticalSpacer_8;
+    QSpacerItem *verticalSpacer;
     QPushButton *btnExportPDF_5;
     QWidget *wastemanagement;
     QGroupBox *sidebarGroup_2;
@@ -2004,9 +2005,9 @@ public:
 
         topActionsLayout_5->addWidget(btnAddCustomer);
 
-        btnCustomerAnalytics = new QPushButton(mainContentWidget_5);
-        btnCustomerAnalytics->setObjectName("btnCustomerAnalytics");
-        btnCustomerAnalytics->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+        btnCustomerSMS = new QPushButton(mainContentWidget_5);
+        btnCustomerSMS->setObjectName("btnCustomerSMS");
+        btnCustomerSMS->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "    background-color: transparent;\n"
 "    border: 1px solid #00ff9c;\n"
 "    border-radius: 10px;\n"
@@ -2019,7 +2020,24 @@ public:
 "    background-color: rgba(0, 255, 156, 0.1);\n"
 "}"));
 
-        topActionsLayout_5->addWidget(btnCustomerAnalytics);
+        topActionsLayout_5->addWidget(btnCustomerSMS);
+
+        btnCustomerAI = new QPushButton(mainContentWidget_5);
+        btnCustomerAI->setObjectName("btnCustomerAI");
+        btnCustomerAI->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"}"));
+
+        topActionsLayout_5->addWidget(btnCustomerAI);
 
         horizontalSpacer_10 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
@@ -2215,9 +2233,9 @@ public:
 
         actionsPanelLayout_5->addWidget(btnClearSelection_5);
 
-        verticalSpacer_8 = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
 
-        actionsPanelLayout_5->addItem(verticalSpacer_8);
+        actionsPanelLayout_5->addItem(verticalSpacer);
 
         btnExportPDF_5 = new QPushButton(actionsPanel_5);
         btnExportPDF_5->setObjectName("btnExportPDF_5");
@@ -4330,7 +4348,8 @@ public:
         pageSubtitle_5->setText(QCoreApplication::translate("MainWindow", "Create, edit, search, sort, export, and analyze customers.", nullptr));
         btnViewCustomers->setText(QCoreApplication::translate("MainWindow", "View Customers", nullptr));
         btnAddCustomer->setText(QCoreApplication::translate("MainWindow", "Add Customer", nullptr));
-        btnCustomerAnalytics->setText(QCoreApplication::translate("MainWindow", "AI Analytics", nullptr));
+        btnCustomerSMS->setText(QCoreApplication::translate("MainWindow", "Send SMS", nullptr));
+        btnCustomerAI->setText(QCoreApplication::translate("MainWindow", "AI Assistant", nullptr));
         lblCustomersList->setText(QCoreApplication::translate("MainWindow", "Customers List", nullptr));
         searchBox_5->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search by ID / Name / Email / Phone...", nullptr));
         sortComboBox_5->setItemText(0, QCoreApplication::translate("MainWindow", "Sort: Name (A-Z)", nullptr));
@@ -4349,12 +4368,14 @@ public:
         ___qtablewidgetitem11->setText(QCoreApplication::translate("MainWindow", "Address", nullptr));
         QTableWidgetItem *___qtablewidgetitem12 = customersTable->horizontalHeaderItem(5);
         ___qtablewidgetitem12->setText(QCoreApplication::translate("MainWindow", "Report Type", nullptr));
-        QTableWidgetItem *___qtablewidgetitem13 = customersTable->horizontalHeaderItem(7);
+        QTableWidgetItem *___qtablewidgetitem13 = customersTable->horizontalHeaderItem(6);
         ___qtablewidgetitem13->setText(QCoreApplication::translate("MainWindow", "Date", nullptr));
-        QTableWidgetItem *___qtablewidgetitem14 = customersTable->horizontalHeaderItem(8);
+        QTableWidgetItem *___qtablewidgetitem14 = customersTable->horizontalHeaderItem(7);
         ___qtablewidgetitem14->setText(QCoreApplication::translate("MainWindow", "Satisfaction Score", nullptr));
-        QTableWidgetItem *___qtablewidgetitem15 = customersTable->horizontalHeaderItem(9);
+        QTableWidgetItem *___qtablewidgetitem15 = customersTable->horizontalHeaderItem(8);
         ___qtablewidgetitem15->setText(QCoreApplication::translate("MainWindow", "Emplyee_ID", nullptr));
+        QTableWidgetItem *___qtablewidgetitem16 = customersTable->horizontalHeaderItem(9);
+        ___qtablewidgetitem16->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
         lblActions_5->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
         btnEditCustomer->setText(QCoreApplication::translate("MainWindow", "Edit Customer", nullptr));
         btnDeleteCustomer->setText(QCoreApplication::translate("MainWindow", "Delete Customer", nullptr));
@@ -4383,22 +4404,22 @@ public:
         sortComboBox->setItemText(2, QCoreApplication::translate("MainWindow", "Sort: Location", nullptr));
         sortComboBox->setItemText(3, QCoreApplication::translate("MainWindow", "Sort: Status", nullptr));
 
-        QTableWidgetItem *___qtablewidgetitem16 = wasteTable->horizontalHeaderItem(0);
-        ___qtablewidgetitem16->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
-        QTableWidgetItem *___qtablewidgetitem17 = wasteTable->horizontalHeaderItem(1);
-        ___qtablewidgetitem17->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
-        QTableWidgetItem *___qtablewidgetitem18 = wasteTable->horizontalHeaderItem(2);
-        ___qtablewidgetitem18->setText(QCoreApplication::translate("MainWindow", "Category", nullptr));
-        QTableWidgetItem *___qtablewidgetitem19 = wasteTable->horizontalHeaderItem(3);
-        ___qtablewidgetitem19->setText(QCoreApplication::translate("MainWindow", "Quantity", nullptr));
-        QTableWidgetItem *___qtablewidgetitem20 = wasteTable->horizontalHeaderItem(4);
-        ___qtablewidgetitem20->setText(QCoreApplication::translate("MainWindow", "Weight (kg)", nullptr));
-        QTableWidgetItem *___qtablewidgetitem21 = wasteTable->horizontalHeaderItem(5);
-        ___qtablewidgetitem21->setText(QCoreApplication::translate("MainWindow", "Collection Date", nullptr));
-        QTableWidgetItem *___qtablewidgetitem22 = wasteTable->horizontalHeaderItem(6);
-        ___qtablewidgetitem22->setText(QCoreApplication::translate("MainWindow", "Location", nullptr));
-        QTableWidgetItem *___qtablewidgetitem23 = wasteTable->horizontalHeaderItem(7);
-        ___qtablewidgetitem23->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
+        QTableWidgetItem *___qtablewidgetitem17 = wasteTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem17->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
+        QTableWidgetItem *___qtablewidgetitem18 = wasteTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem18->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
+        QTableWidgetItem *___qtablewidgetitem19 = wasteTable->horizontalHeaderItem(2);
+        ___qtablewidgetitem19->setText(QCoreApplication::translate("MainWindow", "Category", nullptr));
+        QTableWidgetItem *___qtablewidgetitem20 = wasteTable->horizontalHeaderItem(3);
+        ___qtablewidgetitem20->setText(QCoreApplication::translate("MainWindow", "Quantity", nullptr));
+        QTableWidgetItem *___qtablewidgetitem21 = wasteTable->horizontalHeaderItem(4);
+        ___qtablewidgetitem21->setText(QCoreApplication::translate("MainWindow", "Weight (kg)", nullptr));
+        QTableWidgetItem *___qtablewidgetitem22 = wasteTable->horizontalHeaderItem(5);
+        ___qtablewidgetitem22->setText(QCoreApplication::translate("MainWindow", "Collection Date", nullptr));
+        QTableWidgetItem *___qtablewidgetitem23 = wasteTable->horizontalHeaderItem(6);
+        ___qtablewidgetitem23->setText(QCoreApplication::translate("MainWindow", "Location", nullptr));
+        QTableWidgetItem *___qtablewidgetitem24 = wasteTable->horizontalHeaderItem(7);
+        ___qtablewidgetitem24->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
         lblActions->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
         btnEditWaste->setText(QCoreApplication::translate("MainWindow", "Edit Record", nullptr));
         btnDeleteWaste->setText(QCoreApplication::translate("MainWindow", "Delete Record", nullptr));
@@ -4428,18 +4449,18 @@ public:
         sortComboBox_2->setItemText(2, QCoreApplication::translate("MainWindow", "Sort: Type", nullptr));
         sortComboBox_2->setItemText(3, QCoreApplication::translate("MainWindow", "Sort: Next Maintenance", nullptr));
 
-        QTableWidgetItem *___qtablewidgetitem24 = vehiclesTable->horizontalHeaderItem(0);
-        ___qtablewidgetitem24->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
-        QTableWidgetItem *___qtablewidgetitem25 = vehiclesTable->horizontalHeaderItem(1);
-        ___qtablewidgetitem25->setText(QCoreApplication::translate("MainWindow", "Num Plate", nullptr));
-        QTableWidgetItem *___qtablewidgetitem26 = vehiclesTable->horizontalHeaderItem(2);
-        ___qtablewidgetitem26->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
-        QTableWidgetItem *___qtablewidgetitem27 = vehiclesTable->horizontalHeaderItem(3);
-        ___qtablewidgetitem27->setText(QCoreApplication::translate("MainWindow", "Model", nullptr));
-        QTableWidgetItem *___qtablewidgetitem28 = vehiclesTable->horizontalHeaderItem(4);
-        ___qtablewidgetitem28->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
-        QTableWidgetItem *___qtablewidgetitem29 = vehiclesTable->horizontalHeaderItem(5);
-        ___qtablewidgetitem29->setText(QCoreApplication::translate("MainWindow", "Next Maintenance", nullptr));
+        QTableWidgetItem *___qtablewidgetitem25 = vehiclesTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem25->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
+        QTableWidgetItem *___qtablewidgetitem26 = vehiclesTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem26->setText(QCoreApplication::translate("MainWindow", "Num Plate", nullptr));
+        QTableWidgetItem *___qtablewidgetitem27 = vehiclesTable->horizontalHeaderItem(2);
+        ___qtablewidgetitem27->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
+        QTableWidgetItem *___qtablewidgetitem28 = vehiclesTable->horizontalHeaderItem(3);
+        ___qtablewidgetitem28->setText(QCoreApplication::translate("MainWindow", "Model", nullptr));
+        QTableWidgetItem *___qtablewidgetitem29 = vehiclesTable->horizontalHeaderItem(4);
+        ___qtablewidgetitem29->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
+        QTableWidgetItem *___qtablewidgetitem30 = vehiclesTable->horizontalHeaderItem(5);
+        ___qtablewidgetitem30->setText(QCoreApplication::translate("MainWindow", "Next Maintenance", nullptr));
         lblActions_2->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
         btnEditVehicle->setText(QCoreApplication::translate("MainWindow", "Edit Vehicle", nullptr));
         btnDeleteVehicle->setText(QCoreApplication::translate("MainWindow", "Delete Vehicle", nullptr));
@@ -4458,18 +4479,18 @@ public:
         sortComboBox_3->setItemText(2, QCoreApplication::translate("MainWindow", "Sort: Status", nullptr));
         sortComboBox_3->setItemText(3, QCoreApplication::translate("MainWindow", "Sort: Date (Newest)", nullptr));
 
-        QTableWidgetItem *___qtablewidgetitem30 = machinesTable->horizontalHeaderItem(0);
-        ___qtablewidgetitem30->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
-        QTableWidgetItem *___qtablewidgetitem31 = machinesTable->horizontalHeaderItem(1);
-        ___qtablewidgetitem31->setText(QCoreApplication::translate("MainWindow", "Name", nullptr));
-        QTableWidgetItem *___qtablewidgetitem32 = machinesTable->horizontalHeaderItem(2);
-        ___qtablewidgetitem32->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
-        QTableWidgetItem *___qtablewidgetitem33 = machinesTable->horizontalHeaderItem(3);
-        ___qtablewidgetitem33->setText(QCoreApplication::translate("MainWindow", "Location", nullptr));
-        QTableWidgetItem *___qtablewidgetitem34 = machinesTable->horizontalHeaderItem(4);
-        ___qtablewidgetitem34->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
-        QTableWidgetItem *___qtablewidgetitem35 = machinesTable->horizontalHeaderItem(5);
-        ___qtablewidgetitem35->setText(QCoreApplication::translate("MainWindow", "Purchase Date", nullptr));
+        QTableWidgetItem *___qtablewidgetitem31 = machinesTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem31->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
+        QTableWidgetItem *___qtablewidgetitem32 = machinesTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem32->setText(QCoreApplication::translate("MainWindow", "Name", nullptr));
+        QTableWidgetItem *___qtablewidgetitem33 = machinesTable->horizontalHeaderItem(2);
+        ___qtablewidgetitem33->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
+        QTableWidgetItem *___qtablewidgetitem34 = machinesTable->horizontalHeaderItem(3);
+        ___qtablewidgetitem34->setText(QCoreApplication::translate("MainWindow", "Location", nullptr));
+        QTableWidgetItem *___qtablewidgetitem35 = machinesTable->horizontalHeaderItem(4);
+        ___qtablewidgetitem35->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
+        QTableWidgetItem *___qtablewidgetitem36 = machinesTable->horizontalHeaderItem(5);
+        ___qtablewidgetitem36->setText(QCoreApplication::translate("MainWindow", "Purchase Date", nullptr));
         lblActions_3->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
         btnEditMachine->setText(QCoreApplication::translate("MainWindow", "Edit Machine", nullptr));
         btnDeleteMachine->setText(QCoreApplication::translate("MainWindow", "Delete Machine", nullptr));
@@ -4508,22 +4529,22 @@ public:
         sortComboBox_4->setItemText(2, QCoreApplication::translate("MainWindow", "Sort: Rating (High-Low)", nullptr));
         sortComboBox_4->setItemText(3, QCoreApplication::translate("MainWindow", "Sort: Date (Newest)", nullptr));
 
-        QTableWidgetItem *___qtablewidgetitem36 = suppliersTable->horizontalHeaderItem(0);
-        ___qtablewidgetitem36->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
-        QTableWidgetItem *___qtablewidgetitem37 = suppliersTable->horizontalHeaderItem(1);
-        ___qtablewidgetitem37->setText(QCoreApplication::translate("MainWindow", "Name", nullptr));
-        QTableWidgetItem *___qtablewidgetitem38 = suppliersTable->horizontalHeaderItem(2);
-        ___qtablewidgetitem38->setText(QCoreApplication::translate("MainWindow", "Email", nullptr));
-        QTableWidgetItem *___qtablewidgetitem39 = suppliersTable->horizontalHeaderItem(3);
-        ___qtablewidgetitem39->setText(QCoreApplication::translate("MainWindow", "Phone", nullptr));
-        QTableWidgetItem *___qtablewidgetitem40 = suppliersTable->horizontalHeaderItem(4);
-        ___qtablewidgetitem40->setText(QCoreApplication::translate("MainWindow", "Product Type", nullptr));
-        QTableWidgetItem *___qtablewidgetitem41 = suppliersTable->horizontalHeaderItem(5);
-        ___qtablewidgetitem41->setText(QCoreApplication::translate("MainWindow", "Contract", nullptr));
-        QTableWidgetItem *___qtablewidgetitem42 = suppliersTable->horizontalHeaderItem(6);
-        ___qtablewidgetitem42->setText(QCoreApplication::translate("MainWindow", "Date", nullptr));
-        QTableWidgetItem *___qtablewidgetitem43 = suppliersTable->horizontalHeaderItem(7);
-        ___qtablewidgetitem43->setText(QCoreApplication::translate("MainWindow", "Rating", nullptr));
+        QTableWidgetItem *___qtablewidgetitem37 = suppliersTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem37->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
+        QTableWidgetItem *___qtablewidgetitem38 = suppliersTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem38->setText(QCoreApplication::translate("MainWindow", "Name", nullptr));
+        QTableWidgetItem *___qtablewidgetitem39 = suppliersTable->horizontalHeaderItem(2);
+        ___qtablewidgetitem39->setText(QCoreApplication::translate("MainWindow", "Email", nullptr));
+        QTableWidgetItem *___qtablewidgetitem40 = suppliersTable->horizontalHeaderItem(3);
+        ___qtablewidgetitem40->setText(QCoreApplication::translate("MainWindow", "Phone", nullptr));
+        QTableWidgetItem *___qtablewidgetitem41 = suppliersTable->horizontalHeaderItem(4);
+        ___qtablewidgetitem41->setText(QCoreApplication::translate("MainWindow", "Product Type", nullptr));
+        QTableWidgetItem *___qtablewidgetitem42 = suppliersTable->horizontalHeaderItem(5);
+        ___qtablewidgetitem42->setText(QCoreApplication::translate("MainWindow", "Contract", nullptr));
+        QTableWidgetItem *___qtablewidgetitem43 = suppliersTable->horizontalHeaderItem(6);
+        ___qtablewidgetitem43->setText(QCoreApplication::translate("MainWindow", "Date", nullptr));
+        QTableWidgetItem *___qtablewidgetitem44 = suppliersTable->horizontalHeaderItem(7);
+        ___qtablewidgetitem44->setText(QCoreApplication::translate("MainWindow", "Rating", nullptr));
         lblActions_4->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
         btnEditSupplier->setText(QCoreApplication::translate("MainWindow", "Edit Supplier", nullptr));
         btnDeleteSupplier->setText(QCoreApplication::translate("MainWindow", "Delete Supplier", nullptr));

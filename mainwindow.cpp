@@ -71,10 +71,10 @@ void MainWindow::updateCustomersTable(const QList<Customer> &customers)
         setItem(i, 3, customer.phone());
         setItem(i, 4, customer.address());
         setItem(i, 5, customer.reportType());
-        setItem(i, 6, QString());
-        setItem(i, 7, customer.reportDate().isValid() ? customer.reportDate().toString("yyyy-MM-dd") : QString());
-        setItem(i, 8, QString::number(customer.satisfactionScore(), 'f', 2));
-        setItem(i, 9, QString::number(customer.employeeId()));
+        setItem(i, 6, customer.reportDate().isValid() ? customer.reportDate().toString("yyyy-MM-dd") : QString());
+        setItem(i, 7, QString::number(customer.satisfactionScore(), 'f', 2));
+        setItem(i, 8, QString::number(customer.employeeId()));
+        setItem(i, 9, customer.status());
     }
     ui->customersTable->resizeColumnsToContents();
     ui->customersTable->setSortingEnabled(true);
@@ -100,7 +100,6 @@ MainWindow::MainWindow(QWidget *parent)
     loadCustomers();
 }
 
-// ...existing code...
 
 void MainWindow::onReportStatusClicked()
 {
@@ -110,26 +109,100 @@ void MainWindow::onReportStatusClicked()
         typeCounts[c.reportType()]++;
     }
 
+    // Distinct green shades for each report type
+    QMap<QString, QColor> typeColors = {
+        { "Missed Waste Collection", QColor(0, 150, 0) },    // dark green
+        { "Garbage Overflow",        QColor(0, 255, 0) },    // bright green
+        { "Illegal Dumping",         QColor(144, 238, 144) },// light green
+        { "Recycling Issue",         QColor(0, 200, 100) }   // teal-green
+    };
+
     QPieSeries *series = new QPieSeries();
+    int totalReports = 0;
     for (auto it = typeCounts.begin(); it != typeCounts.end(); ++it) {
-        series->append(it.key(), it.value());
+        totalReports += it.value();
+    }
+    QList<QPair<QString, double>> typePercentList;
+    QMap<QString, QString> typeSentences = {
+        { "Missed Waste Collection", "Missed Waste Collection reports" },
+        { "Garbage Overflow", "Garbage Overflow reports" },
+        { "Illegal Dumping", "Illegal Dumping reports" },
+        { "Recycling Issue", "Recycling Issue reports" }
+    };
+    for (auto it = typeCounts.begin(); it != typeCounts.end(); ++it) {
+        double percent = totalReports > 0 ? (100.0 * it.value() / totalReports) : 0.0;
+        typePercentList.append(qMakePair(it.key(), percent));
+        QString sentence = typeSentences.contains(it.key()) ? typeSentences[it.key()] : it.key();
+        QString label = QString("%1: %2%").arg(sentence).arg(QString::number(percent, 'f', 1));
+        series->append(label, it.value());
     }
 
+    // Apply colors, borders, and label style
+    int colorIdx = 0;
+    QList<QColor> fallback = {
+        QColor(50, 205, 50),    // lime green
+        QColor(34, 139, 34),    // forest green
+        QColor(0, 255, 127),    // spring green
+        QColor(0, 128, 0)       // classic green
+    };
+
+    int sliceIdx = 0;
+    for (QPieSlice *slice : series->slices()) {
+        QString typeName;
+        double percent = 0.0;
+        if (sliceIdx < typePercentList.size()) {
+            typeName = typePercentList[sliceIdx].first;
+            percent = typePercentList[sliceIdx].second;
+        }
+        QColor c = typeColors.contains(typeName)
+                       ? typeColors[typeName]
+                       : fallback[colorIdx % fallback.size()];
+
+        slice->setColor(c);
+        slice->setBorderColor(QColor(13, 17, 23)); // dark border
+        slice->setBorderWidth(2);
+
+        slice->setLabelVisible(true);
+        slice->setLabelColor(Qt::white);
+        slice->setLabelFont(QFont("Arial", 10, QFont::Bold));
+        slice->setExploded(false);  // can set true if you want slices "popped out"
+        slice->setPen(QPen(QColor(0, 0, 0, 100))); // subtle shadow line
+        QString sentence = typeSentences.contains(typeName) ? typeSentences[typeName] : typeName;
+        slice->setLabel(QString("%1: %2%").arg(sentence).arg(QString::number(percent, 'f', 1)));
+        colorIdx++;
+        sliceIdx++;
+    }
+
+    // Create chart
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Report Status Distribution");
-    chart->legend()->setAlignment(Qt::AlignRight);
+    chart->setTitleFont(QFont("Arial", 16, QFont::Bold));
+    chart->setTitleBrush(QBrush(QColor(0, 255, 127)));  // title in green
+    chart->setBackgroundBrush(QBrush(QColor(13, 17, 23))); // dark background
 
+    // Legend styling
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignRight);
+    chart->legend()->setLabelColor(Qt::white);
+    chart->legend()->setFont(QFont("Arial", 10));
+
+    // Create chart view
     QChartView *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
+    chartView->setBackgroundBrush(QBrush(QColor(13, 17, 23))); // dark background
 
-    // Show chart in a dialog
+    // Dialog to display chart
     QDialog dialog(this);
     dialog.setWindowTitle("Report Status Pie Chart");
+    dialog.setStyleSheet(
+        "QDialog { background-color: #0D1117; }"
+        "QLabel { color: #00FF7F; }"
+        );
     QVBoxLayout layout;
     layout.addWidget(chartView);
     dialog.setLayout(&layout);
-    dialog.resize(500, 400);
+    dialog.resize(650, 500); // slightly bigger for comfort
     dialog.exec();
 }
 
@@ -175,7 +248,7 @@ void MainWindow::onExportPDFClicked()
     QStringList headers = {
         "ID", "Name", "Email", "Phone",
         "Address", "Type", "Date",
-        "Score", "Employee"
+        "Score", "Employee", "Status"
     };
 
     // Custom column widths (proportional)
@@ -184,11 +257,12 @@ void MainWindow::onExportPDFClicked()
         tableWidth * 0.14,  // Name
         tableWidth * 0.18,  // Email
         tableWidth * 0.12,  // Phone
-        tableWidth * 0.20,  // Address
-        tableWidth * 0.10,  // Type
-        tableWidth * 0.10,  // Date
+        tableWidth * 0.18,  // Address
+        tableWidth * 0.09,  // Type
+        tableWidth * 0.09,  // Date
         tableWidth * 0.05,  // Score
-        tableWidth * 0.05   // Employee
+        tableWidth * 0.05,  // Employee
+        tableWidth * 0.07   // Status
     };
 
     auto drawHeader = [&]() {
@@ -225,9 +299,18 @@ void MainWindow::onExportPDFClicked()
             drawHeader();
         }
 
-        if (alternate) {
-            painter.fillRect(QRect(margin, y, tableWidth, rowHeight),
-                             QColor(245, 245, 245));
+        // Color rows by report type — matching dark UI palette (lighter for print)
+        QMap<QString, QColor> pdfTypeColors = {
+            { "Missed Waste Collection", QColor(204, 255, 235) },  // soft cyan-green
+            { "Garbage Overflow",        QColor(255, 210, 210) },  // soft red
+            { "Illegal Dumping",         QColor(255, 245, 190) },  // soft amber
+            { "Recycling Issue",         QColor(200, 240, 255) }   // soft cyan
+        };
+        QString rType = c.reportType();
+        if (pdfTypeColors.contains(rType)) {
+            painter.fillRect(QRect(margin, y, tableWidth, rowHeight), pdfTypeColors[rType]);
+        } else if (alternate) {
+            painter.fillRect(QRect(margin, y, tableWidth, rowHeight), QColor(245, 245, 245));
         }
 
         QStringList row = {
@@ -241,7 +324,8 @@ void MainWindow::onExportPDFClicked()
                 ? c.reportDate().toString("yyyy-MM-dd")
                 : "",
             QString::number(c.satisfactionScore(), 'f', 2),
-            QString::number(c.employeeId())
+            QString::number(c.employeeId()),
+            c.status()
         };
 
         int x = margin;
@@ -329,9 +413,10 @@ void MainWindow::onEditCustomer()
         itemText(3),
         itemText(4),
         itemText(5),
-        QDate::fromString(itemText(7), "yyyy-MM-dd"),
-        itemText(8).toDouble(),
-        itemText(9).toInt());
+        QDate::fromString(itemText(6), "yyyy-MM-dd"),
+        itemText(7).toDouble(),
+        itemText(8).toInt(),
+        itemText(9));
 
     AddCustomerDialog dialog(this);
     dialog.setCustomer(customer);
