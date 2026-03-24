@@ -169,9 +169,9 @@ public:
     QHBoxLayout *topActionsLayout_5;
     QPushButton *btnViewCustomers;
     QPushButton *btnAddCustomer;
-    QPushButton *btnCustomerSMS;
     QPushButton *btnCustomerAI;
     QPushButton *btnCustomerAr_2;
+    QPushButton *btnCustomerSMS;
     QSpacerItem *horizontalSpacer_10;
     QWidget *searchFilterWidget_5;
     QVBoxLayout *searchFilterLayout_5;
@@ -2006,23 +2006,6 @@ public:
 
         topActionsLayout_5->addWidget(btnAddCustomer);
 
-        btnCustomerSMS = new QPushButton(mainContentWidget_5);
-        btnCustomerSMS->setObjectName("btnCustomerSMS");
-        btnCustomerSMS->setStyleSheet(QString::fromUtf8("QPushButton {\n"
-"    background-color: transparent;\n"
-"    border: 1px solid #00ff9c;\n"
-"    border-radius: 10px;\n"
-"    padding: 10px 20px;\n"
-"    color: #00ff9c;\n"
-"    font-weight: 600;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: rgba(0, 255, 156, 0.1);\n"
-"}"));
-
-        topActionsLayout_5->addWidget(btnCustomerSMS);
-
         btnCustomerAI = new QPushButton(mainContentWidget_5);
         btnCustomerAI->setObjectName("btnCustomerAI");
         btnCustomerAI->setStyleSheet(QString::fromUtf8("QPushButton {\n"
@@ -2056,6 +2039,23 @@ public:
 "}"));
 
         topActionsLayout_5->addWidget(btnCustomerAr_2);
+
+        btnCustomerSMS = new QPushButton(mainContentWidget_5);
+        btnCustomerSMS->setObjectName("btnCustomerSMS");
+        btnCustomerSMS->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"}"));
+
+        topActionsLayout_5->addWidget(btnCustomerSMS);
 
         horizontalSpacer_10 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
@@ -4370,11 +4370,11 @@ public:
         pageSubtitle_5->setText(QCoreApplication::translate("MainWindow", "Create, edit, search, sort, export, and analyze customers.", nullptr));
         btnViewCustomers->setText(QCoreApplication::translate("MainWindow", "View Customers", nullptr));
         btnAddCustomer->setText(QCoreApplication::translate("MainWindow", "Add Customer", nullptr));
-        btnCustomerSMS->setText(QCoreApplication::translate("MainWindow", "Send SMS Or Email", nullptr));
-        btnCustomerAI->setText(QCoreApplication::translate("MainWindow", "AI Assistant", nullptr));
+        btnCustomerAI->setText(QCoreApplication::translate("MainWindow", "Reports Dashboard", nullptr));
         btnCustomerAr_2->setText(QCoreApplication::translate("MainWindow", "View Archive", nullptr));
+        btnCustomerSMS->setText(QCoreApplication::translate("MainWindow", "Send SMS Or Email", nullptr));
         lblCustomersList->setText(QCoreApplication::translate("MainWindow", "Customers List", nullptr));
-        searchBox_5->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search by ID / Name / Email / Phone...", nullptr));
+        searchBox_5->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search by Name / Email / Phone...", nullptr));
         sortComboBox_5->setItemText(0, QCoreApplication::translate("MainWindow", "Sort: Name (A-Z)", nullptr));
         sortComboBox_5->setItemText(1, QCoreApplication::translate("MainWindow", "Sort: Type", nullptr));
         sortComboBox_5->setItemText(2, QCoreApplication::translate("MainWindow", "Sort: Date (Newest)", nullptr));

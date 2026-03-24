@@ -2548,27 +2548,6 @@ QPushButton:hover {
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnCustomerSMS">
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-    background-color: transparent;
-    border: 1px solid #00ff9c;
-    border-radius: 10px;
-    padding: 10px 20px;
-    color: #00ff9c;
-    font-weight: 600;
-}
-
-QPushButton:hover {
-    background-color: rgba(0, 255, 156, 0.1);
-}</string>
-           </property>
-           <property name="text">
-            <string>Send SMS Or Email</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="btnCustomerAI">
            <property name="styleSheet">
             <string notr="true">QPushButton {
@@ -2585,7 +2564,7 @@ QPushButton:hover {
 }</string>
            </property>
            <property name="text">
-            <string>AI Assistant</string>
+            <string>Reports Dashboard</string>
            </property>
           </widget>
          </item>
@@ -2607,6 +2586,27 @@ QPushButton:hover {
            </property>
            <property name="text">
             <string>View Archive</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnCustomerSMS">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: transparent;
+    border: 1px solid #00ff9c;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: #00ff9c;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: rgba(0, 255, 156, 0.1);
+}</string>
+           </property>
+           <property name="text">
+            <string>Send SMS Or Email</string>
            </property>
           </widget>
          </item>
@@ -2674,7 +2674,7 @@ QPushButton:hover {
                </size>
               </property>
               <property name="placeholderText">
-               <string>Search by ID / Name / Email / Phone...</string>
+               <string>Search by Name / Email / Phone...</string>
               </property>
              </widget>
             </item>

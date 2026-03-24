@@ -17,8 +17,6 @@
 #include <QLineEdit>
 #include <QMap>
 #include <QMessageBox>
-#include <QPainter>
-#include <QPdfWriter>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QScrollArea>
@@ -32,10 +30,6 @@
 #include <QTextStream>
 #include <QVBoxLayout>
 #include <QtGlobal>
-
-#include <QtCharts/QChart>
-#include <QtCharts/QChartView>
-#include <QtCharts/QPieSeries>
 
 namespace {
 QList<Customer> g_autoExportCustomers;
@@ -85,7 +79,6 @@ AdvancedFeatures::AdvancedFeatures(const QList<Customer> &customers, QWidget *pa
     , reportsTable_(nullptr)
     , smartSortButton_(nullptr)
     , deleteButton_(nullptr)
-    , exportPdfButton_(nullptr)
     , chatDisplay_(nullptr)
     , messageInput_(nullptr)
     , sendButton_(nullptr)
@@ -265,7 +258,7 @@ void AdvancedFeatures::setupUI()
     filterLayout->setSpacing(8);
 
     searchFilterEdit_ = new QLineEdit(filterPanel);
-    searchFilterEdit_->setPlaceholderText("Search by ID / Name / Email / Phone...");
+    searchFilterEdit_->setPlaceholderText("Search by Name / Email / Phone...");
 
     statusFilterCombo_ = new QComboBox(filterPanel);
     statusFilterCombo_->addItems({"All Status", "pending", "in progress", "solved", "rejected"});
@@ -285,7 +278,6 @@ void AdvancedFeatures::setupUI()
 
     smartSortButton_ = new QPushButton("Smart Sort by Priority", filterPanel);
     deleteButton_ = new QPushButton("Delete Selected", filterPanel);
-    exportPdfButton_ = new QPushButton("Export PDF + Chart", filterPanel);
 
     filterLayout->addWidget(searchFilterEdit_, 2);
     filterLayout->addWidget(statusFilterCombo_);
@@ -294,7 +286,6 @@ void AdvancedFeatures::setupUI()
     filterLayout->addWidget(toDateFilterEdit_);
     filterLayout->addWidget(smartSortButton_);
     filterLayout->addWidget(deleteButton_);
-    filterLayout->addWidget(exportPdfButton_);
     mainLayout->addWidget(filterPanel);
 
     QTabWidget *workspaceTabs = new QTabWidget(this);
@@ -383,7 +374,6 @@ void AdvancedFeatures::setupUI()
     connect(toDateFilterEdit_, &QDateEdit::dateChanged, this, &AdvancedFeatures::onFilterChanged);
     connect(smartSortButton_, &QPushButton::clicked, this, &AdvancedFeatures::onSmartSortByPriority);
     connect(deleteButton_, &QPushButton::clicked, this, &AdvancedFeatures::onDeleteSelectedReport);
-    connect(exportPdfButton_, &QPushButton::clicked, this, &AdvancedFeatures::onExportPdfWithCharts);
     connect(reportsTable_, &QTableWidget::itemSelectionChanged, this, [this]() {
         const int row = reportsTable_->currentRow();
         if (row < 0) {
@@ -465,168 +455,6 @@ void AdvancedFeatures::onDeleteSelectedReport()
 
     refreshDashboardAndTable();
     QMessageBox::information(this, "Delete Report", "Report deleted successfully.");
-}
-
-void AdvancedFeatures::onExportPdfWithCharts()
-{
-    const QString fileName = QFileDialog::getSaveFileName(this, "Export PDF", "reports_analytics.pdf", "PDF Files (*.pdf)");
-    if (fileName.isEmpty()) {
-        return;
-    }
-
-    QMap<QString, int> typeCounts;
-    for (const Customer &c : customers_) {
-        typeCounts[c.reportType()]++;
-    }
-
-    QPieSeries *series = new QPieSeries();
-    for (auto it = typeCounts.begin(); it != typeCounts.end(); ++it) {
-        series->append(it.key(), it.value());
-    }
-    if (series->count() == 0) {
-        series->append("No Data", 1.0);
-    }
-    for (QPieSlice *slice : series->slices()) {
-        slice->setLabelVisible(true);
-    }
-
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("Report Types Distribution");
-    chart->setTitleFont(QFont("Arial", 18, QFont::Bold));
-    chart->legend()->setVisible(true);
-    chart->legend()->setAlignment(Qt::AlignBottom);
-    chart->legend()->setFont(QFont("Arial", 11));
-    chart->setMargins(QMargins(12, 12, 12, 12));
-    chart->setBackgroundVisible(false);
-
-    QChartView chartView(chart);
-    chartView.setRenderHint(QPainter::Antialiasing);
-    chartView.resize(2200, 1200);
-
-    QImage chartImage(chartView.size(), QImage::Format_ARGB32);
-    chartImage.fill(Qt::white);
-    {
-        QPainter chartPainter(&chartImage);
-        chartView.render(&chartPainter);
-    }
-
-    QPdfWriter writer(fileName);
-    writer.setPageSize(QPageSize(QPageSize::A4));
-    writer.setPageOrientation(QPageLayout::Landscape);
-    writer.setResolution(300);
-
-    QPainter painter(&writer);
-    const QList<Customer> data = getFilteredCustomers();
-
-    const QRect pageRect = writer.pageLayout().paintRectPixels(writer.resolution());
-    const int margin = 48;
-    const int contentLeft = pageRect.left() + margin;
-    const int contentTop = pageRect.top() + margin;
-    const int contentWidth = pageRect.width() - (2 * margin);
-    const int contentBottom = pageRect.bottom() - margin;
-
-    int y = contentTop;
-
-    painter.setPen(Qt::black);
-    painter.setFont(QFont("Arial", 24, QFont::Bold));
-    painter.drawText(QRect(contentLeft, y, contentWidth, 56), Qt::AlignCenter, "Reports Analytics Export");
-    y += 66;
-
-    painter.setFont(QFont("Arial", 11));
-    painter.drawText(QRect(contentLeft, y, contentWidth, 22), Qt::AlignLeft,
-                     "Generated on: " + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm"));
-    painter.drawText(QRect(contentLeft, y, contentWidth, 22), Qt::AlignRight,
-                     "Rows: " + QString::number(data.size()));
-    y += 30;
-
-    const int chartHeight = contentBottom - y;
-    painter.drawImage(QRect(contentLeft, y, contentWidth, chartHeight), chartImage);
-
-    // Start table on a dedicated second page for readability.
-    writer.newPage();
-    y = contentTop;
-
-    painter.setPen(Qt::black);
-    painter.setFont(QFont("Arial", 18, QFont::Bold));
-    painter.drawText(QRect(contentLeft, y, contentWidth, 40), Qt::AlignCenter, "Reports Table");
-    y += 52;
-
-    const QStringList headers = {"ID", "Name", "Type", "Status", "Priority", "Days"};
-    const QList<double> widthRatios = {0.09, 0.23, 0.26, 0.14, 0.14, 0.14};
-    QList<int> colWidths;
-    int consumed = 0;
-    for (int i = 0; i < widthRatios.size(); ++i) {
-        int w = static_cast<int>(contentWidth * widthRatios.at(i));
-        if (i == widthRatios.size() - 1) {
-            w = contentWidth - consumed;
-        }
-        colWidths.append(w);
-        consumed += w;
-    }
-
-    auto drawHeader = [&](int &cursorY) {
-        const int headerHeight = 38;
-        painter.fillRect(QRect(contentLeft, cursorY, contentWidth, headerHeight), QColor(230, 230, 230));
-        painter.setPen(Qt::black);
-        painter.setFont(QFont("Arial", 11, QFont::Bold));
-
-        int x = contentLeft;
-        for (int i = 0; i < headers.size(); ++i) {
-            QRect cell(x, cursorY, colWidths.at(i), headerHeight);
-            painter.drawRect(cell);
-            painter.drawText(cell.adjusted(6, 0, -6, 0), Qt::AlignVCenter | Qt::AlignLeft, headers.at(i));
-            x += colWidths.at(i);
-        }
-        cursorY += headerHeight;
-    };
-
-    drawHeader(y);
-
-    painter.setFont(QFont("Arial", 10));
-    const int rowHeight = 34;
-    QFontMetrics fm(painter.font());
-
-    for (int i = 0; i < data.size(); ++i) {
-        if (y + rowHeight > contentBottom) {
-            writer.newPage();
-            y = contentTop;
-            painter.setFont(QFont("Arial", 18, QFont::Bold));
-            painter.drawText(QRect(contentLeft, y, contentWidth, 40), Qt::AlignCenter, "Reports Table (cont.)");
-            y += 52;
-            drawHeader(y);
-            painter.setFont(QFont("Arial", 10));
-            fm = QFontMetrics(painter.font());
-        }
-
-        const Customer &c = data.at(i);
-        const QStringList row = {
-            QString::number(c.customerId()),
-            c.name(),
-            c.reportType(),
-            normalizeStatus(c.status()),
-            calculatePriorityLevel(c),
-            QString::number(calculateReportAgeDays(c))
-        };
-
-        int x = contentLeft;
-        if (i % 2 == 0) {
-            painter.fillRect(QRect(contentLeft, y, contentWidth, rowHeight), QColor(248, 248, 248));
-        }
-        for (int col = 0; col < row.size(); ++col) {
-            QRect cell(x, y, colWidths.at(col), rowHeight);
-            painter.drawRect(cell);
-            const QString text = fm.elidedText(row.at(col), Qt::ElideRight, cell.width() - 10);
-            painter.drawText(cell.adjusted(5, 0, -5, 0), Qt::AlignVCenter | Qt::AlignLeft, text);
-            x += colWidths.at(col);
-        }
-
-        y += rowHeight;
-    }
-
-    painter.end();
-    delete chart;
-    QMessageBox::information(this, "Export PDF", "PDF exported successfully.");
 }
 
 void AdvancedFeatures::onAutoExportCsvBackup()

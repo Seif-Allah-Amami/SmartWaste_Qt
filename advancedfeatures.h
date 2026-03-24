@@ -30,7 +30,6 @@ private slots:
     void onFilterChanged();
     void onSmartSortByPriority();
     void onDeleteSelectedReport();
-    void onExportPdfWithCharts();
     void onAutoExportCsvBackup();
 
 protected:
@@ -93,7 +92,6 @@ private:
     QTableWidget *reportsTable_;
     QPushButton *smartSortButton_;
     QPushButton *deleteButton_;
-    QPushButton *exportPdfButton_;
 
     QTextEdit *chatDisplay_;
     QLineEdit *messageInput_;

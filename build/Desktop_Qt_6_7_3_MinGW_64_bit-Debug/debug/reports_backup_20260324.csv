@@ -1,4 +1,5 @@
 customer_id,name,email,phone,address,report_type,report_date,status
-2,"eyaA","eyabenyder@gmail.com","+216 58955446","megrine","Garbage Overflow",2026-02-04,solved
-1,"saaida","didazarrouk@gmail.com","+216 58926446","bizert","Missed Waste Collection",2026-02-28,solved
+2,"eyaAn","eyabenyder@gmail.com","+216 58955446","megrine","Garbage Overflow",2026-02-04,solved
+55,"saaida","dia@.gmail.com","+216 58926466","fffff","Missed Waste Collection",2026-03-24,rejected
 4,"rayen","rayen@gmail.com","+216 58955565","ezzhra","Recycling Issue",2026-01-27,solved
+6,"mahdi bali","mahdi@.gmail.com","+216 58964444","bizet","Garbage Overflow",2026-03-24,pending

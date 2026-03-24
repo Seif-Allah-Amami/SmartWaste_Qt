@@ -274,8 +274,7 @@ void MainWindow::onExportPDFClicked()
 
     auto drawHeader = [&]() {
         painter.setFont(QFont("Arial", 16, QFont::Bold));
-        painter.fillRect(QRect(margin, y, tableWidth, rowHeight),
-                         QColor(210, 210, 210));
+        painter.fillRect(QRect(margin, y, tableWidth, rowHeight), QColor(235, 235, 235));
 
         int x = margin;
 
@@ -295,8 +294,6 @@ void MainWindow::onExportPDFClicked()
     drawHeader();
 
     // ===== DATA =====
-    bool alternate = false;
-
     for (const Customer &c : allCustomers_) {
 
         // New page if needed
@@ -304,20 +301,6 @@ void MainWindow::onExportPDFClicked()
             pdfWriter.newPage();
             y = margin;
             drawHeader();
-        }
-
-        // Color rows by report type — matching dark UI palette (lighter for print)
-        QMap<QString, QColor> pdfTypeColors = {
-            { "Missed Waste Collection", QColor(204, 255, 235) },  // soft cyan-green
-            { "Garbage Overflow",        QColor(255, 210, 210) },  // soft red
-            { "Illegal Dumping",         QColor(255, 245, 190) },  // soft amber
-            { "Recycling Issue",         QColor(200, 240, 255) }   // soft cyan
-        };
-        QString rType = c.reportType();
-        if (pdfTypeColors.contains(rType)) {
-            painter.fillRect(QRect(margin, y, tableWidth, rowHeight), pdfTypeColors[rType]);
-        } else if (alternate) {
-            painter.fillRect(QRect(margin, y, tableWidth, rowHeight), QColor(245, 245, 245));
         }
 
         QStringList row = {
@@ -351,7 +334,6 @@ void MainWindow::onExportPDFClicked()
         }
 
         y += rowHeight;
-        alternate = !alternate;
     }
 
     painter.end();
