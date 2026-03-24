@@ -2590,7 +2590,7 @@ QPushButton:hover {
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnCustomerSMS_2">
+          <widget class="QPushButton" name="btnCustomerAr_2">
            <property name="styleSheet">
             <string notr="true">QPushButton {
     background-color: transparent;

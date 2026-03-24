@@ -1,23 +1,112 @@
 #include "advancedfeatures.h"
 
-#include <QTextEdit>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QVBoxLayout>
+#include <algorithm>
+#include <QCoreApplication>
+#include <QCloseEvent>
+#include <QComboBox>
+#include <QDate>
+#include <QDateEdit>
+#include <QDateTime>
+#include <QFile>
+#include <QFileDialog>
+#include <QFrame>
+#include <QGridLayout>
+#include <QHeaderView>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QDate>
-#include <QDateTime>
+#include <QLineEdit>
 #include <QMap>
+#include <QMessageBox>
+#include <QPainter>
+#include <QPdfWriter>
+#include <QProgressBar>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QSplitter>
+#include <QSizePolicy>
+#include <QStyle>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QTabWidget>
+#include <QTextEdit>
+#include <QTextStream>
+#include <QVBoxLayout>
 #include <QtGlobal>
+
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+
+namespace {
+QList<Customer> g_autoExportCustomers;
+bool g_autoExportHookInstalled = false;
+
+void writeAutoBackupCsv(const QList<Customer> &customers)
+{
+    const QString filePath = QString("reports_backup_%1.csv").arg(QDate::currentDate().toString("yyyyMMdd"));
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream out(&file);
+    out << "customer_id,name,email,phone,address,report_type,report_date,status\n";
+    for (const Customer &c : customers) {
+        out << c.customerId() << ","
+            << '"' << c.name().replace('"', "''") << "\","
+            << '"' << c.email().replace('"', "''") << "\","
+            << '"' << c.phone().replace('"', "''") << "\","
+            << '"' << c.address().replace('"', "''") << "\","
+            << '"' << c.reportType().replace('"', "''") << "\","
+            << c.reportDate().toString("yyyy-MM-dd") << ","
+            << c.status()
+            << "\n";
+    }
+}
+}
 
 AdvancedFeatures::AdvancedFeatures(const QList<Customer> &customers, QWidget *parent)
     : QDialog(parent)
     , customers_(customers)
+    , totalReportsValueLabel_(nullptr)
+    , resolvedPercentValueLabel_(nullptr)
+    , pendingPercentValueLabel_(nullptr)
+    , commonTypeValueLabel_(nullptr)
+    , avgResolutionValueLabel_(nullptr)
+    , statusBadgeLabel_(nullptr)
+    , statusSuggestionLabel_(nullptr)
+    , resolvedProgressBar_(nullptr)
+    , pendingProgressBar_(nullptr)
+    , searchFilterEdit_(nullptr)
+    , statusFilterCombo_(nullptr)
+    , typeFilterCombo_(nullptr)
+    , fromDateFilterEdit_(nullptr)
+    , toDateFilterEdit_(nullptr)
+    , reportsTable_(nullptr)
+    , smartSortButton_(nullptr)
+    , deleteButton_(nullptr)
+    , exportPdfButton_(nullptr)
+    , chatDisplay_(nullptr)
+    , messageInput_(nullptr)
+    , sendButton_(nullptr)
+    , priorityButton_(nullptr)
+    , predictiveButton_(nullptr)
+    , titleLabel_(nullptr)
+    , prioritySortEnabled_(false)
+    , overdueThresholdDays_(5)
 {
     setupUI();
+    g_autoExportCustomers = customers_;
+    if (!g_autoExportHookInstalled && QCoreApplication::instance()) {
+        QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, QCoreApplication::instance(), []() {
+            writeAutoBackupCsv(g_autoExportCustomers);
+        });
+        g_autoExportHookInstalled = true;
+    }
 
-    // Welcome message
+    refreshDashboardAndTable();
+    showOverduePendingAlert();
+
     addMessage("Hello! I'm your AI Assistant for SmartWaste. I can help you with:<br><br>"
                "<b>&#128202; AI Priority Detection</b> - Analyze reports and assign priority levels<br>"
                "<b>&#128302; Predictive Analytics</b> - Forecast next week's reports and trends<br>"
@@ -30,13 +119,18 @@ AdvancedFeatures::~AdvancedFeatures()
 {
 }
 
+void AdvancedFeatures::closeEvent(QCloseEvent *event)
+{
+    onAutoExportCsvBackup();
+    QDialog::closeEvent(event);
+}
+
 void AdvancedFeatures::setupUI()
 {
     setWindowTitle("AI Assistant - SmartWaste");
-    setMinimumSize(600, 500);
-    resize(700, 600);
+    setMinimumSize(980, 700);
+    resize(1240, 840);
 
-    // Dark theme styling
     setStyleSheet(
         "QDialog {"
         "    background-color: #0D1117;"
@@ -44,16 +138,21 @@ void AdvancedFeatures::setupUI()
         "}"
         "QLabel {"
         "    color: #00ff9c;"
-        "    font-size: 18px;"
+        "    font-size: 14px;"
         "    font-weight: bold;"
-        "    padding: 10px;"
+        "    padding: 2px;"
+        "}"
+        "QFrame#panel {"
+        "    background-color: #081713;"
+        "    border: 1px solid #00ff9c;"
+        "    border-radius: 10px;"
         "}"
         "QTextEdit {"
         "    background-color: #081713;"
         "    color: #66ffcc;"
         "    border: 1px solid #00ff9c;"
         "    border-radius: 10px;"
-        "    padding: 10px;"
+        "    padding: 8px;"
         "    font-size: 13px;"
         "}"
         "QLineEdit {"
@@ -61,8 +160,15 @@ void AdvancedFeatures::setupUI()
         "    color: #66ffcc;"
         "    border: 1px solid #00ff9c;"
         "    border-radius: 8px;"
-        "    padding: 12px;"
+        "    padding: 8px;"
         "    font-size: 13px;"
+        "}"
+        "QComboBox, QDateEdit {"
+        "    background-color: #081713;"
+        "    color: #66ffcc;"
+        "    border: 1px solid #00ff9c;"
+        "    border-radius: 8px;"
+        "    padding: 6px;"
         "}"
         "QPushButton {"
         "    background-color: #0a1f18;"
@@ -82,51 +188,736 @@ void AdvancedFeatures::setupUI()
         "QPushButton#primaryBtn:hover {"
         "    background-color: #33ffcc;"
         "}"
+        "QProgressBar {"
+        "    border: 1px solid #1e4b3d;"
+        "    border-radius: 6px;"
+        "    background: #081713;"
+        "    text-align: center;"
+        "    color: #d5ffee;"
+        "}"
+        "QProgressBar::chunk {"
+        "    border-radius: 6px;"
+        "    background: #00ff9c;"
+        "}"
         );
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setSpacing(15);
+    QVBoxLayout *outerLayout = new QVBoxLayout(this);
+    outerLayout->setContentsMargins(8, 8, 8, 8);
+
+    QScrollArea *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+
+    QWidget *contentWidget = new QWidget(scrollArea);
+    scrollArea->setWidget(contentWidget);
+    outerLayout->addWidget(scrollArea);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(contentWidget);
+    mainLayout->setSpacing(10);
     mainLayout->setContentsMargins(20, 20, 20, 20);
 
-    // Title
     titleLabel_ = new QLabel("AI Assistant", this);
     titleLabel_->setAlignment(Qt::AlignCenter);
+    titleLabel_->setStyleSheet("QLabel { font-size: 24px; color:#ffffff; padding: 4px; }");
     mainLayout->addWidget(titleLabel_);
 
-    // Chat display area
-    chatDisplay_ = new QTextEdit(this);
-    chatDisplay_->setReadOnly(true);
-    chatDisplay_->setMinimumHeight(300);
-    mainLayout->addWidget(chatDisplay_);
+    QFrame *analyticsPanel = new QFrame(this);
+    analyticsPanel->setObjectName("panel");
+    QGridLayout *analyticsLayout = new QGridLayout(analyticsPanel);
+    analyticsLayout->setContentsMargins(12, 12, 12, 12);
+    analyticsLayout->setHorizontalSpacing(20);
 
-    // Quick action buttons
+    totalReportsValueLabel_ = new QLabel("0", analyticsPanel);
+    resolvedPercentValueLabel_ = new QLabel("0%", analyticsPanel);
+    pendingPercentValueLabel_ = new QLabel("0%", analyticsPanel);
+    commonTypeValueLabel_ = new QLabel("-", analyticsPanel);
+    avgResolutionValueLabel_ = new QLabel("0 day(s)", analyticsPanel);
+    statusBadgeLabel_ = new QLabel("Pending (0) | In Progress (0) | Solved (0) | Rejected (0)", analyticsPanel);
+    statusSuggestionLabel_ = new QLabel("Suggested Status: -", analyticsPanel);
+
+    resolvedProgressBar_ = new QProgressBar(analyticsPanel);
+    pendingProgressBar_ = new QProgressBar(analyticsPanel);
+    resolvedProgressBar_->setRange(0, 100);
+    pendingProgressBar_->setRange(0, 100);
+
+    analyticsLayout->addWidget(new QLabel("Total Reports", analyticsPanel), 0, 0);
+    analyticsLayout->addWidget(totalReportsValueLabel_, 0, 1);
+    analyticsLayout->addWidget(new QLabel("% Resolved", analyticsPanel), 0, 2);
+    analyticsLayout->addWidget(resolvedPercentValueLabel_, 0, 3);
+    analyticsLayout->addWidget(new QLabel("% Pending", analyticsPanel), 1, 0);
+    analyticsLayout->addWidget(pendingPercentValueLabel_, 1, 1);
+    analyticsLayout->addWidget(new QLabel("Most Common Type", analyticsPanel), 1, 2);
+    analyticsLayout->addWidget(commonTypeValueLabel_, 1, 3);
+    analyticsLayout->addWidget(new QLabel("Avg Resolution Time", analyticsPanel), 2, 0);
+    analyticsLayout->addWidget(avgResolutionValueLabel_, 2, 1);
+    analyticsLayout->addWidget(statusSuggestionLabel_, 2, 2, 1, 2);
+    analyticsLayout->addWidget(new QLabel("Resolved Progress", analyticsPanel), 3, 0);
+    analyticsLayout->addWidget(resolvedProgressBar_, 3, 1, 1, 3);
+    analyticsLayout->addWidget(new QLabel("Pending Progress", analyticsPanel), 4, 0);
+    analyticsLayout->addWidget(pendingProgressBar_, 4, 1, 1, 3);
+    analyticsLayout->addWidget(statusBadgeLabel_, 5, 0, 1, 4);
+    mainLayout->addWidget(analyticsPanel);
+
+    QFrame *filterPanel = new QFrame(this);
+    filterPanel->setObjectName("panel");
+    QHBoxLayout *filterLayout = new QHBoxLayout(filterPanel);
+    filterLayout->setContentsMargins(10, 10, 10, 10);
+    filterLayout->setSpacing(8);
+
+    searchFilterEdit_ = new QLineEdit(filterPanel);
+    searchFilterEdit_->setPlaceholderText("Search by ID / Name / Email / Phone...");
+
+    statusFilterCombo_ = new QComboBox(filterPanel);
+    statusFilterCombo_->addItems({"All Status", "pending", "in progress", "solved", "rejected"});
+
+    typeFilterCombo_ = new QComboBox(filterPanel);
+    typeFilterCombo_->addItems({"All Types", "Illegal Dumping", "Garbage Overflow", "Missed Waste Collection", "Recycling Issue"});
+
+    fromDateFilterEdit_ = new QDateEdit(filterPanel);
+    fromDateFilterEdit_->setDisplayFormat("yyyy-MM-dd");
+    fromDateFilterEdit_->setCalendarPopup(true);
+    fromDateFilterEdit_->setDate(QDate::currentDate().addYears(-5));
+
+    toDateFilterEdit_ = new QDateEdit(filterPanel);
+    toDateFilterEdit_->setDisplayFormat("yyyy-MM-dd");
+    toDateFilterEdit_->setCalendarPopup(true);
+    toDateFilterEdit_->setDate(QDate::currentDate().addYears(1));
+
+    smartSortButton_ = new QPushButton("Smart Sort by Priority", filterPanel);
+    deleteButton_ = new QPushButton("Delete Selected", filterPanel);
+    exportPdfButton_ = new QPushButton("Export PDF + Chart", filterPanel);
+
+    filterLayout->addWidget(searchFilterEdit_, 2);
+    filterLayout->addWidget(statusFilterCombo_);
+    filterLayout->addWidget(typeFilterCombo_);
+    filterLayout->addWidget(fromDateFilterEdit_);
+    filterLayout->addWidget(toDateFilterEdit_);
+    filterLayout->addWidget(smartSortButton_);
+    filterLayout->addWidget(deleteButton_);
+    filterLayout->addWidget(exportPdfButton_);
+    mainLayout->addWidget(filterPanel);
+
+    QTabWidget *workspaceTabs = new QTabWidget(this);
+    workspaceTabs->setDocumentMode(true);
+    workspaceTabs->setStyleSheet(
+        "QTabWidget::pane { border: 1px solid #00ff9c; border-radius: 8px; }"
+        "QTabBar::tab { background: #0a1f18; color: #66ffcc; padding: 8px 16px; margin-right: 4px; }"
+        "QTabBar::tab:selected { background: #00ff9c; color: #050d0a; font-weight: 700; }");
+
+    QWidget *reportsTab = new QWidget(workspaceTabs);
+    QVBoxLayout *reportsTabLayout = new QVBoxLayout(reportsTab);
+    reportsTabLayout->setContentsMargins(8, 8, 8, 8);
+
+    reportsTable_ = new QTableWidget(reportsTab);
+    reportsTable_->setColumnCount(9);
+    reportsTable_->setHorizontalHeaderLabels({
+        "Report ID", "Customer", "Email", "Type", "Status", "Date", "Days", "Priority", "Flags"
+    });
+    reportsTable_->setSelectionBehavior(QAbstractItemView::SelectRows);
+    reportsTable_->setSelectionMode(QAbstractItemView::SingleSelection);
+    reportsTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    reportsTable_->horizontalHeader()->setStretchLastSection(true);
+    reportsTable_->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    reportsTable_->setMinimumHeight(320);
+    reportsTabLayout->addWidget(reportsTable_);
+
+    QWidget *chatTab = new QWidget(workspaceTabs);
+    QVBoxLayout *chatTabLayout = new QVBoxLayout(chatTab);
+    chatTabLayout->setContentsMargins(8, 8, 8, 8);
+
+    QFrame *chatPanel = new QFrame(chatTab);
+    chatPanel->setObjectName("panel");
+    chatPanel->setMinimumHeight(220);
+    chatPanel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QVBoxLayout *chatLayout = new QVBoxLayout(chatPanel);
+    chatLayout->setContentsMargins(10, 10, 10, 10);
+    chatLayout->setSpacing(8);
+
     QHBoxLayout *actionLayout = new QHBoxLayout();
-
-    priorityButton_ = new QPushButton("Priority Analysis", this);
-    predictiveButton_ = new QPushButton("Predictive Analytics", this);
-
+    priorityButton_ = new QPushButton("Priority Analysis", chatPanel);
+    predictiveButton_ = new QPushButton("Predictive Analytics", chatPanel);
+    priorityButton_->setMinimumHeight(36);
+    predictiveButton_->setMinimumHeight(36);
     actionLayout->addWidget(priorityButton_);
     actionLayout->addWidget(predictiveButton_);
-    mainLayout->addLayout(actionLayout);
+    chatLayout->addLayout(actionLayout);
 
-    // Message input area
     QHBoxLayout *inputLayout = new QHBoxLayout();
-
-    messageInput_ = new QLineEdit(this);
+    messageInput_ = new QLineEdit(chatPanel);
     messageInput_->setPlaceholderText("Type your message here...");
-
-    sendButton_ = new QPushButton("Send", this);
+    sendButton_ = new QPushButton("Send", chatPanel);
     sendButton_->setObjectName("primaryBtn");
-
+    sendButton_->setMinimumHeight(36);
     inputLayout->addWidget(messageInput_);
     inputLayout->addWidget(sendButton_);
-    mainLayout->addLayout(inputLayout);
+    chatLayout->addLayout(inputLayout);
 
-    // Connect signals
+    chatDisplay_ = new QTextEdit(chatPanel);
+    chatDisplay_->setReadOnly(true);
+    chatDisplay_->setMinimumHeight(180);
+    chatDisplay_->setLineWrapMode(QTextEdit::WidgetWidth);
+    chatDisplay_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    chatLayout->addWidget(chatDisplay_, 1);
+
+    chatLayout->setStretch(0, 0);
+    chatLayout->setStretch(1, 0);
+    chatLayout->setStretch(2, 1);
+
+    chatTabLayout->addWidget(chatPanel);
+
+    workspaceTabs->addTab(reportsTab, "Reports Overview");
+    workspaceTabs->addTab(chatTab, "AI Chat");
+    workspaceTabs->setCurrentIndex(1);
+
+    mainLayout->addWidget(workspaceTabs, 1);
+    messageInput_->setFocus();
+
     connect(sendButton_, &QPushButton::clicked, this, &AdvancedFeatures::onSendMessage);
     connect(messageInput_, &QLineEdit::returnPressed, this, &AdvancedFeatures::onSendMessage);
     connect(priorityButton_, &QPushButton::clicked, this, &AdvancedFeatures::onShowPriorityAnalysis);
     connect(predictiveButton_, &QPushButton::clicked, this, &AdvancedFeatures::onShowPredictiveAnalysis);
+    connect(searchFilterEdit_, &QLineEdit::textChanged, this, &AdvancedFeatures::onFilterChanged);
+    connect(statusFilterCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AdvancedFeatures::onFilterChanged);
+    connect(typeFilterCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AdvancedFeatures::onFilterChanged);
+    connect(fromDateFilterEdit_, &QDateEdit::dateChanged, this, &AdvancedFeatures::onFilterChanged);
+    connect(toDateFilterEdit_, &QDateEdit::dateChanged, this, &AdvancedFeatures::onFilterChanged);
+    connect(smartSortButton_, &QPushButton::clicked, this, &AdvancedFeatures::onSmartSortByPriority);
+    connect(deleteButton_, &QPushButton::clicked, this, &AdvancedFeatures::onDeleteSelectedReport);
+    connect(exportPdfButton_, &QPushButton::clicked, this, &AdvancedFeatures::onExportPdfWithCharts);
+    connect(reportsTable_, &QTableWidget::itemSelectionChanged, this, [this]() {
+        const int row = reportsTable_->currentRow();
+        if (row < 0) {
+            statusSuggestionLabel_->setText("Suggested Status: -");
+            return;
+        }
+        const int id = reportsTable_->item(row, 0) ? reportsTable_->item(row, 0)->text().toInt() : -1;
+        for (const Customer &c : customers_) {
+            if (c.customerId() == id) {
+                statusSuggestionLabel_->setText("Suggested Status: " + suggestedStatusFor(c));
+                break;
+            }
+        }
+    });
+}
+
+void AdvancedFeatures::onFilterChanged()
+{
+    refreshDashboardAndTable();
+}
+
+void AdvancedFeatures::onSmartSortByPriority()
+{
+    prioritySortEnabled_ = !prioritySortEnabled_;
+    smartSortButton_->setText(prioritySortEnabled_ ? "Smart Sort: ON" : "Smart Sort by Priority");
+    refreshReportsTable();
+}
+
+void AdvancedFeatures::onDeleteSelectedReport()
+{
+    const int row = reportsTable_->currentRow();
+    if (row < 0) {
+        QMessageBox::information(this, "Delete Report", "Select a report first.");
+        return;
+    }
+
+    const int id = reportsTable_->item(row, 0) ? reportsTable_->item(row, 0)->text().toInt() : -1;
+    Customer selected;
+    bool found = false;
+    for (const Customer &c : customers_) {
+        if (c.customerId() == id) {
+            selected = c;
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        QMessageBox::warning(this, "Delete Report", "Unable to find selected report.");
+        return;
+    }
+
+    QString details = QString("ID: %1\nName: %2\nEmail: %3\nType: %4\nStatus: %5\nDate: %6")
+                          .arg(selected.customerId())
+                          .arg(selected.name())
+                          .arg(selected.email())
+                          .arg(selected.reportType())
+                          .arg(selected.status())
+                          .arg(selected.reportDate().toString("yyyy-MM-dd"));
+
+    const auto confirm = QMessageBox::question(this,
+                                               "Confirm Delete",
+                                               "Delete this report?\n\n" + details,
+                                               QMessageBox::Yes | QMessageBox::No,
+                                               QMessageBox::No);
+    if (confirm != QMessageBox::Yes) {
+        return;
+    }
+
+    QString error;
+    if (!Customer::remove(selected.customerId(), &error)) {
+        QMessageBox::warning(this, "Delete Report", "Failed to delete report.\n" + error);
+        return;
+    }
+
+    customers_.erase(std::remove_if(customers_.begin(), customers_.end(), [id](const Customer &c) {
+                         return c.customerId() == id;
+                     }),
+                     customers_.end());
+
+    refreshDashboardAndTable();
+    QMessageBox::information(this, "Delete Report", "Report deleted successfully.");
+}
+
+void AdvancedFeatures::onExportPdfWithCharts()
+{
+    const QString fileName = QFileDialog::getSaveFileName(this, "Export PDF", "reports_analytics.pdf", "PDF Files (*.pdf)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    QMap<QString, int> typeCounts;
+    for (const Customer &c : customers_) {
+        typeCounts[c.reportType()]++;
+    }
+
+    QPieSeries *series = new QPieSeries();
+    for (auto it = typeCounts.begin(); it != typeCounts.end(); ++it) {
+        series->append(it.key(), it.value());
+    }
+    if (series->count() == 0) {
+        series->append("No Data", 1.0);
+    }
+    for (QPieSlice *slice : series->slices()) {
+        slice->setLabelVisible(true);
+    }
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Report Types Distribution");
+    chart->setTitleFont(QFont("Arial", 18, QFont::Bold));
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignBottom);
+    chart->legend()->setFont(QFont("Arial", 11));
+    chart->setMargins(QMargins(12, 12, 12, 12));
+    chart->setBackgroundVisible(false);
+
+    QChartView chartView(chart);
+    chartView.setRenderHint(QPainter::Antialiasing);
+    chartView.resize(2200, 1200);
+
+    QImage chartImage(chartView.size(), QImage::Format_ARGB32);
+    chartImage.fill(Qt::white);
+    {
+        QPainter chartPainter(&chartImage);
+        chartView.render(&chartPainter);
+    }
+
+    QPdfWriter writer(fileName);
+    writer.setPageSize(QPageSize(QPageSize::A4));
+    writer.setPageOrientation(QPageLayout::Landscape);
+    writer.setResolution(300);
+
+    QPainter painter(&writer);
+    const QList<Customer> data = getFilteredCustomers();
+
+    const QRect pageRect = writer.pageLayout().paintRectPixels(writer.resolution());
+    const int margin = 48;
+    const int contentLeft = pageRect.left() + margin;
+    const int contentTop = pageRect.top() + margin;
+    const int contentWidth = pageRect.width() - (2 * margin);
+    const int contentBottom = pageRect.bottom() - margin;
+
+    int y = contentTop;
+
+    painter.setPen(Qt::black);
+    painter.setFont(QFont("Arial", 24, QFont::Bold));
+    painter.drawText(QRect(contentLeft, y, contentWidth, 56), Qt::AlignCenter, "Reports Analytics Export");
+    y += 66;
+
+    painter.setFont(QFont("Arial", 11));
+    painter.drawText(QRect(contentLeft, y, contentWidth, 22), Qt::AlignLeft,
+                     "Generated on: " + QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm"));
+    painter.drawText(QRect(contentLeft, y, contentWidth, 22), Qt::AlignRight,
+                     "Rows: " + QString::number(data.size()));
+    y += 30;
+
+    const int chartHeight = contentBottom - y;
+    painter.drawImage(QRect(contentLeft, y, contentWidth, chartHeight), chartImage);
+
+    // Start table on a dedicated second page for readability.
+    writer.newPage();
+    y = contentTop;
+
+    painter.setPen(Qt::black);
+    painter.setFont(QFont("Arial", 18, QFont::Bold));
+    painter.drawText(QRect(contentLeft, y, contentWidth, 40), Qt::AlignCenter, "Reports Table");
+    y += 52;
+
+    const QStringList headers = {"ID", "Name", "Type", "Status", "Priority", "Days"};
+    const QList<double> widthRatios = {0.09, 0.23, 0.26, 0.14, 0.14, 0.14};
+    QList<int> colWidths;
+    int consumed = 0;
+    for (int i = 0; i < widthRatios.size(); ++i) {
+        int w = static_cast<int>(contentWidth * widthRatios.at(i));
+        if (i == widthRatios.size() - 1) {
+            w = contentWidth - consumed;
+        }
+        colWidths.append(w);
+        consumed += w;
+    }
+
+    auto drawHeader = [&](int &cursorY) {
+        const int headerHeight = 38;
+        painter.fillRect(QRect(contentLeft, cursorY, contentWidth, headerHeight), QColor(230, 230, 230));
+        painter.setPen(Qt::black);
+        painter.setFont(QFont("Arial", 11, QFont::Bold));
+
+        int x = contentLeft;
+        for (int i = 0; i < headers.size(); ++i) {
+            QRect cell(x, cursorY, colWidths.at(i), headerHeight);
+            painter.drawRect(cell);
+            painter.drawText(cell.adjusted(6, 0, -6, 0), Qt::AlignVCenter | Qt::AlignLeft, headers.at(i));
+            x += colWidths.at(i);
+        }
+        cursorY += headerHeight;
+    };
+
+    drawHeader(y);
+
+    painter.setFont(QFont("Arial", 10));
+    const int rowHeight = 34;
+    QFontMetrics fm(painter.font());
+
+    for (int i = 0; i < data.size(); ++i) {
+        if (y + rowHeight > contentBottom) {
+            writer.newPage();
+            y = contentTop;
+            painter.setFont(QFont("Arial", 18, QFont::Bold));
+            painter.drawText(QRect(contentLeft, y, contentWidth, 40), Qt::AlignCenter, "Reports Table (cont.)");
+            y += 52;
+            drawHeader(y);
+            painter.setFont(QFont("Arial", 10));
+            fm = QFontMetrics(painter.font());
+        }
+
+        const Customer &c = data.at(i);
+        const QStringList row = {
+            QString::number(c.customerId()),
+            c.name(),
+            c.reportType(),
+            normalizeStatus(c.status()),
+            calculatePriorityLevel(c),
+            QString::number(calculateReportAgeDays(c))
+        };
+
+        int x = contentLeft;
+        if (i % 2 == 0) {
+            painter.fillRect(QRect(contentLeft, y, contentWidth, rowHeight), QColor(248, 248, 248));
+        }
+        for (int col = 0; col < row.size(); ++col) {
+            QRect cell(x, y, colWidths.at(col), rowHeight);
+            painter.drawRect(cell);
+            const QString text = fm.elidedText(row.at(col), Qt::ElideRight, cell.width() - 10);
+            painter.drawText(cell.adjusted(5, 0, -5, 0), Qt::AlignVCenter | Qt::AlignLeft, text);
+            x += colWidths.at(col);
+        }
+
+        y += rowHeight;
+    }
+
+    painter.end();
+    delete chart;
+    QMessageBox::information(this, "Export PDF", "PDF exported successfully.");
+}
+
+void AdvancedFeatures::onAutoExportCsvBackup()
+{
+    const QString filePath = QString("reports_backup_%1.csv").arg(QDate::currentDate().toString("yyyyMMdd"));
+    writeCsvBackup(filePath);
+}
+
+void AdvancedFeatures::writeCsvBackup(const QString &filePath) const
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return;
+    }
+
+    QTextStream out(&file);
+    out << "customer_id,name,email,phone,address,report_type,report_date,status,priority\n";
+    for (const Customer &c : customers_) {
+        out << c.customerId() << ","
+            << '"' << c.name().replace('"', "''") << "\","
+            << '"' << c.email().replace('"', "''") << "\","
+            << '"' << c.phone().replace('"', "''") << "\","
+            << '"' << c.address().replace('"', "''") << "\","
+            << '"' << c.reportType().replace('"', "''") << "\","
+            << c.reportDate().toString("yyyy-MM-dd") << ","
+            << normalizeStatus(c.status()) << ","
+            << calculatePriorityLevel(c)
+            << "\n";
+    }
+}
+
+void AdvancedFeatures::refreshDashboardAndTable()
+{
+    g_autoExportCustomers = customers_;
+    refreshStatisticsPanel();
+    refreshStatusBadges();
+    refreshReportsTable();
+}
+
+void AdvancedFeatures::refreshStatisticsPanel()
+{
+    const QList<Customer> filtered = getFilteredCustomers();
+    const int total = filtered.size();
+    int resolved = 0;
+    int pending = 0;
+
+    QMap<QString, int> typeCounts;
+    int solvedDaysTotal = 0;
+    int solvedCount = 0;
+
+    for (const Customer &c : filtered) {
+        const QString status = normalizeStatus(c.status());
+        if (status == "solved") {
+            ++resolved;
+            solvedDaysTotal += calculateReportAgeDays(c);
+            ++solvedCount;
+        }
+        if (status == "pending") {
+            ++pending;
+        }
+        typeCounts[c.reportType()]++;
+    }
+
+    const int resolvedPct = total > 0 ? (resolved * 100) / total : 0;
+    const int pendingPct = total > 0 ? (pending * 100) / total : 0;
+
+    QString commonType = "-";
+    int bestCount = -1;
+    for (auto it = typeCounts.begin(); it != typeCounts.end(); ++it) {
+        if (it.value() > bestCount) {
+            bestCount = it.value();
+            commonType = it.key();
+        }
+    }
+
+    const double avgResolution = solvedCount > 0 ? static_cast<double>(solvedDaysTotal) / solvedCount : 0.0;
+
+    totalReportsValueLabel_->setText(QString::number(total));
+    resolvedPercentValueLabel_->setText(QString::number(resolvedPct) + "%");
+    pendingPercentValueLabel_->setText(QString::number(pendingPct) + "%");
+    commonTypeValueLabel_->setText(commonType);
+    avgResolutionValueLabel_->setText(QString::number(avgResolution, 'f', 1) + " day(s)");
+    resolvedProgressBar_->setValue(resolvedPct);
+    pendingProgressBar_->setValue(pendingPct);
+}
+
+void AdvancedFeatures::refreshStatusBadges()
+{
+    int pending = 0;
+    int inProgress = 0;
+    int solved = 0;
+    int rejected = 0;
+
+    for (const Customer &c : customers_) {
+        const QString s = normalizeStatus(c.status());
+        if (s == "pending") {
+            ++pending;
+        } else if (s == "in progress") {
+            ++inProgress;
+        } else if (s == "solved") {
+            ++solved;
+        } else if (s == "rejected") {
+            ++rejected;
+        }
+    }
+
+    statusBadgeLabel_->setText(QString("Pending (%1)   In Progress (%2)   Solved (%3)   Rejected (%4)")
+                                   .arg(pending)
+                                   .arg(inProgress)
+                                   .arg(solved)
+                                   .arg(rejected));
+}
+
+QList<Customer> AdvancedFeatures::getFilteredCustomers() const
+{
+    QList<Customer> filtered;
+    const QString text = searchFilterEdit_->text().trimmed();
+    const QString statusFilter = statusFilterCombo_->currentText();
+    const QString typeFilter = typeFilterCombo_->currentText();
+    const QDate fromDate = fromDateFilterEdit_->date();
+    const QDate toDate = toDateFilterEdit_->date();
+
+    for (const Customer &c : customers_) {
+        const QString status = normalizeStatus(c.status());
+        const bool searchOk = text.isEmpty()
+                              || QString::number(c.customerId()).contains(text, Qt::CaseInsensitive)
+                              || c.name().contains(text, Qt::CaseInsensitive)
+                              || c.email().contains(text, Qt::CaseInsensitive)
+                              || c.phone().contains(text, Qt::CaseInsensitive);
+
+        const bool statusOk = (statusFilter == "All Status") || (status == statusFilter);
+        const bool typeOk = (typeFilter == "All Types") || (c.reportType() == typeFilter);
+
+        bool dateOk = true;
+        if (c.reportDate().isValid()) {
+            dateOk = (c.reportDate() >= fromDate && c.reportDate() <= toDate);
+        }
+
+        if (searchOk && statusOk && typeOk && dateOk) {
+            filtered.append(c);
+        }
+    }
+
+    return filtered;
+}
+
+bool AdvancedFeatures::isDuplicateCustomer(const Customer &customer) const
+{
+    int sameName = 0;
+    int sameEmail = 0;
+    for (const Customer &c : customers_) {
+        if (c.name().compare(customer.name(), Qt::CaseInsensitive) == 0) {
+            ++sameName;
+        }
+        if (c.email().compare(customer.email(), Qt::CaseInsensitive) == 0) {
+            ++sameEmail;
+        }
+    }
+    return sameName > 1 || sameEmail > 1;
+}
+
+bool AdvancedFeatures::isBlacklistedCustomer(const Customer &customer) const
+{
+    int rejectedCount = 0;
+    for (const Customer &c : customers_) {
+        const bool sameIdentity = c.name().compare(customer.name(), Qt::CaseInsensitive) == 0
+                                  || c.email().compare(customer.email(), Qt::CaseInsensitive) == 0;
+        if (sameIdentity && normalizeStatus(c.status()) == "rejected") {
+            ++rejectedCount;
+        }
+    }
+    return rejectedCount > 3;
+}
+
+void AdvancedFeatures::refreshReportsTable()
+{
+    QList<Customer> rows = getFilteredCustomers();
+    if (prioritySortEnabled_) {
+        std::sort(rows.begin(), rows.end(), [this](const Customer &a, const Customer &b) {
+            auto rank = [this](const Customer &c) {
+                const QString status = normalizeStatus(c.status());
+                if (status == "solved") {
+                    return 5;
+                }
+                const QString p = calculatePriorityLevel(c);
+                if (p == "CRITICAL") return 0;
+                if (p == "HIGH") return 1;
+                if (p == "MEDIUM") return 2;
+                return 3;
+            };
+            const int ra = rank(a);
+            const int rb = rank(b);
+            if (ra != rb) {
+                return ra < rb;
+            }
+            return calculateReportAgeDays(a) > calculateReportAgeDays(b);
+        });
+    }
+
+    reportsTable_->setRowCount(0);
+    for (int i = 0; i < rows.size(); ++i) {
+        const Customer &c = rows.at(i);
+        const QString status = normalizeStatus(c.status());
+        const QString priority = calculatePriorityLevel(c);
+
+        QString flags;
+        if (isDuplicateCustomer(c)) {
+            flags += "[DUPLICATE] ";
+        }
+        if (isBlacklistedCustomer(c)) {
+            flags += "[BLACKLIST]";
+        }
+
+        reportsTable_->insertRow(i);
+        const QStringList cells = {
+            QString::number(c.customerId()),
+            c.name(),
+            c.email(),
+            c.reportType(),
+            status,
+            c.reportDate().isValid() ? c.reportDate().toString("yyyy-MM-dd") : "N/A",
+            QString::number(calculateReportAgeDays(c)),
+            priority,
+            flags.trimmed()
+        };
+
+        QColor rowColor = QColor("#0b1713");
+        if (status == "pending") {
+            rowColor = QColor("#451a1d");
+        } else if (status == "in progress") {
+            rowColor = QColor("#4b3f14");
+        } else if (status == "solved") {
+            rowColor = QColor("#143d2a");
+        } else if (status == "rejected") {
+            rowColor = QColor("#2d3035");
+        }
+
+        const bool needsWarning = isDuplicateCustomer(c) || isBlacklistedCustomer(c);
+        for (int col = 0; col < cells.size(); ++col) {
+            QTableWidgetItem *item = new QTableWidgetItem(cells.at(col));
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            item->setBackground(rowColor);
+            item->setForeground(QBrush(Qt::white));
+            if (col == 8 && needsWarning) {
+                item->setIcon(style()->standardIcon(QStyle::SP_MessageBoxWarning));
+            }
+            reportsTable_->setItem(i, col, item);
+        }
+    }
+}
+
+QString AdvancedFeatures::suggestedStatusFor(const Customer &customer) const
+{
+    const QString current = normalizeStatus(customer.status());
+    if (current == "solved") {
+        return "solved";
+    }
+
+    const int age = calculateReportAgeDays(customer);
+    if (customer.reportType() == "Illegal Dumping" && age > 1) {
+        return "in progress";
+    }
+    if (age > 7) {
+        return "in progress";
+    }
+    if (age <= 2) {
+        return "pending";
+    }
+    return current;
+}
+
+void AdvancedFeatures::showOverduePendingAlert()
+{
+    QStringList overdueLines;
+    for (const Customer &c : customers_) {
+        const QString status = normalizeStatus(c.status());
+        const int age = calculateReportAgeDays(c);
+        if (status == "pending" && age > overdueThresholdDays_) {
+            overdueLines << QString("Report #%1 pending for %2 day(s)").arg(c.customerId()).arg(age);
+        }
+    }
+
+    if (overdueLines.isEmpty()) {
+        return;
+    }
+
+    QMessageBox::warning(this,
+                         "Overdue Pending Alert",
+                         QString("%1 overdue pending report(s) found:\n\n%2")
+                             .arg(overdueLines.size())
+                             .arg(overdueLines.mid(0, 10).join("\n")));
 }
 
 void AdvancedFeatures::addMessage(const QString &message, bool isUser)
@@ -223,6 +1014,24 @@ QString AdvancedFeatures::processUserMessage(const QString &message)
             .arg(inProgressCount)
             .arg(rejectedCount)
             .arg(solvedCount);
+    }
+
+    if (lowerMsg.contains("show critical reports") || lowerMsg.contains("critical reports")) {
+        QString response = "<b>Critical Reports:</b><br>";
+        int found = 0;
+        for (const Customer &c : customers_) {
+            if (calculatePriorityLevel(c) == "CRITICAL" && normalizeStatus(c.status()) != "solved") {
+                response += QString("- #%1 %2 (%3 day(s))<br>")
+                .arg(c.customerId())
+                    .arg(c.reportType())
+                    .arg(calculateReportAgeDays(c));
+                ++found;
+            }
+        }
+        if (found == 0) {
+            response += "No active critical reports.";
+        }
+        return response;
     }
 
     // Predictive analytics queries

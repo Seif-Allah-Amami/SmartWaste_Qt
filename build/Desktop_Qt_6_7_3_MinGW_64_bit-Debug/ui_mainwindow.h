@@ -171,7 +171,7 @@ public:
     QPushButton *btnAddCustomer;
     QPushButton *btnCustomerSMS;
     QPushButton *btnCustomerAI;
-    QPushButton *btnCustomerSMS_2;
+    QPushButton *btnCustomerAr_2;
     QSpacerItem *horizontalSpacer_10;
     QWidget *searchFilterWidget_5;
     QVBoxLayout *searchFilterLayout_5;
@@ -2040,9 +2040,9 @@ public:
 
         topActionsLayout_5->addWidget(btnCustomerAI);
 
-        btnCustomerSMS_2 = new QPushButton(mainContentWidget_5);
-        btnCustomerSMS_2->setObjectName("btnCustomerSMS_2");
-        btnCustomerSMS_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+        btnCustomerAr_2 = new QPushButton(mainContentWidget_5);
+        btnCustomerAr_2->setObjectName("btnCustomerAr_2");
+        btnCustomerAr_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "    background-color: transparent;\n"
 "    border: 1px solid #00ff9c;\n"
 "    border-radius: 10px;\n"
@@ -2055,7 +2055,7 @@ public:
 "    background-color: rgba(0, 255, 156, 0.1);\n"
 "}"));
 
-        topActionsLayout_5->addWidget(btnCustomerSMS_2);
+        topActionsLayout_5->addWidget(btnCustomerAr_2);
 
         horizontalSpacer_10 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
@@ -4372,7 +4372,7 @@ public:
         btnAddCustomer->setText(QCoreApplication::translate("MainWindow", "Add Customer", nullptr));
         btnCustomerSMS->setText(QCoreApplication::translate("MainWindow", "Send SMS Or Email", nullptr));
         btnCustomerAI->setText(QCoreApplication::translate("MainWindow", "AI Assistant", nullptr));
-        btnCustomerSMS_2->setText(QCoreApplication::translate("MainWindow", "View Archive", nullptr));
+        btnCustomerAr_2->setText(QCoreApplication::translate("MainWindow", "View Archive", nullptr));
         lblCustomersList->setText(QCoreApplication::translate("MainWindow", "Customers List", nullptr));
         searchBox_5->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search by ID / Name / Email / Phone...", nullptr));
         sortComboBox_5->setItemText(0, QCoreApplication::translate("MainWindow", "Sort: Name (A-Z)", nullptr));
