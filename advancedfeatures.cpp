@@ -6,8 +6,10 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QDate>
 #include <QDateTime>
 #include <QMap>
+#include <QtGlobal>
 
 AdvancedFeatures::AdvancedFeatures(const QList<Customer> &customers, QWidget *parent)
     : QDialog(parent)
@@ -173,6 +175,56 @@ QString AdvancedFeatures::processUserMessage(const QString &message)
 {
     QString lowerMsg = message.toLower();
 
+    // Improvement 4: quick status counters for natural chat questions.
+    int pendingCount = 0;
+    int inProgressCount = 0;
+    int rejectedCount = 0;
+    int solvedCount = 0;
+
+    for (const Customer &c : customers_) {
+        const QString normalized = normalizeStatus(c.status());
+        if (normalized == "pending") {
+            ++pendingCount;
+        } else if (normalized == "in progress") {
+            ++inProgressCount;
+        } else if (normalized == "rejected") {
+            ++rejectedCount;
+        } else if (normalized == "solved") {
+            ++solvedCount;
+        }
+    }
+
+    if (lowerMsg.contains("solved") || lowerMsg.contains("resolved")) {
+        return QString("<b>Solved Reports:</b> %1<br>"
+                       "These are completed reports that no longer need action.")
+            .arg(solvedCount);
+    }
+
+    if (lowerMsg.contains("rejected")) {
+        return QString("<b>Rejected Reports:</b> %1<br>"
+                       "Rejected reports usually need corrected details before resubmission.")
+            .arg(rejectedCount);
+    }
+
+    if (lowerMsg.contains("in progress") || lowerMsg.contains("inprogress")) {
+        return QString("<b>In Progress Reports:</b> %1<br>"
+                       "These reports are currently being handled by the operations team.")
+            .arg(inProgressCount);
+    }
+
+    if (lowerMsg.contains("how many") || lowerMsg.contains("total") || lowerMsg.contains("count")) {
+        return QString("<b>Total Reports:</b> %1<br><br>"
+                       "Pending: %2<br>"
+                       "In Progress: %3<br>"
+                       "Rejected: %4<br>"
+                       "Solved: %5")
+            .arg(customers_.size())
+            .arg(pendingCount)
+            .arg(inProgressCount)
+            .arg(rejectedCount)
+            .arg(solvedCount);
+    }
+
     // Predictive analytics queries
     if (lowerMsg.contains("predict") || lowerMsg.contains("forecast") ||
         lowerMsg.contains("next week") || lowerMsg.contains("future") ||
@@ -267,57 +319,93 @@ void AdvancedFeatures::onShowPriorityAnalysis()
 
 QString AdvancedFeatures::generatePriorityAnalysis()
 {
-    QMap<QString, int> typeCounts;
-    QMap<QString, QList<int>> typeCustomerIds;
-
-    for (const Customer &c : customers_) {
-        typeCounts[c.reportType()]++;
-        typeCustomerIds[c.reportType()].append(c.customerId());
-    }
-
-    QStringList priorityOrder = {"Illegal Dumping", "Garbage Overflow",
-                                 "Missed Waste Collection", "Recycling Issue"};
-
     QString analysis = "<b>&#127919; AI PRIORITY DETECTION ANALYSIS</b><br><br>";
     analysis += QString("Total Reports: <b>%1</b><br><br>").arg(customers_.size());
 
-    int criticalCount = typeCounts.value("Illegal Dumping", 0);
-    int highCount = typeCounts.value("Garbage Overflow", 0);
-
-    if (criticalCount > 0) {
-        analysis += QString("&#128680; <span style='color: #ff4444;'><b>ALERT:</b> %1 Critical priority reports require immediate attention!</span><br><br>")
-        .arg(criticalCount);
+    if (customers_.isEmpty()) {
+        return analysis + "<i>No reports available for scoring.</i>";
     }
 
-    if (highCount > 0) {
-        analysis += QString("&#9888; <span style='color: #ffaa00;'><b>WARNING:</b> %1 High priority reports pending!</span><br><br>")
-        .arg(highCount);
+    // Improvement 1 + 2: score each report and apply date-based CRITICAL override.
+    QMap<QString, int> levelCounts;
+    levelCounts["CRITICAL"] = 0;
+    levelCounts["HIGH"] = 0;
+    levelCounts["MEDIUM"] = 0;
+    levelCounts["LOW"] = 0;
+
+    analysis += "<b>Per-Report Priority Scores</b><br>";
+    analysis += "<table style='width: 100%; margin-top: 10px; border-collapse: collapse;'>";
+    analysis += "<tr style='background-color: #0a1f18;'>"
+                "<th style='text-align:left; padding: 8px;'>Customer</th>"
+                "<th style='text-align:left; padding: 8px;'>Type</th>"
+                "<th style='text-align:left; padding: 8px;'>Status</th>"
+                "<th style='text-align:left; padding: 8px;'>Age</th>"
+                "<th style='text-align:left; padding: 8px;'>Priority</th>"
+                "</tr>";
+
+    for (const Customer &c : customers_) {
+        const int score = calculatePriorityScore(c);
+        const int daysOld = calculateReportAgeDays(c);
+        const QString level = calculatePriorityLevel(c);
+        const QString levelColor = getPriorityColor(level);
+        const QString levelIcon = getPriorityIcon(level);
+        const QString statusNormalized = normalizeStatus(c.status());
+        const QString statusDisplay = statusNormalized == "in progress"
+                                          ? "In Progress"
+                                          : QString(statusNormalized).replace(0, 1, statusNormalized.left(1).toUpper());
+
+        levelCounts[level]++;
+
+        analysis += QString("<tr>"
+                            "<td style='padding: 8px;'>#%1 %2</td>"
+                            "<td style='padding: 8px;'>%3</td>"
+                            "<td style='padding: 8px;'>%4</td>"
+                            "<td style='padding: 8px;'>%5 day(s)</td>"
+                            "<td style='padding: 8px; color:%6;'><b>Score: %7/100 %8 %9</b></td>"
+                            "</tr>")
+                        .arg(c.customerId())
+                        .arg(c.name())
+                        .arg(c.reportType())
+                        .arg(statusDisplay)
+                        .arg(daysOld)
+                        .arg(levelColor)
+                        .arg(score)
+                        .arg(levelIcon)
+                        .arg(level);
     }
-
-    analysis += "<b>Priority Breakdown:</b><br>";
-    analysis += "<table style='width: 100%; margin-top: 10px;'>";
-
-    for (const QString &type : priorityOrder) {
-        int count = typeCounts.value(type, 0);
-        QString priority = getPriorityForReportType(type);
-        double percentage = customers_.isEmpty() ? 0 : (100.0 * count / customers_.size());
-
-        analysis += QString("<tr><td>%1</td><td><b>%2</b></td><td>%3 reports (%4%)</td></tr>")
-                        .arg(priority, type)
-                        .arg(count)
-                        .arg(QString::number(percentage, 'f', 1));
-    }
-
     analysis += "</table><br>";
 
-    analysis += "<b>&#128203; AI Recommendations:</b><br>";
-    if (criticalCount > 0) {
-        analysis += "- Dispatch emergency team for Illegal Dumping cases<br>";
+    // Improvement 3: visual priority bars in QTextEdit HTML.
+    analysis += "<b>Priority Distribution</b><br>";
+
+    auto addBar = [&](const QString &label, const QString &color, int count) {
+        const double pct = (100.0 * count) / customers_.size();
+        analysis += QString("<div style='margin: 8px 0;'>"
+                            "<div><b>%1:</b> %2 (%3%)</div>"
+                            "<div style='width: 100%; background-color: #113328; border-radius: 6px; height: 16px;'>"
+                            "<div style='height: 16px; width: %4%; background-color: %5; border-radius: 6px;'></div>"
+                            "</div>"
+                            "</div>")
+                        .arg(label)
+                        .arg(count)
+                        .arg(QString::number(pct, 'f', 1))
+                        .arg(QString::number(pct, 'f', 1))
+                        .arg(color);
+    };
+
+    addBar("CRITICAL", "#ff4444", levelCounts.value("CRITICAL", 0));
+    addBar("HIGH", "#ffaa00", levelCounts.value("HIGH", 0));
+    addBar("MEDIUM", "#ffcc00", levelCounts.value("MEDIUM", 0));
+    addBar("LOW", "#00cc66", levelCounts.value("LOW", 0));
+
+    analysis += "<br><b>&#128203; AI Recommendations:</b><br>";
+    if (levelCounts.value("CRITICAL", 0) > 0) {
+        analysis += "- Dispatch emergency team for CRITICAL reports first<br>";
     }
-    if (highCount > 0) {
-        analysis += "- Schedule additional collection routes for overflow areas<br>";
+    if (levelCounts.value("HIGH", 0) > 0) {
+        analysis += "- Assign additional resources to HIGH priority reports<br>";
     }
-    analysis += "- Review pending reports daily for priority changes<br>";
+    analysis += "- Review pending and rejected reports daily for faster closure<br>";
 
     return analysis;
 }
@@ -361,7 +449,7 @@ QString AdvancedFeatures::analyzeTrends()
 
     for (const Customer &c : customers_) {
         typeCounts[c.reportType()]++;
-        statusCounts[c.status()]++;
+        statusCounts[normalizeStatus(c.status())]++;
     }
 
     QString trends = "<b>&#128200; HISTORICAL TREND ANALYSIS</b><br><br>";
@@ -396,31 +484,40 @@ QString AdvancedFeatures::analyzeTrends()
 
     // Status breakdown
     trends += "<b>Current Status Distribution:</b><br>";
-    trends += QString("Pending: %1 | In Progress: %2 | Resolved: %3<br>")
-                  .arg(statusCounts.value("Pending", 0))
-                  .arg(statusCounts.value("In Progress", 0))
-                  .arg(statusCounts.value("Resolved", 0));
+    // Improvement 6: use "Solved" everywhere to match real values.
+    trends += QString("Pending: %1 | In Progress: %2 | Rejected: %3 | Solved: %4<br>")
+                  .arg(statusCounts.value("pending", 0))
+                  .arg(statusCounts.value("in progress", 0))
+                  .arg(statusCounts.value("rejected", 0))
+                  .arg(statusCounts.value("solved", 0));
 
     return trends;
 }
 
 int AdvancedFeatures::calculateTrendScore(const QString &reportType)
 {
-    // Simulate trend calculation based on report type patterns
-    // In production, this would analyze date-based historical data
-    int count = 0;
+    // Improvement 5: trend score now uses real status mix for each report type.
+    int pending = 0;
+    int inProgress = 0;
+    int solved = 0;
+
     for (const Customer &c : customers_) {
-        if (c.reportType() == reportType) count++;
+        if (c.reportType() != reportType) {
+            continue;
+        }
+
+        const QString status = normalizeStatus(c.status());
+        if (status == "pending") {
+            ++pending;
+        } else if (status == "in progress") {
+            ++inProgress;
+        } else if (status == "solved") {
+            ++solved;
+        }
     }
 
-    if (reportType == "Illegal Dumping") {
-        return count > 2 ? 15 : (count > 0 ? 5 : 0);
-    } else if (reportType == "Garbage Overflow") {
-        return count > 3 ? 20 : (count > 1 ? 10 : 0);
-    } else if (reportType == "Missed Waste Collection") {
-        return count > 2 ? -5 : 0;
-    }
-    return 0;
+    int score = (pending * 10) + (inProgress * 5) - (solved * 8);
+    return qBound(-30, score, 30);
 }
 
 QString AdvancedFeatures::predictNextWeekReports()
@@ -484,52 +581,45 @@ QString AdvancedFeatures::getEscalationRisks()
 {
     QString risks = "<b>&#9888; ESCALATION RISK ASSESSMENT</b><br><br>";
 
-    QList<Customer> pendingReports;
-    QList<Customer> inProgressReports;
+    int criticalRisk = 0;
+    int highRisk = 0;
+    QString rows;
 
     for (const Customer &c : customers_) {
-        if (c.status() == "Pending") {
-            pendingReports.append(c);
-        } else if (c.status() == "In Progress") {
-            inProgressReports.append(c);
+        const QString status = normalizeStatus(c.status());
+        if (status == "solved") {
+            continue;
         }
+
+        const QString level = calculatePriorityLevel(c);
+        if (level != "CRITICAL" && level != "HIGH") {
+            continue;
+        }
+
+        if (level == "CRITICAL") {
+            ++criticalRisk;
+        } else {
+            ++highRisk;
+        }
+
+        rows += QString("<tr><td>Customer #%1</td><td>%2</td>"
+                        "<td>%3 day(s) old</td>"
+                        "<td><span style='color: %4;'><b>&#8594; %5</b></span></td></tr>")
+                    .arg(c.customerId())
+                    .arg(c.reportType())
+                    .arg(calculateReportAgeDays(c))
+                    .arg(getPriorityColor(level))
+                    .arg(level);
     }
 
-    if (pendingReports.isEmpty() && inProgressReports.isEmpty()) {
+    if (criticalRisk == 0 && highRisk == 0) {
         risks += "<span style='color: #00cc66;'>&#10004; No active reports at risk of escalation.</span><br>";
         return risks;
     }
 
-    // Identify high-risk pending reports
-    int criticalRisk = 0;
-    int highRisk = 0;
-
     risks += "<b>Reports Likely to Escalate:</b><br>";
     risks += "<table style='width: 100%;'>";
-
-    for (const Customer &c : pendingReports) {
-        QString riskLevel;
-        QString riskColor;
-
-        if (c.reportType() == "Illegal Dumping") {
-            criticalRisk++;
-            riskLevel = "CRITICAL";
-            riskColor = "#ff4444";
-        } else if (c.reportType() == "Garbage Overflow") {
-            highRisk++;
-            riskLevel = "HIGH";
-            riskColor = "#ffaa00";
-        } else {
-            continue; // Skip lower priority for escalation list
-        }
-
-        risks += QString("<tr><td>Customer #%1</td><td>%2</td>"
-                         "<td><span style='color: %3;'><b>&#8594; %4</b></span></td></tr>")
-                     .arg(c.customerId())
-                     .arg(c.reportType())
-                     .arg(riskColor)
-                     .arg(riskLevel);
-    }
+    risks += rows;
     risks += "</table><br>";
 
     if (criticalRisk > 0) {
@@ -546,13 +636,20 @@ QString AdvancedFeatures::generateActionableRecommendations()
 {
     QString recs = "<b>&#128203; ACTIONABLE RECOMMENDATIONS FOR ADMINISTRATORS</b><br><br>";
 
-    QMap<QString, int> typeCounts;
     QMap<QString, int> pendingByType;
+    int agedCritical = 0;
 
     for (const Customer &c : customers_) {
-        typeCounts[c.reportType()]++;
-        if (c.status() == "Pending") {
+        const QString status = normalizeStatus(c.status());
+        if (status == "pending") {
             pendingByType[c.reportType()]++;
+        }
+
+        // Improvement 2 reflected in recommendations.
+        if (calculatePriorityLevel(c) == "CRITICAL" &&
+            normalizeStatus(c.status()) != "solved" &&
+            calculateReportAgeDays(c) > 7) {
+            ++agedCritical;
         }
     }
 
@@ -565,6 +662,10 @@ QString AdvancedFeatures::generateActionableRecommendations()
 
     if (illegalPending > 0) {
         recs += QString("<tr><td>&#128680;</td><td><b>URGENT:</b> Dispatch emergency cleanup team for %1 Illegal Dumping case(s)</td></tr>").arg(illegalPending);
+    }
+
+    if (agedCritical > 0) {
+        recs += QString("<tr><td>&#9200;</td><td><b>URGENT:</b> %1 report(s) older than 7 days are auto-marked CRITICAL. Escalate immediately.</td></tr>").arg(agedCritical);
     }
 
     if (overflowPending > 0) {
@@ -598,4 +699,96 @@ QString AdvancedFeatures::getPriorityColor(const QString &priority)
     if (priority == "MEDIUM") return "#ffcc00";
     if (priority == "LOW") return "#00cc66";
     return "#ffffff";
+}
+
+int AdvancedFeatures::calculatePriorityScore(const Customer &customer) const
+{
+    // Improvement 1: numeric score system (0-100) from type + status + age weights.
+    int typeWeight = 0;
+    if (customer.reportType() == "Illegal Dumping") {
+        typeWeight = 50;
+    } else if (customer.reportType() == "Garbage Overflow") {
+        typeWeight = 35;
+    } else if (customer.reportType() == "Missed Waste Collection") {
+        typeWeight = 20;
+    } else if (customer.reportType() == "Recycling Issue") {
+        typeWeight = 10;
+    }
+
+    const QString status = normalizeStatus(customer.status());
+    int statusWeight = 0;
+    if (status == "pending") {
+        statusWeight = 30;
+    } else if (status == "in progress") {
+        statusWeight = 15;
+    } else if (status == "rejected") {
+        statusWeight = 20;
+    } else if (status == "solved") {
+        statusWeight = 0;
+    }
+
+    const int daysOld = calculateReportAgeDays(customer);
+    int ageWeight = 0;
+    if (daysOld > 7) {
+        ageWeight = 20;
+    } else if (daysOld > 3) {
+        ageWeight = 10;
+    }
+
+    return qBound(0, typeWeight + statusWeight + ageWeight, 100);
+}
+
+int AdvancedFeatures::calculateReportAgeDays(const Customer &customer) const
+{
+    if (!customer.reportDate().isValid()) {
+        return 0;
+    }
+
+    const int days = customer.reportDate().daysTo(QDate::currentDate());
+    return days < 0 ? 0 : days;
+}
+
+QString AdvancedFeatures::calculatePriorityLevel(const Customer &customer) const
+{
+    const QString status = normalizeStatus(customer.status());
+    const int daysOld = calculateReportAgeDays(customer);
+
+    // Improvement 2: force CRITICAL when older than 7 days and not solved.
+    if (daysOld > 7 && status != "solved") {
+        return "CRITICAL";
+    }
+
+    const int score = calculatePriorityScore(customer);
+    if (score >= 75) {
+        return "CRITICAL";
+    }
+    if (score >= 50) {
+        return "HIGH";
+    }
+    if (score >= 25) {
+        return "MEDIUM";
+    }
+    return "LOW";
+}
+
+QString AdvancedFeatures::normalizeStatus(const QString &status) const
+{
+    QString normalized = status.trimmed().toLower();
+
+    // Improvement 6: map any legacy "resolved" value to "solved".
+    if (normalized == "resolved") {
+        return "solved";
+    }
+    if (normalized == "inprogress") {
+        return "in progress";
+    }
+    return normalized;
+}
+
+QString AdvancedFeatures::getPriorityIcon(const QString &priority) const
+{
+    if (priority == "CRITICAL") return "🔴";
+    if (priority == "HIGH") return "🟠";
+    if (priority == "MEDIUM") return "🟡";
+    return "🟢";
 }

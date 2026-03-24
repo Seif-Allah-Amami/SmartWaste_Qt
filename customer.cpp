@@ -38,6 +38,7 @@ Customer::Customer(int customerId,
 
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QMetaType>
 #include <QVariant>
 
 Customer::Customer()
@@ -77,10 +78,12 @@ QString Customer::status() const
 
 void Customer::setStatus(const QString &status)
 {
-    // Allowed values: "pending", "resolved", "in progress", "rejected"
-    static const QStringList allowed = {"pending", "resolved", "in progress", "rejected"};
-    if (allowed.contains(status)) {
-        status_ = status;
+    // Canonical values: "pending", "solved", "in progress", "rejected"
+    // Accept legacy "resolved" and map it to "solved".
+    const QString normalized = status.trimmed().toLower();
+    static const QStringList allowed = {"pending", "solved", "in progress", "rejected", "resolved"};
+    if (allowed.contains(normalized)) {
+        status_ = (normalized == "resolved") ? "solved" : normalized;
     } else {
         status_ = "pending"; // fallback to default if invalid
     }
@@ -196,7 +199,8 @@ bool Customer::add(QString *errorMessage) const
     if (employeeId_ > 0) {
         query.bindValue(":employee_id", employeeId_);
     } else {
-        query.bindValue(":employee_id", QVariant(QVariant::Int));
+        // Oracle expects a typed NULL for NUMBER columns.
+        query.bindValue(":employee_id", QVariant(QMetaType::fromType<int>()));
     }
     query.bindValue(":status", status_);
 
@@ -228,7 +232,8 @@ bool Customer::update(QString *errorMessage) const
     if (employeeId_ > 0) {
         query.bindValue(":employee_id", employeeId_);
     } else {
-        query.bindValue(":employee_id", QVariant(QVariant::Int));
+        // Oracle expects a typed NULL for NUMBER columns.
+        query.bindValue(":employee_id", QVariant(QMetaType::fromType<int>()));
     }
     query.bindValue(":status", status_);
     query.bindValue(":customer_id", customerId_);
@@ -327,7 +332,9 @@ void AddCustomerDialog::buildUi()
     emailEdit_->setPlaceholderText("Email");
 
     phoneEdit_ = new QLineEdit(this);
-    phoneEdit_->setPlaceholderText("Phone");
+    phoneEdit_->setPlaceholderText("+216 12345678");
+    phoneEdit_->setText("+216 ");
+    connect(phoneEdit_, &QLineEdit::textChanged, this, &AddCustomerDialog::onPhoneTextChanged);
 
     addressEdit_ = new QLineEdit(this);
     addressEdit_->setPlaceholderText("Address");
@@ -355,7 +362,7 @@ void AddCustomerDialog::buildUi()
     employeeIdEdit_->setSpecialValueText("(none)");
 
     statusEdit_ = new QComboBox(this);
-    statusEdit_->addItems({"pending", "in progress", "resolved", "rejected"});
+    statusEdit_->addItems({"pending", "in progress", "solved", "rejected"});
 
     formLayout->addRow("Customer ID", customerIdEdit_);
     formLayout->addRow("Name", nameEdit_);
@@ -390,7 +397,7 @@ void AddCustomerDialog::clearFields()
     customerIdEdit_->clear();
     nameEdit_->clear();
     emailEdit_->clear();
-    phoneEdit_->clear();
+    phoneEdit_->setText("+216 ");
     addressEdit_->clear();
     reportTypeEdit_->setCurrentIndex(0);
     reportDateEdit_->setDate(QDate::currentDate());
@@ -417,7 +424,12 @@ void AddCustomerDialog::setCustomer(const Customer &customer)
         reportTypeEdit_->setCurrentIndex(0);
     }
 
-    int statusIdx = statusEdit_->findText(customer.status());
+    QString statusText = customer.status().trimmed().toLower();
+    if (statusText == "resolved") {
+        statusText = "solved";
+    }
+
+    int statusIdx = statusEdit_->findText(statusText);
     if (statusIdx >= 0) {
         statusEdit_->setCurrentIndex(statusIdx);
     } else {
@@ -456,6 +468,19 @@ void AddCustomerDialog::onAccept()
     accept();
 }
 
+void AddCustomerDialog::onPhoneTextChanged(const QString &text)
+{
+    // Ensure +216 prefix is always present
+    if (!text.startsWith("+216")) {
+        phoneEdit_->blockSignals(true);
+        QString digits = text;
+        digits.remove(QRegularExpression("[^0-9]"));
+        phoneEdit_->setText("+216 " + digits);
+        phoneEdit_->setCursorPosition(phoneEdit_->text().length());
+        phoneEdit_->blockSignals(false);
+    }
+}
+
 bool AddCustomerDialog::validateInput()
 {
     if (customerIdEdit_->text().trimmed().isEmpty()) {
@@ -481,12 +506,16 @@ bool AddCustomerDialog::validateInput()
     }
 
     QString phone = phoneEdit_->text().trimmed();
-    if (!phone.isEmpty()) {
-        QRegularExpression phoneRegex(R"(^\+?[0-9\-\s]{7,20}$)");
-        if (!phoneRegex.match(phone).hasMatch()) {
-            QMessageBox::warning(this, "Validation", "Invalid phone number format. Allowed: digits, spaces, dashes, optional +, min 7 digits.");
-            return false;
-        }
+    if (phone.isEmpty()) {
+        QMessageBox::warning(this, "Validation", "Phone number is required.");
+        return false;
+    }
+
+    // Tunisia phone format: +216 followed by exactly 8 digits
+    QRegularExpression phoneRegex(R"(^\+216\s?\d{8}$)");
+    if (!phoneRegex.match(phone).hasMatch()) {
+        QMessageBox::warning(this, "Validation", "Invalid phone format.\nRequired: +216 followed by 8 digits\nExample: +216 12345678");
+        return false;
     }
 
     return true;

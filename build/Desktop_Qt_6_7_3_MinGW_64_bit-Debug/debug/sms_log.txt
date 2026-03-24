@@ -1,0 +1,453 @@
+========================================
+Timestamp: 2026-03-05 20:28:56
+Phone: 58955446
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:28:56
+Phone: 28564775
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:28:56
+Phone: 58926446
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:28:56
+Phone: 58955565
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:28:56
+Phone: 98575013
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:29:11
+Phone: 58955446
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:29:11
+Phone: 28564775
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:29:11
+Phone: 58926446
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:29:11
+Phone: 58955565
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:29:11
+Phone: 98575013
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:30:14
+Phone: 58955446
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:30:14
+Phone: 28564775
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:30:14
+Phone: 58926446
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:30:14
+Phone: 58955565
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:30:14
+Phone: 98575013
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:34:43
+Phone: 58955446
+Customer: eyaA
+Status: in progress
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:34:43
+Phone: 28564775
+Customer: saif
+Status: resolved
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:34:43
+Phone: 58926446
+Customer: saaida
+Status: in progress
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:34:43
+Phone: 58955565
+Customer: rayen
+Status: resolved
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:34:43
+Phone: 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:45:26
+To: eyabenyder@gmail.com
+Customer: eyaA
+Status: in progress
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:45:26
+To: saif@gmail.com
+Customer: saif
+Status: resolved
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:45:26
+To: didazarrouk@gmail.com
+Customer: saaida
+Status: in progress
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:45:26
+To: rayen@gmail.com
+Customer: rayen
+Status: resolved
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:45:26
+To: m@gmail.com
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:01
+To: 58955446
+Customer: eyaA
+Status: in progress
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+Method: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:01
+To: 28564775
+Customer: saif
+Status: resolved
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+Method: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:01
+To: 58926446
+Customer: saaida
+Status: in progress
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+Method: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:01
+To: 58955565
+Customer: rayen
+Status: resolved
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+Method: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:01
+To: 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+Method: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:28
+To: 58955446
+Customer: eyaA
+Status: in progress
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+Method: Email-to-SMS
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:28
+To: 28564775
+Customer: saif
+Status: resolved
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+Method: Email-to-SMS
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:28
+To: 58926446
+Customer: saaida
+Status: in progress
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+Method: Email-to-SMS
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:28
+To: 58955565
+Customer: rayen
+Status: resolved
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+Method: Email-to-SMS
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:28
+To: 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+Method: Email-to-SMS
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:55
+To: eyabenyder@gmail.com
+Customer: eyaA
+Status: in progress
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:55
+To: saif@gmail.com
+Customer: saif
+Status: resolved
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:55
+To: didazarrouk@gmail.com
+Customer: saaida
+Status: in progress
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:55
+To: rayen@gmail.com
+Customer: rayen
+Status: resolved
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:46:55
+To: m@gmail.com
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:51:25
+To: 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali,
+
+Your report about Illegal Dumping could not be processed.
+Please check the details and try again.
+
+Best regards,
+SmartWaste Team
+Method: SMS Gateway
+========================================
+
+========================================
+Timestamp: 2026-03-05 20:55:57
+To: mahdibali05@gmail.com
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali,
+
+Your report about Illegal Dumping could not be processed.
+Please check the details and try again.
+
+Best regards,
+SmartWaste Team
+Method: Email
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:09:28
+To: 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details. - SmartWaste
+Result: Sent
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:16:55
+Phone: 58955446
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once it is resolved.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:16:55
+Phone: 28564775
+Message: Hello saif, your report about Missed Waste Collection has been resolved. Thank you for helping improve the city.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:16:55
+Phone: 58926446
+Message: Hello saaida, your report about Missed Waste Collection is being processed. We will notify you once it is resolved.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:16:55
+Phone: 58955565
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you for helping improve the city.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:16:55
+Phone: 98575013
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details and try again.
+Status: Simulated
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:21:33
+To: 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details. - SmartWaste
+Result: Sent
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:43:28
+To: +216 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details. - SmartWaste
+Result: Sent
+========================================
+
+========================================
+Timestamp: 2026-03-05 21:43:34
+To: +216 58955565
+Customer: rayen
+Status: resolved
+Message: Hello rayen, your report about Recycling Issue has been resolved. Thank you! - SmartWaste
+Result: Sent
+========================================
+
+========================================
+Timestamp: 2026-03-06 08:47:55
+To: +216 58955446
+Customer: eyaA
+Status: in progress
+Message: Hello eyaA, your report about Garbage Overflow is being processed. We will notify you once resolved. - SmartWaste
+Result: Sent
+========================================
+
+========================================
+Timestamp: 2026-03-17 00:02:55
+To: +216 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details. - SmartWaste
+Result: Sent
+========================================
+
+========================================
+Timestamp: 2026-03-17 00:03:04
+To: +216 98575013
+Customer: mahdi bali
+Status: rejected
+Message: Hello mahdi bali, your report about Illegal Dumping could not be processed. Please check the details. - SmartWaste
+Result: Sent
+========================================
+

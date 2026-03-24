@@ -108,7 +108,6 @@ void MainWindow::onCustomerAIClicked()
     dialog.exec();
 }
 
-
 void MainWindow::onReportStatusClicked()
 {
     // Count report types

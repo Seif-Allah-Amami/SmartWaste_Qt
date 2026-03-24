@@ -41,6 +41,13 @@ private:
     int calculateTrendScore(const QString &reportType);
     QString getPriorityColor(const QString &priority);
 
+    // Improvement 1 + 2 helpers: numeric score and date-based critical escalation.
+    int calculatePriorityScore(const Customer &customer) const;
+    int calculateReportAgeDays(const Customer &customer) const;
+    QString calculatePriorityLevel(const Customer &customer) const;
+    QString normalizeStatus(const QString &status) const;
+    QString getPriorityIcon(const QString &priority) const;
+
     QList<Customer> customers_;
 
     // UI Components

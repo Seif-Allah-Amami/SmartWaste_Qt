@@ -80,7 +80,7 @@ private:
     QDate reportDate_;
     double satisfactionScore_;
     int employeeId_;
-    // Status attribute: allowed values are "pending", "resolved", "in progress", "rejected"
+    // Status attribute: canonical values are "pending", "solved", "in progress", "rejected"
     QString status_;
 };
 
@@ -103,6 +103,7 @@ public:
 private slots:
     void onAccept();
     void onClearClicked();
+    void onPhoneTextChanged(const QString &text);
 
 private:
     void buildUi();

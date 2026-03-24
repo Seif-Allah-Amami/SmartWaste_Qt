@@ -26,15 +26,14 @@ private slots:
     void onExportPDFClicked();
     void onReportStatusClicked();
     void onCustomerAIClicked();
-
-private:
-    Ui::MainWindow *ui;
-    QList<Customer> allCustomers_; // Store all customers for dynamic search
-    void updateCustomersTable(const QList<Customer> &customers);
-
-private slots:
     void onSearchBox5TextChanged(const QString &text);
     void onSortComboBox5Changed(int index);
     void onClearSelection5Clicked();
+
+private:
+    Ui::MainWindow *ui;
+    QList<Customer> allCustomers_;
+    void updateCustomersTable(const QList<Customer> &customers);
 };
+
 #endif // MAINWINDOW_H
