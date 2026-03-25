@@ -9,7 +9,6 @@ Customer::Customer(int customerId,
                    const QString &address,
                    const QString &reportType,
                    const QDate &reportDate,
-                   double satisfactionScore,
                    int employeeId)
     : customerId_(customerId),
     name_(name),
@@ -18,7 +17,6 @@ Customer::Customer(int customerId,
     address_(address),
     reportType_(reportType),
     reportDate_(reportDate),
-    satisfactionScore_(satisfactionScore),
     employeeId_(employeeId),
     status_("pending")
 {
@@ -26,7 +24,6 @@ Customer::Customer(int customerId,
 
 #include <QDateEdit>
 #include <QDialogButtonBox>
-#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QIntValidator>
 #include <QLineEdit>
@@ -43,7 +40,6 @@ Customer::Customer(int customerId,
 
 Customer::Customer()
     : customerId_(0),
-    satisfactionScore_(0.0),
     employeeId_(0),
     status_("pending")
 {
@@ -56,7 +52,6 @@ Customer::Customer(int customerId,
                    const QString &address,
                    const QString &reportType,
                    const QDate &reportDate,
-                   double satisfactionScore,
                    int employeeId,
                    const QString &status)
     : customerId_(customerId),
@@ -66,7 +61,6 @@ Customer::Customer(int customerId,
     address_(address),
     reportType_(reportType),
     reportDate_(reportDate),
-    satisfactionScore_(satisfactionScore),
     employeeId_(employeeId),
     status_(status)
 {
@@ -159,16 +153,6 @@ void Customer::setReportDate(const QDate &reportDate)
     reportDate_ = reportDate;
 }
 
-double Customer::satisfactionScore() const
-{
-    return satisfactionScore_;
-}
-
-void Customer::setSatisfactionScore(double satisfactionScore)
-{
-    satisfactionScore_ = satisfactionScore;
-}
-
 int Customer::employeeId() const
 {
     return employeeId_;
@@ -184,9 +168,9 @@ bool Customer::add(QString *errorMessage) const
     QSqlQuery query;
     query.prepare(
         "INSERT INTO CUSTOMER (CUSTOMER_ID, NAME, EMAIL, PHONE, ADDRESS, REPORT_TYPE, REPORT_DATE, "
-        "SATISFACTION_SCORE, EMPLOYEE_ID, STATUS) "
+        "EMPLOYEE_ID, STATUS) "
         "VALUES (:customer_id, :name, :email, :phone, :address, :report_type, :report_date, "
-        ":satisfaction_score, :employee_id, :status)");
+        ":employee_id, :status)");
 
     query.bindValue(":customer_id", customerId_);
     query.bindValue(":name", name_);
@@ -195,7 +179,6 @@ bool Customer::add(QString *errorMessage) const
     query.bindValue(":address", address_);
     query.bindValue(":report_type", reportType_);
     query.bindValue(":report_date", reportDate_);
-    query.bindValue(":satisfaction_score", satisfactionScore_);
     if (employeeId_ > 0) {
         query.bindValue(":employee_id", employeeId_);
     } else {
@@ -219,7 +202,7 @@ bool Customer::update(QString *errorMessage) const
     QSqlQuery query;
     query.prepare(
         "UPDATE CUSTOMER SET NAME = :name, EMAIL = :email, PHONE = :phone, ADDRESS = :address, "
-        "REPORT_TYPE = :report_type, REPORT_DATE = :report_date, SATISFACTION_SCORE = :satisfaction_score, "
+        "REPORT_TYPE = :report_type, REPORT_DATE = :report_date, "
         "EMPLOYEE_ID = :employee_id, STATUS = :status WHERE CUSTOMER_ID = :customer_id");
 
     query.bindValue(":name", name_);
@@ -228,7 +211,6 @@ bool Customer::update(QString *errorMessage) const
     query.bindValue(":address", address_);
     query.bindValue(":report_type", reportType_);
     query.bindValue(":report_date", reportDate_);
-    query.bindValue(":satisfaction_score", satisfactionScore_);
     if (employeeId_ > 0) {
         query.bindValue(":employee_id", employeeId_);
     } else {
@@ -270,7 +252,7 @@ bool Customer::fetchAll(QList<Customer> &out, QString *errorMessage)
     QSqlQuery query;
     query.prepare(
         "SELECT CUSTOMER_ID, NAME, EMAIL, PHONE, ADDRESS, REPORT_TYPE, REPORT_DATE, "
-        "SATISFACTION_SCORE, EMPLOYEE_ID, STATUS FROM CUSTOMER");
+        "EMPLOYEE_ID, STATUS FROM CUSTOMER");
 
     if (!query.exec()) {
         if (errorMessage) {
@@ -288,9 +270,8 @@ bool Customer::fetchAll(QList<Customer> &out, QString *errorMessage)
             query.value(4).toString(),
             query.value(5).toString(),
             query.value(6).toDate(),
-            query.value(7).toDouble(),
-            query.value(8).toInt(),
-            query.value(9).toString());
+            query.value(7).toInt(),
+            query.value(8).toString());
         out.append(customer);
     }
 
@@ -306,7 +287,6 @@ AddCustomerDialog::AddCustomerDialog(QWidget *parent)
     addressEdit_(nullptr),
     reportTypeEdit_(nullptr),
     reportDateEdit_(nullptr),
-    satisfactionScoreEdit_(nullptr),
     employeeIdEdit_(nullptr),
     buttonBox_(nullptr),
     isEdit_(false)
@@ -329,7 +309,7 @@ void AddCustomerDialog::buildUi()
     nameEdit_->setPlaceholderText("Full name");
 
     emailEdit_ = new QLineEdit(this);
-    emailEdit_->setPlaceholderText("Email");
+    emailEdit_->setPlaceholderText("example@domain.com");
 
     phoneEdit_ = new QLineEdit(this);
     phoneEdit_->setPlaceholderText("+216 12345678");
@@ -352,11 +332,6 @@ void AddCustomerDialog::buildUi()
     reportDateEdit_->setDisplayFormat("yyyy-MM-dd");
     reportDateEdit_->setDate(QDate::currentDate());
 
-    satisfactionScoreEdit_ = new QDoubleSpinBox(this);
-    satisfactionScoreEdit_->setRange(0.0, 100.0);
-    satisfactionScoreEdit_->setDecimals(2);
-    satisfactionScoreEdit_->setSingleStep(1.0);
-
     employeeIdEdit_ = new QSpinBox(this);
     employeeIdEdit_->setRange(0, 1000000000);
     employeeIdEdit_->setSpecialValueText("(none)");
@@ -371,7 +346,6 @@ void AddCustomerDialog::buildUi()
     formLayout->addRow("Address", addressEdit_);
     formLayout->addRow("Report Type", reportTypeEdit_);
     formLayout->addRow("Report Date", reportDateEdit_);
-    formLayout->addRow("Satisfaction Score", satisfactionScoreEdit_);
     formLayout->addRow("Employee ID", employeeIdEdit_);
     formLayout->addRow("Status", statusEdit_);
 
@@ -401,7 +375,6 @@ void AddCustomerDialog::clearFields()
     addressEdit_->clear();
     reportTypeEdit_->setCurrentIndex(0);
     reportDateEdit_->setDate(QDate::currentDate());
-    satisfactionScoreEdit_->setValue(0.0);
     employeeIdEdit_->setValue(0);
     statusEdit_->setCurrentIndex(0);
 }
@@ -439,8 +412,6 @@ void AddCustomerDialog::setCustomer(const Customer &customer)
     if (customer.reportDate().isValid()) {
         reportDateEdit_->setDate(customer.reportDate());
     }
-
-    satisfactionScoreEdit_->setValue(customer.satisfactionScore());
     employeeIdEdit_->setValue(customer.employeeId());
 }
 
@@ -454,7 +425,6 @@ Customer AddCustomerDialog::customer() const
         addressEdit_->text().trimmed(),
         reportTypeEdit_->currentText().trimmed(),
         reportDateEdit_->date(),
-        satisfactionScoreEdit_->value(),
         employeeIdEdit_->value(),
         statusEdit_->currentText().trimmed());
 }
@@ -499,7 +469,9 @@ bool AddCustomerDialog::validateInput()
         return false;
     }
 
-    QRegularExpression emailRegex(R"(^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$)");
+    // Basic strict email validation: disallow empty local-part and domain labels that start with '.' or '-'.
+    QRegularExpression emailRegex(
+        R"(^[A-Za-z0-9](?:[A-Za-z0-9._%+-]{0,62}[A-Za-z0-9])?@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$)");
     if (!emailRegex.match(email).hasMatch()) {
         QMessageBox::warning(this, "Validation", "Invalid email format.");
         return false;

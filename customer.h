@@ -21,7 +21,6 @@ public:
              const QString &address,
              const QString &reportType,
              const QDate &reportDate,
-             double satisfactionScore,
              int employeeId);
     Customer(int customerId,
              const QString &name,
@@ -30,7 +29,6 @@ public:
              const QString &address,
              const QString &reportType,
              const QDate &reportDate,
-             double satisfactionScore,
              int employeeId,
              const QString &status);
 
@@ -55,9 +53,6 @@ public:
     QDate reportDate() const;
     void setReportDate(const QDate &reportDate);
 
-    double satisfactionScore() const;
-    void setSatisfactionScore(double satisfactionScore);
-
     int employeeId() const;
     void setEmployeeId(int employeeId);
 
@@ -78,7 +73,6 @@ private:
     QString address_;
     QString reportType_;
     QDate reportDate_;
-    double satisfactionScore_;
     int employeeId_;
     // Status attribute: canonical values are "pending", "solved", "in progress", "rejected"
     QString status_;
@@ -86,7 +80,6 @@ private:
 
 class QLineEdit;
 class QDateEdit;
-class QDoubleSpinBox;
 class QSpinBox;
 class QDialogButtonBox;
 
@@ -117,7 +110,6 @@ private:
     QLineEdit *addressEdit_;
     QComboBox *reportTypeEdit_;
     QDateEdit *reportDateEdit_;
-    QDoubleSpinBox *satisfactionScoreEdit_;
     QSpinBox *employeeIdEdit_;
     QComboBox *statusEdit_;
     QDialogButtonBox *buttonBox_;

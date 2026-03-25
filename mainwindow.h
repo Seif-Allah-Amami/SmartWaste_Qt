@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "customer.h"
 
 QT_BEGIN_NAMESPACE
@@ -33,6 +34,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QList<Customer> allCustomers_;
+    QTimer *restoreRearchiveTimer_;
     void updateCustomersTable(const QList<Customer> &customers);
 };
 

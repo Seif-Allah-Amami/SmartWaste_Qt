@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QList>
+#include <QMap>
+#include <QSet>
 #include "customer.h"
 
 class QTextEdit;
@@ -31,13 +33,16 @@ private slots:
     void onSmartSortByPriority();
     void onDeleteSelectedReport();
     void onAutoExportCsvBackup();
+    void onManageArchivedReports();
 
 protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
     void setupUI();
+    void syncArchivedStateFromStorage();
     void refreshDashboardAndTable();
+    void autoArchiveOldReports();
     void refreshStatisticsPanel();
     void refreshReportsTable();
     void refreshStatusBadges();
@@ -47,6 +52,11 @@ private:
     bool isDuplicateCustomer(const Customer &customer) const;
     bool isBlacklistedCustomer(const Customer &customer) const;
     void writeCsvBackup(const QString &filePath) const;
+    bool updateArchiveStateInStorage(int customerId,
+                                     bool archived,
+                                     const QString &restoreStatus,
+                                     const QDate &archiveDate,
+                                     QString *errorMessage = nullptr) const;
 
     void addMessage(const QString &message, bool isUser);
     QString processUserMessage(const QString &message);
@@ -102,6 +112,10 @@ private:
 
     bool prioritySortEnabled_;
     int overdueThresholdDays_;
+    QSet<int> archivedCustomerIds_;
+    QSet<int> manuallyRestoredCustomerIds_;
+    QMap<int, QDate> archiveDates_;
+    QMap<int, QString> archivedPreviousStatus_;
 };
 
 #endif // ADVANCEDFEATURES_H

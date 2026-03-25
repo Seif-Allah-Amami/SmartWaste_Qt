@@ -21,6 +21,8 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSplitter>
+#include <QSqlQuery>
+#include <QSqlError>
 #include <QSizePolicy>
 #include <QStyle>
 #include <QTableWidget>
@@ -98,7 +100,6 @@ AdvancedFeatures::AdvancedFeatures(const QList<Customer> &customers, QWidget *pa
     }
 
     refreshDashboardAndTable();
-    showOverduePendingAlert();
 
     addMessage("Hello! I'm your AI Assistant for SmartWaste. I can help you with:<br><br>"
                "<b>&#128202; AI Priority Detection</b> - Analyze reports and assign priority levels<br>"
@@ -463,6 +464,278 @@ void AdvancedFeatures::onAutoExportCsvBackup()
     writeCsvBackup(filePath);
 }
 
+void AdvancedFeatures::syncArchivedStateFromStorage()
+{
+    QSqlQuery query;
+    if (query.exec("SELECT CUSTOMER_ID, STATUS, ARCHIVE_DATE FROM CUSTOMER WHERE ARCHIVED = 1")) {
+        while (query.next()) {
+            const int id = query.value(0).toInt();
+            const QString preservedStatus = normalizeStatus(query.value(1).toString());
+            const QDate archiveDate = query.value(2).toDate();
+
+            archivedCustomerIds_.insert(id);
+            archivedPreviousStatus_[id] = preservedStatus.isEmpty() ? "pending" : preservedStatus;
+            archiveDates_[id] = archiveDate.isValid() ? archiveDate : QDate::currentDate();
+        }
+    }
+}
+
+void AdvancedFeatures::onManageArchivedReports()
+{
+    QDialog dialog(parentWidget());
+    dialog.setWindowTitle("Archived Reports");
+    dialog.resize(980, 560);
+    dialog.setModal(true);
+
+    QVBoxLayout *layout = new QVBoxLayout(&dialog);
+    QLabel *summaryLabel = new QLabel(&dialog);
+    QLineEdit *searchEdit = new QLineEdit(&dialog);
+    searchEdit->setPlaceholderText("Search archived by Name / Email / Type...");
+    searchEdit->setClearButtonEnabled(true);
+
+    QComboBox *statusFilterCombo = new QComboBox(&dialog);
+    statusFilterCombo->addItems({"All Status", "pending", "in progress", "solved", "rejected"});
+
+    QComboBox *sortStatusCombo = new QComboBox(&dialog);
+    sortStatusCombo->addItems({"Sort: Date (Newest)", "Sort: Status (A-Z)", "Sort: Status (Z-A)"});
+
+    QTableWidget *table = new QTableWidget(&dialog);
+    table->setColumnCount(6);
+    table->setHorizontalHeaderLabels({"Report ID", "Customer", "Type", "Previous Status", "Archive Date", "Age (Days)"});
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->horizontalHeader()->setStretchLastSection(true);
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    auto repopulateTable = [this, table, summaryLabel, searchEdit, statusFilterCombo, sortStatusCombo]() {
+        table->setRowCount(0);
+        const QString query = searchEdit->text().trimmed();
+        const QString statusFilter = statusFilterCombo->currentText();
+        const QString sortMode = sortStatusCombo->currentText();
+        int row = 0;
+        int totalArchived = 0;
+
+        for (const Customer &c : customers_) {
+            const int id = c.customerId();
+            const bool isArchived = archivedCustomerIds_.contains(id) || normalizeStatus(c.status()) == "archived";
+            if (!isArchived) {
+                continue;
+            }
+            ++totalArchived;
+
+            if (!archivedCustomerIds_.contains(id)) {
+                archivedCustomerIds_.insert(id);
+            }
+            if (!archiveDates_.contains(id)) {
+                archiveDates_[id] = QDate::currentDate();
+            }
+            if (!archivedPreviousStatus_.contains(id)) {
+                archivedPreviousStatus_[id] = "pending";
+            }
+
+            const QString previousStatus = normalizeStatus(archivedPreviousStatus_.value(id, "pending"));
+            const bool statusOk = (statusFilter == "All Status") || (previousStatus == statusFilter);
+            if (!statusOk) {
+                continue;
+            }
+
+            const QString archiveDateText = archiveDates_.value(id).isValid()
+                                                ? archiveDates_.value(id).toString("yyyy-MM-dd")
+                                                : "-";
+            const QString ageText = QString::number(calculateReportAgeDays(c));
+            const bool searchOk = query.isEmpty()
+                                  || QString::number(id).contains(query, Qt::CaseInsensitive)
+                                  || c.name().contains(query, Qt::CaseInsensitive)
+                                  || c.email().contains(query, Qt::CaseInsensitive)
+                                  || c.reportType().contains(query, Qt::CaseInsensitive)
+                                  || previousStatus.contains(query, Qt::CaseInsensitive)
+                                  || archiveDateText.contains(query, Qt::CaseInsensitive)
+                                  || ageText.contains(query, Qt::CaseInsensitive);
+            if (!searchOk) {
+                continue;
+            }
+
+            table->insertRow(row);
+            table->setItem(row, 0, new QTableWidgetItem(QString::number(id)));
+            table->setItem(row, 1, new QTableWidgetItem(c.name()));
+            table->setItem(row, 2, new QTableWidgetItem(c.reportType()));
+            table->setItem(row, 3, new QTableWidgetItem(archivedPreviousStatus_.value(id, "pending")));
+            table->setItem(row, 4, new QTableWidgetItem(archiveDateText));
+            table->setItem(row, 5, new QTableWidgetItem(ageText));
+            ++row;
+        }
+
+        if (sortMode == "Sort: Status (A-Z)") {
+            table->sortItems(3, Qt::AscendingOrder);
+        } else if (sortMode == "Sort: Status (Z-A)") {
+            table->sortItems(3, Qt::DescendingOrder);
+        } else {
+            table->sortItems(4, Qt::DescendingOrder);
+        }
+        summaryLabel->setText(QString("Archived reports: %1 | Visible: %2").arg(totalArchived).arg(table->rowCount()));
+    };
+
+    layout->addWidget(summaryLabel);
+    QHBoxLayout *topFilterLayout = new QHBoxLayout();
+    topFilterLayout->addWidget(searchEdit, 1);
+    topFilterLayout->addWidget(statusFilterCombo);
+    topFilterLayout->addWidget(sortStatusCombo);
+    layout->addLayout(topFilterLayout);
+    repopulateTable();
+
+    if (table->rowCount() == 0) {
+        QMessageBox::information(&dialog,
+                                 "Archived Reports",
+                                 "No archived reports found yet.\n\nAuto-archive rule: report 30+ days old.");
+    }
+
+    QHBoxLayout *buttonsLayout = new QHBoxLayout();
+    QPushButton *deleteButton = new QPushButton("Delete Selected", &dialog);
+    QPushButton *restoreButton = new QPushButton("Restore Selected", &dialog);
+    QPushButton *closeButton = new QPushButton("Close", &dialog);
+    deleteButton->setStyleSheet(
+        "QPushButton {"
+        "    background-color: #3a1010;"
+        "    border: 1px solid #ff5a5a;"
+        "    color: #ffb3b3;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: #5a1515;"
+        "    border: 1px solid #ff8080;"
+        "    color: #ffe0e0;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: #2a0b0b;"
+        "}"
+        "QPushButton:disabled {"
+        "    background-color: #1f1f1f;"
+        "    border: 1px solid #555555;"
+        "    color: #777777;"
+        "}");
+    deleteButton->setEnabled(false);
+    restoreButton->setEnabled(false);
+    buttonsLayout->addWidget(deleteButton);
+    buttonsLayout->addWidget(restoreButton);
+    buttonsLayout->addStretch();
+    buttonsLayout->addWidget(closeButton);
+
+    layout->addWidget(table);
+    layout->addLayout(buttonsLayout);
+
+    connect(searchEdit, &QLineEdit::textChanged, &dialog, [repopulateTable]() {
+        repopulateTable();
+    });
+    connect(statusFilterCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), &dialog, [repopulateTable]() {
+        repopulateTable();
+    });
+    connect(sortStatusCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), &dialog, [repopulateTable]() {
+        repopulateTable();
+    });
+    connect(table, &QTableWidget::itemSelectionChanged, &dialog, [table, restoreButton, deleteButton]() {
+        const bool hasSelection = table->currentRow() >= 0;
+        restoreButton->setEnabled(hasSelection);
+        deleteButton->setEnabled(hasSelection);
+    });
+
+    connect(deleteButton, &QPushButton::clicked, &dialog, [this, &dialog, table, repopulateTable]() {
+        const int row = table->currentRow();
+        if (row < 0) {
+            QMessageBox::information(&dialog, "Delete Report", "Select an archived report first.");
+            return;
+        }
+
+        const int id = table->item(row, 0) ? table->item(row, 0)->text().toInt() : -1;
+        if (id < 0) {
+            QMessageBox::warning(&dialog, "Delete Report", "Invalid report selected.");
+            return;
+        }
+
+        const QString confirmText = QString("Delete archived report #%1 permanently?").arg(id);
+        if (QMessageBox::question(&dialog,
+                                  "Confirm Delete",
+                                  confirmText,
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No) != QMessageBox::Yes) {
+            return;
+        }
+
+        QString error;
+        if (!Customer::remove(id, &error)) {
+            QMessageBox::warning(&dialog, "Delete Report", "Failed to delete report.\n" + error);
+            return;
+        }
+
+        customers_.erase(std::remove_if(customers_.begin(), customers_.end(), [id](const Customer &c) {
+                             return c.customerId() == id;
+                         }),
+                         customers_.end());
+        archivedCustomerIds_.remove(id);
+        archiveDates_.remove(id);
+        archivedPreviousStatus_.remove(id);
+        manuallyRestoredCustomerIds_.remove(id);
+
+        refreshDashboardAndTable();
+        repopulateTable();
+        QMessageBox::information(&dialog, "Delete Report", "Archived report deleted successfully.");
+    });
+
+    connect(restoreButton, &QPushButton::clicked, &dialog, [this, &dialog, table, repopulateTable]() {
+        const int row = table->currentRow();
+        if (row < 0) {
+            QMessageBox::information(&dialog, "Restore Report", "Select an archived report first.");
+            return;
+        }
+
+        const int id = table->item(row, 0) ? table->item(row, 0)->text().toInt() : -1;
+        if (id < 0) {
+            QMessageBox::warning(&dialog, "Restore Report", "Invalid report selected.");
+            return;
+        }
+
+        const QString details = QString("Restore report #%1?").arg(id);
+        if (QMessageBox::question(&dialog,
+                                  "Confirm Restore",
+                                  details,
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No) != QMessageBox::Yes) {
+            return;
+        }
+
+        const QString restoreStatus = archivedPreviousStatus_.value(id, "pending");
+
+        QString archiveError;
+        if (!updateArchiveStateInStorage(id, false, restoreStatus, QDate(), &archiveError)) {
+            const QString details = archiveError.isEmpty()
+            ? "Failed to update database for selected report."
+            : QString("Failed to update database for selected report.\n\n%1").arg(archiveError);
+            QMessageBox::warning(&dialog, "Restore Report", details);
+            return;
+        }
+
+        // Update the customer in the customers_ list
+        for (int i = 0; i < customers_.size(); ++i) {
+            if (customers_[i].customerId() == id) {
+                customers_[i].setStatus(restoreStatus);
+                break;
+            }
+        }
+
+        manuallyRestoredCustomerIds_.insert(id);
+        archivedCustomerIds_.remove(id);
+        archiveDates_.remove(id);
+        archivedPreviousStatus_.remove(id);
+
+        refreshDashboardAndTable();
+        repopulateTable();
+        QMessageBox::information(&dialog, "Restore Report", "Report restored successfully.");
+    });
+
+    connect(closeButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+
+    dialog.exec();
+}
+
 void AdvancedFeatures::writeCsvBackup(const QString &filePath) const
 {
     QFile file(filePath);
@@ -488,10 +761,68 @@ void AdvancedFeatures::writeCsvBackup(const QString &filePath) const
 
 void AdvancedFeatures::refreshDashboardAndTable()
 {
+    syncArchivedStateFromStorage();
+    autoArchiveOldReports();
     g_autoExportCustomers = customers_;
     refreshStatisticsPanel();
     refreshStatusBadges();
     refreshReportsTable();
+}
+
+void AdvancedFeatures::autoArchiveOldReports()
+{
+    int archivedNow = 0;
+    const QDate today = QDate::currentDate();
+
+    QSet<int> restoredIds;
+    QSqlQuery restoredQuery;
+    if (restoredQuery.exec("SELECT CUSTOMER_ID FROM CUSTOMER WHERE ARCHIVED = 0 AND ARCHIVE_DATE IS NOT NULL")) {
+        while (restoredQuery.next()) {
+            restoredIds.insert(restoredQuery.value(0).toInt());
+        }
+    }
+
+    for (int i = 0; i < customers_.size(); ++i) {
+        Customer &c = customers_[i];
+        const int id = c.customerId();
+        const QString status = normalizeStatus(c.status());
+
+        if (status == "archived") {
+            manuallyRestoredCustomerIds_.remove(id);
+        }
+
+        if (status == "archived") {
+            archivedCustomerIds_.insert(id);
+            if (!archiveDates_.contains(id)) {
+                archiveDates_[id] = today;
+            }
+            if (!archivedPreviousStatus_.contains(id)) {
+                archivedPreviousStatus_[id] = "pending";
+            }
+            continue;
+        }
+
+        if (archivedCustomerIds_.contains(id)) {
+            continue;
+        }
+
+        if (manuallyRestoredCustomerIds_.contains(id) || restoredIds.contains(id)) {
+            continue;
+        }
+
+        if (status == "rejected" || calculateReportAgeDays(c) >= 30) {
+            if (updateArchiveStateInStorage(id, true, QString(), today)) {
+                archivedCustomerIds_.insert(id);
+                archiveDates_[id] = today;
+                archivedPreviousStatus_[id] = status;
+                ++archivedNow;
+            }
+        }
+    }
+
+    if (archivedNow > 0) {
+        addMessage(QString("Auto-archived %1 report(s): rejected or 30+ days old.").arg(archivedNow), false);
+    }
 }
 
 void AdvancedFeatures::refreshStatisticsPanel()
@@ -549,6 +880,9 @@ void AdvancedFeatures::refreshStatusBadges()
     int rejected = 0;
 
     for (const Customer &c : customers_) {
+        if (archivedCustomerIds_.contains(c.customerId()) || normalizeStatus(c.status()) == "archived") {
+            continue;
+        }
         const QString s = normalizeStatus(c.status());
         if (s == "pending") {
             ++pending;
@@ -578,6 +912,9 @@ QList<Customer> AdvancedFeatures::getFilteredCustomers() const
     const QDate toDate = toDateFilterEdit_->date();
 
     for (const Customer &c : customers_) {
+        if (archivedCustomerIds_.contains(c.customerId()) || normalizeStatus(c.status()) == "archived") {
+            continue;
+        }
         const QString status = normalizeStatus(c.status());
         const bool searchOk = text.isEmpty()
                               || QString::number(c.customerId()).contains(text, Qt::CaseInsensitive)
@@ -1428,4 +1765,60 @@ QString AdvancedFeatures::getPriorityIcon(const QString &priority) const
     if (priority == "HIGH") return "🟠";
     if (priority == "MEDIUM") return "🟡";
     return "🟢";
+}
+
+bool AdvancedFeatures::updateArchiveStateInStorage(int customerId,
+                                                   bool archived,
+                                                   const QString &restoreStatus,
+                                                   const QDate &archiveDate,
+                                                   QString *errorMessage) const
+{
+    Q_UNUSED(restoreStatus);
+
+    if (errorMessage) {
+        errorMessage->clear();
+    }
+
+    QSqlQuery query;
+    if (archived) {
+        query.prepare("UPDATE CUSTOMER SET ARCHIVED = 1, ARCHIVE_DATE = :archive_date WHERE CUSTOMER_ID = :customer_id");
+        query.bindValue(":archive_date", archiveDate);
+        query.bindValue(":customer_id", customerId);
+        if (query.exec()) {
+            return true;
+        }
+
+        if (errorMessage) {
+            *errorMessage = query.lastError().text();
+        }
+
+        // Fallback for schemas where ARCHIVE_DATE is missing or restricted.
+        QSqlQuery fallback;
+        fallback.prepare("UPDATE CUSTOMER SET ARCHIVED = 1 WHERE CUSTOMER_ID = :customer_id");
+        fallback.bindValue(":customer_id", customerId);
+        if (fallback.exec()) {
+            return true;
+        }
+
+        if (errorMessage) {
+            const QString fallbackErr = fallback.lastError().text();
+            if (!fallbackErr.isEmpty()) {
+                *errorMessage = QString("%1\nFallback failed: %2").arg(*errorMessage, fallbackErr);
+            }
+        }
+        return false;
+    }
+
+    // Keep a restore timestamp so restored reports can be re-archived after the timeout.
+    query.prepare("UPDATE CUSTOMER SET ARCHIVED = 0, ARCHIVE_DATE = :restore_time WHERE CUSTOMER_ID = :customer_id");
+    query.bindValue(":restore_time", QDateTime::currentDateTime());
+    query.bindValue(":customer_id", customerId);
+    if (query.exec()) {
+        return true;
+    }
+
+    if (errorMessage) {
+        *errorMessage = query.lastError().text();
+    }
+    return false;
 }

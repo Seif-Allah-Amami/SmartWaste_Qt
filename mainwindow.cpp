@@ -4,17 +4,83 @@
 #include "advancedfeatures.h"
 #include <QAbstractItemView>
 #include <QDate>
+#include <QDateTime>
 #include <QMessageBox>
+#include <QSet>
+#include <QSqlQuery>
 #include <QTableWidgetItem>
 
 #include <QFileDialog>
 #include <QPdfWriter>
 #include <QPainter>
+#include <QMetaObject>
 
 // QtCharts includes
 #include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QChart>
+
+namespace {
+QString normalizeStatusValue(const QString &status)
+{
+    QString normalized = status.trimmed().toLower();
+    if (normalized == "resolved") {
+        return "solved";
+    }
+    if (normalized == "inprogress") {
+        return "in progress";
+    }
+    return normalized;
+}
+
+bool applyAutoArchiveForOldReports()
+{
+    const QDate today = QDate::currentDate();
+    const QDate cutoffDate = today.addDays(-30);
+    const QDateTime restoreCutoff = QDateTime::currentDateTime().addSecs(-15 * 60);
+
+    QSqlQuery query;
+    query.prepare(
+        "UPDATE CUSTOMER "
+        "SET ARCHIVED = 1, ARCHIVE_DATE = :archive_date "
+        "WHERE (ARCHIVED IS NULL OR ARCHIVED = 0) "
+        "AND ((ARCHIVE_DATE IS NULL AND ((REPORT_DATE IS NOT NULL AND REPORT_DATE <= :cutoff_date) "
+        "OR LOWER(TRIM(STATUS)) = 'rejected')) "
+        "OR (ARCHIVE_DATE IS NOT NULL AND ARCHIVE_DATE <= :restore_cutoff))");
+    query.bindValue(":archive_date", today);
+    query.bindValue(":cutoff_date", cutoffDate);
+    query.bindValue(":restore_cutoff", restoreCutoff);
+    if (!query.exec()) {
+        return false;
+    }
+
+    return query.numRowsAffected() > 0;
+}
+
+void rearchiveRestoredReportAfterStatusEdit(const Customer &beforeEdit, const Customer &afterEdit)
+{
+    Q_UNUSED(beforeEdit);
+
+    const bool forceOnRejected = (normalizeStatusValue(afterEdit.status()) == "rejected");
+
+    // Only re-archive records that had been restored earlier (ARCHIVE_DATE kept as marker).
+    QSqlQuery query;
+    QString sql =
+        "UPDATE CUSTOMER "
+        "SET ARCHIVED = 1, ARCHIVE_DATE = :archive_date "
+        "WHERE CUSTOMER_ID = :customer_id "
+        "AND ARCHIVED = 0";
+
+    if (!forceOnRejected) {
+        sql += " AND ARCHIVE_DATE IS NOT NULL";
+    }
+
+    query.prepare(sql);
+    query.bindValue(":archive_date", QDate::currentDate());
+    query.bindValue(":customer_id", afterEdit.customerId());
+    query.exec();
+}
+}
 
 void MainWindow::onSortComboBox5Changed(int)
 {
@@ -73,9 +139,8 @@ void MainWindow::updateCustomersTable(const QList<Customer> &customers)
         setItem(i, 4, customer.address());
         setItem(i, 5, customer.reportType());
         setItem(i, 6, customer.reportDate().isValid() ? customer.reportDate().toString("yyyy-MM-dd") : QString());
-        setItem(i, 7, QString::number(customer.satisfactionScore(), 'f', 2));
-        setItem(i, 8, QString::number(customer.employeeId()));
-        setItem(i, 9, customer.status());
+        setItem(i, 7, QString::number(customer.employeeId()));
+        setItem(i, 8, customer.status());
     }
     ui->customersTable->resizeColumnsToContents();
     ui->customersTable->setSortingEnabled(true);
@@ -84,8 +149,14 @@ void MainWindow::updateCustomersTable(const QList<Customer> &customers)
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , restoreRearchiveTimer_(new QTimer(this))
 {
     ui->setupUi(this);
+
+    ui->customersTable->setColumnCount(9);
+    ui->customersTable->setHorizontalHeaderLabels({
+        "ID", "Name", "Email", "Phone", "Address", "Type", "Date", "Employee", "Status"
+    });
 
     ui->customersTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -99,6 +170,27 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnExportPDF_5, &QPushButton::clicked, this, &MainWindow::onExportPDFClicked);
     connect(ui->btnReportStatus, &QPushButton::clicked, this, &MainWindow::onReportStatusClicked);
     connect(ui->btnCustomerAI, &QPushButton::clicked, this, &MainWindow::onCustomerAIClicked);
+    connect(ui->btnCustomerAr_2, &QPushButton::clicked, this, [this]() {
+        QList<Customer> archiveCustomers;
+        QString archiveError;
+        if (!Customer::fetchAll(archiveCustomers, &archiveError)) {
+            QMessageBox::warning(this, "Archive", "Failed to load archive data.\n" + archiveError);
+            return;
+        }
+
+        AdvancedFeatures dialog(archiveCustomers, this);
+        QMetaObject::invokeMethod(&dialog, "onManageArchivedReports", Qt::DirectConnection);
+        loadCustomers();
+    });
+
+    restoreRearchiveTimer_->setInterval(60 * 1000);
+    connect(restoreRearchiveTimer_, &QTimer::timeout, this, [this]() {
+        if (applyAutoArchiveForOldReports()) {
+            loadCustomers();
+        }
+    });
+    restoreRearchiveTimer_->start();
+
     loadCustomers();
 }
 
@@ -129,7 +221,7 @@ void MainWindow::onReportStatusClicked()
     for (auto it = typeCounts.begin(); it != typeCounts.end(); ++it) {
         totalReports += it.value();
     }
-    QList<QPair<QString, double>> typePercentList;
+    QList<QString> sliceTypes;
     QMap<QString, QString> typeSentences = {
         { "Missed Waste Collection", "Missed Waste Collection reports" },
         { "Garbage Overflow", "Garbage Overflow reports" },
@@ -137,11 +229,11 @@ void MainWindow::onReportStatusClicked()
         { "Recycling Issue", "Recycling Issue reports" }
     };
     for (auto it = typeCounts.begin(); it != typeCounts.end(); ++it) {
-        double percent = totalReports > 0 ? (100.0 * it.value() / totalReports) : 0.0;
-        typePercentList.append(qMakePair(it.key(), percent));
+        const double percent = totalReports > 0 ? (100.0 * it.value() / totalReports) : 0.0;
         QString sentence = typeSentences.contains(it.key()) ? typeSentences[it.key()] : it.key();
-        QString label = QString("%1: %2%").arg(sentence).arg(QString::number(percent, 'f', 1));
+        QString label = QString("%1 - %2%").arg(sentence).arg(QString::number(percent, 'f', 1));
         series->append(label, it.value());
+        sliceTypes.append(it.key());
     }
 
     // Apply colors, borders, and label style
@@ -153,14 +245,12 @@ void MainWindow::onReportStatusClicked()
         QColor(0, 128, 0)       // classic green
     };
 
+    series->setLabelsVisible(true);
+
     int sliceIdx = 0;
     for (QPieSlice *slice : series->slices()) {
-        QString typeName;
-        double percent = 0.0;
-        if (sliceIdx < typePercentList.size()) {
-            typeName = typePercentList[sliceIdx].first;
-            percent = typePercentList[sliceIdx].second;
-        }
+        const QString typeName = (sliceIdx < sliceTypes.size()) ? sliceTypes[sliceIdx] : QString();
+        const double percent = slice->percentage() * 100.0;
         QColor c = typeColors.contains(typeName)
                        ? typeColors[typeName]
                        : fallback[colorIdx % fallback.size()];
@@ -170,12 +260,15 @@ void MainWindow::onReportStatusClicked()
         slice->setBorderWidth(2);
 
         slice->setLabelVisible(true);
+        slice->setLabelPosition(QPieSlice::LabelOutside);
         slice->setLabelColor(Qt::white);
-        slice->setLabelFont(QFont("Arial", 10, QFont::Bold));
+        slice->setLabelFont(QFont("Arial", 9, QFont::Bold));
         slice->setExploded(false);  // can set true if you want slices "popped out"
         slice->setPen(QPen(QColor(0, 0, 0, 100))); // subtle shadow line
         QString sentence = typeSentences.contains(typeName) ? typeSentences[typeName] : typeName;
-        slice->setLabel(QString("%1: %2%").arg(sentence).arg(QString::number(percent, 'f', 1)));
+        slice->setLabel(QString("%1% - %2")
+                            .arg(QString::number(percent, 'f', 1))
+                            .arg(sentence));
         colorIdx++;
         sliceIdx++;
     }
@@ -187,12 +280,10 @@ void MainWindow::onReportStatusClicked()
     chart->setTitleFont(QFont("Arial", 16, QFont::Bold));
     chart->setTitleBrush(QBrush(QColor(0, 255, 127)));  // title in green
     chart->setBackgroundBrush(QBrush(QColor(13, 17, 23))); // dark background
+    chart->setMargins(QMargins(16, 16, 16, 16));
 
     // Legend styling
-    chart->legend()->setVisible(true);
-    chart->legend()->setAlignment(Qt::AlignRight);
-    chart->legend()->setLabelColor(Qt::white);
-    chart->legend()->setFont(QFont("Arial", 10));
+    chart->legend()->setVisible(false);
 
     // Create chart view
     QChartView *chartView = new QChartView(chart);
@@ -209,7 +300,7 @@ void MainWindow::onReportStatusClicked()
     QVBoxLayout layout;
     layout.addWidget(chartView);
     dialog.setLayout(&layout);
-    dialog.resize(650, 500); // slightly bigger for comfort
+    dialog.resize(900, 620); // larger canvas so outside labels are not clipped
     dialog.exec();
 }
 
@@ -254,8 +345,7 @@ void MainWindow::onExportPDFClicked()
     // ===== HEADERS =====
     QStringList headers = {
         "ID", "Name", "Email", "Phone",
-        "Address", "Type", "Date",
-        "Score", "Employee", "Status"
+        "Address", "Type", "Date", "Employee", "Status"
     };
 
     // Custom column widths (proportional)
@@ -267,9 +357,8 @@ void MainWindow::onExportPDFClicked()
         tableWidth * 0.18,  // Address
         tableWidth * 0.09,  // Type
         tableWidth * 0.09,  // Date
-        tableWidth * 0.05,  // Score
         tableWidth * 0.05,  // Employee
-        tableWidth * 0.07   // Status
+        tableWidth * 0.08   // Status
     };
 
     auto drawHeader = [&]() {
@@ -313,7 +402,6 @@ void MainWindow::onExportPDFClicked()
             c.reportDate().isValid()
                 ? c.reportDate().toString("yyyy-MM-dd")
                 : "",
-            QString::number(c.satisfactionScore(), 'f', 2),
             QString::number(c.employeeId()),
             c.status()
         };
@@ -358,10 +446,28 @@ void MainWindow::loadCustomers()
 {
     QString errorMessage;
     allCustomers_.clear();
+
+    applyAutoArchiveForOldReports();
+
     if (!Customer::fetchAll(allCustomers_, &errorMessage)) {
         QMessageBox::warning(this, "Customers", "Failed to load customers.\n" + errorMessage);
         return;
     }
+
+    QSet<int> archivedIds;
+    QSqlQuery archivedQuery;
+    if (archivedQuery.exec("SELECT CUSTOMER_ID FROM CUSTOMER WHERE ARCHIVED = 1")) {
+        while (archivedQuery.next()) {
+            archivedIds.insert(archivedQuery.value(0).toInt());
+        }
+    }
+
+    if (!archivedIds.isEmpty()) {
+        allCustomers_.erase(std::remove_if(allCustomers_.begin(), allCustomers_.end(), [&archivedIds](const Customer &c) {
+                                return archivedIds.contains(c.customerId());
+                            }), allCustomers_.end());
+    }
+
     updateCustomersTable(allCustomers_);
 }
 
@@ -403,9 +509,8 @@ void MainWindow::onEditCustomer()
         itemText(4),
         itemText(5),
         QDate::fromString(itemText(6), "yyyy-MM-dd"),
-        itemText(7).toDouble(),
-        itemText(8).toInt(),
-        itemText(9));
+        itemText(7).toInt(),
+        itemText(8));
 
     AddCustomerDialog dialog(this);
     dialog.setCustomer(customer);
@@ -419,6 +524,8 @@ void MainWindow::onEditCustomer()
         QMessageBox::warning(this, "Customers", "Failed to update customer.\n" + errorMessage);
         return;
     }
+
+    rearchiveRestoredReportAfterStatusEdit(customer, updated);
 
     loadCustomers();
 }
