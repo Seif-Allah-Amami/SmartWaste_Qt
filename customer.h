@@ -12,6 +12,7 @@
 class Customer
 {
 public:
+
     Customer();
     // Backward-compatible constructor for legacy code
     Customer(int customerId,
@@ -59,11 +60,22 @@ public:
     QString status() const;
     void setStatus(const QString &status);
 
+    // ==================== CRUD OPERATIONS ====================
+
+    // CREATE: Insert a new customer into the database
     bool add(QString *errorMessage = nullptr) const;
+
+    // READ: Retrieve a single customer by ID
+    static bool getById(int customerId, Customer &out, QString *errorMessage = nullptr);
+
+    // READ: Retrieve all customers from the database
+    static bool fetchAll(QList<Customer> &out, QString *errorMessage = nullptr);
+
+    // UPDATE: Modify an existing customer record
     bool update(QString *errorMessage = nullptr) const;
 
+    // DELETE: Remove a customer from the database
     static bool remove(int customerId, QString *errorMessage = nullptr);
-    static bool fetchAll(QList<Customer> &out, QString *errorMessage = nullptr);
 
 private:
     int customerId_;

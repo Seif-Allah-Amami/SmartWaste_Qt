@@ -163,6 +163,9 @@ void Customer::setEmployeeId(int employeeId)
     employeeId_ = employeeId;
 }
 
+// ==================== CRUD OPERATIONS ====================
+
+// CREATE: Insert a new customer record into the database
 bool Customer::add(QString *errorMessage) const
 {
     QSqlQuery query;
@@ -197,6 +200,77 @@ bool Customer::add(QString *errorMessage) const
     return true;
 }
 
+// READ: Retrieve a single customer by ID from the database
+bool Customer::getById(int customerId, Customer &out, QString *errorMessage)
+{
+    QSqlQuery query;
+    query.prepare(
+        "SELECT CUSTOMER_ID, NAME, EMAIL, PHONE, ADDRESS, REPORT_TYPE, REPORT_DATE, "
+        "EMPLOYEE_ID, STATUS FROM CUSTOMER WHERE CUSTOMER_ID = :customer_id");
+    query.bindValue(":customer_id", customerId);
+
+    if (!query.exec()) {
+        if (errorMessage) {
+            *errorMessage = query.lastError().text();
+        }
+        return false;
+    }
+
+    if (query.next()) {
+        out = Customer(
+            query.value(0).toInt(),
+            query.value(1).toString(),
+            query.value(2).toString(),
+            query.value(3).toString(),
+            query.value(4).toString(),
+            query.value(5).toString(),
+            query.value(6).toDate(),
+            query.value(7).toInt(),
+            query.value(8).toString());
+        return true;
+    }
+
+    if (errorMessage) {
+        *errorMessage = "Customer not found";
+    }
+    return false;
+}
+
+// READ: Retrieve all customers from the database
+bool Customer::fetchAll(QList<Customer> &out, QString *errorMessage)
+{
+    out.clear();
+
+    QSqlQuery query;
+    query.prepare(
+        "SELECT CUSTOMER_ID, NAME, EMAIL, PHONE, ADDRESS, REPORT_TYPE, REPORT_DATE, "
+        "EMPLOYEE_ID, STATUS FROM CUSTOMER");
+
+    if (!query.exec()) {
+        if (errorMessage) {
+            *errorMessage = query.lastError().text();
+        }
+        return false;
+    }
+
+    while (query.next()) {
+        Customer customer(
+            query.value(0).toInt(),
+            query.value(1).toString(),
+            query.value(2).toString(),
+            query.value(3).toString(),
+            query.value(4).toString(),
+            query.value(5).toString(),
+            query.value(6).toDate(),
+            query.value(7).toInt(),
+            query.value(8).toString());
+        out.append(customer);
+    }
+
+    return true;
+}
+
+// UPDATE: Modify an existing customer record in the database
 bool Customer::update(QString *errorMessage) const
 {
     QSqlQuery query;
@@ -230,6 +304,7 @@ bool Customer::update(QString *errorMessage) const
     return true;
 }
 
+// DELETE: Remove a customer record from the database
 bool Customer::remove(int customerId, QString *errorMessage)
 {
     QSqlQuery query;
@@ -240,39 +315,6 @@ bool Customer::remove(int customerId, QString *errorMessage)
             *errorMessage = query.lastError().text();
         }
         return false;
-    }
-
-    return true;
-}
-
-bool Customer::fetchAll(QList<Customer> &out, QString *errorMessage)
-{
-    out.clear();
-
-    QSqlQuery query;
-    query.prepare(
-        "SELECT CUSTOMER_ID, NAME, EMAIL, PHONE, ADDRESS, REPORT_TYPE, REPORT_DATE, "
-        "EMPLOYEE_ID, STATUS FROM CUSTOMER");
-
-    if (!query.exec()) {
-        if (errorMessage) {
-            *errorMessage = query.lastError().text();
-        }
-        return false;
-    }
-
-    while (query.next()) {
-        Customer customer(
-            query.value(0).toInt(),
-            query.value(1).toString(),
-            query.value(2).toString(),
-            query.value(3).toString(),
-            query.value(4).toString(),
-            query.value(5).toString(),
-            query.value(6).toDate(),
-            query.value(7).toInt(),
-            query.value(8).toString());
-        out.append(customer);
     }
 
     return true;
