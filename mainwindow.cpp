@@ -330,18 +330,54 @@ void MainWindow::setupConnections()
     connect(ui->btnMenuEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
     connect(ui->btnMenuCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
     connect(ui->btnMenuWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+<<<<<<< HEAD
+    connect(ui->btnMenuVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    connect(ui->btnMenuMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+    connect(ui->btnMenuSupplier, &QPushButton::clicked, this, &MainWindow::showSupplierPage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnMenuVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    connect(ui->btnMenuMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnMenuVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
 
     // Employee Page Sidebar Navigation
     connect(ui->btnEmpDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnEmpLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmpEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
     connect(ui->btnEmpCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
+<<<<<<< HEAD
     connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
 
+=======
+<<<<<<< HEAD
+    connect(ui->btnEmpVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+    connect(ui->btnEmpMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+    connect(ui->btnEmpSupplier, &QPushButton::clicked, this, &MainWindow::showSupplierPage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnEmpVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+    connect(ui->btnEmpMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnEmpVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+>>>>>>> origin/waste
     // Waste Management Sidebar Navigation
     connect(ui->btnDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
+<<<<<<< HEAD
     connect(ui->btnWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
     connect(ui->btnViewWaste, &QPushButton::clicked, this, &MainWindow::onViewWasteClicked);
     connect(ui->btnAddWaste, &QPushButton::clicked, this, &MainWindow::onAddWasteClicked);
@@ -359,12 +395,66 @@ void MainWindow::setupConnections()
             qOverload<int>(&QComboBox::currentIndexChanged),
             this,
             &MainWindow::onWasteSortChanged);
+=======
+<<<<<<< HEAD
+    connect(ui->btnVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    connect(ui->btnMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+    connect(ui->btnSupplier, &QPushButton::clicked, this, &MainWindow::showSupplierPage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    connect(ui->btnMachines, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+    // Waste Vehicle Sidebar Navigation
+    connect(ui->btnDashboard_2, &QPushButton::clicked, this, &MainWindow::showMainMenu);
+    connect(ui->btnLogout_2, &QPushButton::clicked, this, &MainWindow::showLoginPage);
+    connect(ui->btnEmployee_2, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
+    connect(ui->btnWaste_2, &QPushButton::clicked, this, &MainWindow::showWastePage);
+<<<<<<< HEAD
+    connect(ui->btnMachines_2, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+    connect(ui->btnSupplier_2, &QPushButton::clicked, this, &MainWindow::showSupplierPage);
+=======
+<<<<<<< HEAD
+    connect(ui->btnMachines_2, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+    // Waste Machine Sidebar Navigation
+    connect(ui->btnDashboard_3, &QPushButton::clicked, this, &MainWindow::showMainMenu);
+    connect(ui->btnLogout_3, &QPushButton::clicked, this, &MainWindow::showLoginPage);
+    connect(ui->btnVehicle_3, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    connect(ui->btnEmployee_3, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
+    connect(ui->btnWaste_3, &QPushButton::clicked, this, &MainWindow::showWastePage);
+<<<<<<< HEAD
+    connect(ui->btnSuppliers, &QPushButton::clicked, this, &MainWindow::showSupplierPage);
+    // Waste Supplier Sidebar Navigation
+    connect(ui->btnDashboard_4, &QPushButton::clicked, this, &MainWindow::showMainMenu);
+    connect(ui->btnLogout_3, &QPushButton::clicked, this, &MainWindow::showLoginPage);
+    connect(ui->btnInventory, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
+    connect(ui->btnReports, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
+    connect(ui->btnOrders, &QPushButton::clicked, this, &MainWindow::showWastePage);
+    connect(ui->btnMachines_4, &QPushButton::clicked, this, &MainWindow::showMachinePage);
+=======
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+
+
+    // ✅ ADD THIS LINE ONLY
+
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> origin/waste
 
     ui->sortComboBox->setItemData(0, "date_desc");
     ui->sortComboBox->setItemData(1, "type_asc");
     ui->sortComboBox->setItemData(2, "location_asc");
     ui->sortComboBox->setItemData(3, "status_asc");
 
+<<<<<<< HEAD
     if (ui->sortComboBox->findText("Sort: ID") < 0) {
         ui->sortComboBox->addItem("Sort: ID");
     }
@@ -415,6 +505,12 @@ void MainWindow::setupConnections()
     m_searchHintLabel->setStyleSheet("QLabel { color: #8feecf; font-size: 11px; }");
     m_searchHintLabel->setVisible(false);
     ui->searchFilterLayout->insertWidget(2, m_searchHintLabel);
+=======
+    // ✅ ADD THIS LINE ONLY
+    connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+>>>>>>> origin/waste
 }
 
 bool MainWindow::initializeDatabase()
@@ -1745,6 +1841,29 @@ void MainWindow::showWastePage()
     ui->stackedwidget->setCurrentWidget(ui->wastemanagement);
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+void MainWindow::showMachinePage()
+{
+    ui->stackedwidget->setCurrentWidget(ui->machinePage);
+}
+<<<<<<< HEAD
+void MainWindow::showSupplierPage()
+{
+    ui->stackedwidget->setCurrentWidget(ui->supplier);
+}
+=======
+=======
+
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+// ================= YOUR ORIGINAL FUNCTIONS =================
+
+>>>>>>> origin/waste
 void MainWindow::showLoginPage()
 {
     ui->stackedwidget->setCurrentWidget(ui->connection);
@@ -1769,6 +1888,25 @@ void MainWindow::showEmployeePage()
 {
     ui->stackedwidget->setCurrentWidget(ui->employe);
 }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+void MainWindow::showVehiclePage()
+{
+    ui->stackedwidget->setCurrentWidget(ui->vehiclePage);
+}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
 
 void MainWindow::showCustomerPage()
 {
