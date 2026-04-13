@@ -21,6 +21,7 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSplitter>
+#include <QStringList>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QSizePolicy>
@@ -36,6 +37,16 @@
 namespace {
 QList<Customer> g_autoExportCustomers;
 bool g_autoExportHookInstalled = false;
+
+bool containsAny(const QString &text, const QStringList &keywords)
+{
+    for (const QString &keyword : keywords) {
+        if (text.contains(keyword)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 void writeAutoBackupCsv(const QList<Customer> &customers)
 {
@@ -75,7 +86,6 @@ AdvancedFeatures::AdvancedFeatures(const QList<Customer> &customers, QWidget *pa
     , pendingProgressBar_(nullptr)
     , searchFilterEdit_(nullptr)
     , statusFilterCombo_(nullptr)
-    , typeFilterCombo_(nullptr)
     , fromDateFilterEdit_(nullptr)
     , toDateFilterEdit_(nullptr)
     , reportsTable_(nullptr)
@@ -264,9 +274,6 @@ void AdvancedFeatures::setupUI()
     statusFilterCombo_ = new QComboBox(filterPanel);
     statusFilterCombo_->addItems({"All Status", "pending", "in progress", "solved", "rejected"});
 
-    typeFilterCombo_ = new QComboBox(filterPanel);
-    typeFilterCombo_->addItems({"All Types", "Illegal Dumping", "Garbage Overflow", "Missed Waste Collection", "Recycling Issue"});
-
     fromDateFilterEdit_ = new QDateEdit(filterPanel);
     fromDateFilterEdit_->setDisplayFormat("yyyy-MM-dd");
     fromDateFilterEdit_->setCalendarPopup(true);
@@ -282,7 +289,6 @@ void AdvancedFeatures::setupUI()
 
     filterLayout->addWidget(searchFilterEdit_, 2);
     filterLayout->addWidget(statusFilterCombo_);
-    filterLayout->addWidget(typeFilterCombo_);
     filterLayout->addWidget(fromDateFilterEdit_);
     filterLayout->addWidget(toDateFilterEdit_);
     filterLayout->addWidget(smartSortButton_);
@@ -370,7 +376,6 @@ void AdvancedFeatures::setupUI()
     connect(predictiveButton_, &QPushButton::clicked, this, &AdvancedFeatures::onShowPredictiveAnalysis);
     connect(searchFilterEdit_, &QLineEdit::textChanged, this, &AdvancedFeatures::onFilterChanged);
     connect(statusFilterCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AdvancedFeatures::onFilterChanged);
-    connect(typeFilterCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AdvancedFeatures::onFilterChanged);
     connect(fromDateFilterEdit_, &QDateEdit::dateChanged, this, &AdvancedFeatures::onFilterChanged);
     connect(toDateFilterEdit_, &QDateEdit::dateChanged, this, &AdvancedFeatures::onFilterChanged);
     connect(smartSortButton_, &QPushButton::clicked, this, &AdvancedFeatures::onSmartSortByPriority);
@@ -466,6 +471,11 @@ void AdvancedFeatures::onAutoExportCsvBackup()
 
 void AdvancedFeatures::syncArchivedStateFromStorage()
 {
+    // Rebuild archive caches from DB each refresh to avoid stale in-memory entries.
+    QSet<int> dbArchivedIds;
+    QMap<int, QString> dbPreviousStatus;
+    QMap<int, QDate> dbArchiveDates;
+
     QSqlQuery query;
     if (query.exec("SELECT CUSTOMER_ID, STATUS, ARCHIVE_DATE FROM CUSTOMER WHERE ARCHIVED = 1")) {
         while (query.next()) {
@@ -473,10 +483,14 @@ void AdvancedFeatures::syncArchivedStateFromStorage()
             const QString preservedStatus = normalizeStatus(query.value(1).toString());
             const QDate archiveDate = query.value(2).toDate();
 
-            archivedCustomerIds_.insert(id);
-            archivedPreviousStatus_[id] = preservedStatus.isEmpty() ? "pending" : preservedStatus;
-            archiveDates_[id] = archiveDate.isValid() ? archiveDate : QDate::currentDate();
+            dbArchivedIds.insert(id);
+            dbPreviousStatus[id] = preservedStatus.isEmpty() ? "pending" : preservedStatus;
+            dbArchiveDates[id] = archiveDate.isValid() ? archiveDate : QDate::currentDate();
         }
+
+        archivedCustomerIds_ = dbArchivedIds;
+        archivedPreviousStatus_ = dbPreviousStatus;
+        archiveDates_ = dbArchiveDates;
     }
 }
 
@@ -789,9 +803,6 @@ void AdvancedFeatures::autoArchiveOldReports()
 
         if (status == "archived") {
             manuallyRestoredCustomerIds_.remove(id);
-        }
-
-        if (status == "archived") {
             archivedCustomerIds_.insert(id);
             if (!archiveDates_.contains(id)) {
                 archiveDates_[id] = today;
@@ -907,7 +918,6 @@ QList<Customer> AdvancedFeatures::getFilteredCustomers() const
     QList<Customer> filtered;
     const QString text = searchFilterEdit_->text().trimmed();
     const QString statusFilter = statusFilterCombo_->currentText();
-    const QString typeFilter = typeFilterCombo_->currentText();
     const QDate fromDate = fromDateFilterEdit_->date();
     const QDate toDate = toDateFilterEdit_->date();
 
@@ -923,14 +933,13 @@ QList<Customer> AdvancedFeatures::getFilteredCustomers() const
                               || c.phone().contains(text, Qt::CaseInsensitive);
 
         const bool statusOk = (statusFilter == "All Status") || (status == statusFilter);
-        const bool typeOk = (typeFilter == "All Types") || (c.reportType() == typeFilter);
 
         bool dateOk = true;
         if (c.reportDate().isValid()) {
             dateOk = (c.reportDate() >= fromDate && c.reportDate() <= toDate);
         }
 
-        if (searchOk && statusOk && typeOk && dateOk) {
+        if (searchOk && statusOk && dateOk) {
             filtered.append(c);
         }
     }
@@ -996,12 +1005,15 @@ void AdvancedFeatures::refreshReportsTable()
         const Customer &c = rows.at(i);
         const QString status = normalizeStatus(c.status());
         const QString priority = calculatePriorityLevel(c);
+        const bool duplicate = isDuplicateCustomer(c);
+        const bool blacklisted = isBlacklistedCustomer(c);
+        const bool needsWarning = duplicate || blacklisted;
 
         QString flags;
-        if (isDuplicateCustomer(c)) {
+        if (duplicate) {
             flags += "[DUPLICATE] ";
         }
-        if (isBlacklistedCustomer(c)) {
+        if (blacklisted) {
             flags += "[BLACKLIST]";
         }
 
@@ -1029,7 +1041,6 @@ void AdvancedFeatures::refreshReportsTable()
             rowColor = QColor("#2d3035");
         }
 
-        const bool needsWarning = isDuplicateCustomer(c) || isBlacklistedCustomer(c);
         for (int col = 0; col < cells.size(); ++col) {
             QTableWidgetItem *item = new QTableWidgetItem(cells.at(col));
             item->setFlags(item->flags() & ~Qt::ItemIsEditable);
@@ -1131,6 +1142,11 @@ QString AdvancedFeatures::processUserMessage(const QString &message)
 {
     QString lowerMsg = message.toLower();
 
+    if (lowerMsg.trimmed().size() < 2) {
+        return "Please type a bit more detail so I can help.<br>"
+               "Examples: <i>total reports</i>, <i>critical reports</i>, <i>predict next week</i>.";
+    }
+
     // Improvement 4: quick status counters for natural chat questions.
     int pendingCount = 0;
     int inProgressCount = 0;
@@ -1150,25 +1166,31 @@ QString AdvancedFeatures::processUserMessage(const QString &message)
         }
     }
 
-    if (lowerMsg.contains("solved") || lowerMsg.contains("resolved")) {
+    if (containsAny(lowerMsg, {"solved", "resolved", "done", "finished", "completed"})) {
         return QString("<b>Solved Reports:</b> %1<br>"
                        "These are completed reports that no longer need action.")
             .arg(solvedCount);
     }
 
-    if (lowerMsg.contains("rejected")) {
+    if (containsAny(lowerMsg, {"rejected", "reject"})) {
         return QString("<b>Rejected Reports:</b> %1<br>"
                        "Rejected reports usually need corrected details before resubmission.")
             .arg(rejectedCount);
     }
 
-    if (lowerMsg.contains("in progress") || lowerMsg.contains("inprogress")) {
+    if (containsAny(lowerMsg, {"in progress", "inprogress", "ongoing"})) {
         return QString("<b>In Progress Reports:</b> %1<br>"
                        "These reports are currently being handled by the operations team.")
             .arg(inProgressCount);
     }
 
-    if (lowerMsg.contains("how many") || lowerMsg.contains("total") || lowerMsg.contains("count")) {
+    if (containsAny(lowerMsg, {"pending", "waiting"})) {
+        return QString("<b>Pending Reports:</b> %1<br>"
+                       "These reports are queued and still waiting for action.")
+            .arg(pendingCount);
+    }
+
+    if (containsAny(lowerMsg, {"how many", "total", "count", "number of"})) {
         return QString("<b>Total Reports:</b> %1<br><br>"
                        "Pending: %2<br>"
                        "In Progress: %3<br>"
@@ -1181,7 +1203,7 @@ QString AdvancedFeatures::processUserMessage(const QString &message)
             .arg(solvedCount);
     }
 
-    if (lowerMsg.contains("show critical reports") || lowerMsg.contains("critical reports")) {
+    if (containsAny(lowerMsg, {"show critical reports", "critical reports", "urgent reports"})) {
         QString response = "<b>Critical Reports:</b><br>";
         int found = 0;
         for (const Customer &c : customers_) {
@@ -1200,58 +1222,52 @@ QString AdvancedFeatures::processUserMessage(const QString &message)
     }
 
     // Predictive analytics queries
-    if (lowerMsg.contains("predict") || lowerMsg.contains("forecast") ||
-        lowerMsg.contains("next week") || lowerMsg.contains("future") ||
-        lowerMsg.contains("trend") || lowerMsg.contains("upcoming")) {
+    if (containsAny(lowerMsg, {"predict", "forecast", "next week", "future", "trend", "upcoming"})) {
         return generatePredictiveAnalysis();
     }
 
     // Escalation queries
-    if (lowerMsg.contains("escalat") || lowerMsg.contains("risk") ||
-        lowerMsg.contains("critical soon") || lowerMsg.contains("watch")) {
+    if (containsAny(lowerMsg, {"escalat", "risk", "critical soon", "watch"})) {
         return getEscalationRisks();
     }
 
     // Recommendation queries
-    if (lowerMsg.contains("recommend") || lowerMsg.contains("suggest") ||
-        lowerMsg.contains("action") || lowerMsg.contains("what should")) {
+    if (containsAny(lowerMsg, {"recommend", "suggest", "action", "what should"})) {
         return generateActionableRecommendations();
     }
 
     // Priority-related queries
-    if (lowerMsg.contains("priority") || lowerMsg.contains("urgent") ||
-        lowerMsg.contains("important") || lowerMsg.contains("critical") ||
-        lowerMsg.contains("analysis") || lowerMsg.contains("overview")) {
+    if (containsAny(lowerMsg, {"priority", "urgent", "important", "critical", "analysis", "overview"})) {
         return generatePriorityAnalysis();
     }
 
     // Report type queries
-    if (lowerMsg.contains("illegal") || lowerMsg.contains("dumping")) {
+    if (containsAny(lowerMsg, {"illegal", "dumping"})) {
         return "🚨 <b>Illegal Dumping</b> reports are classified as <span style='color: #ff4444;'><b>HIGH PRIORITY</b></span>.<br><br>"
                "These require immediate attention due to environmental and legal implications. "
                "Average resolution time should be within 24-48 hours.";
     }
 
-    if (lowerMsg.contains("overflow") || lowerMsg.contains("garbage")) {
+    if (containsAny(lowerMsg, {"overflow", "garbage"})) {
         return "⚠️ <b>Garbage Overflow</b> reports are classified as <span style='color: #ffaa00;'><b>MEDIUM-HIGH PRIORITY</b></span>.<br><br>"
                "These need prompt attention to prevent health hazards and public complaints. "
                "Recommended resolution within 48-72 hours.";
     }
 
-    if (lowerMsg.contains("missed") || lowerMsg.contains("collection")) {
+    if (containsAny(lowerMsg, {"missed", "collection"})) {
         return "📋 <b>Missed Waste Collection</b> reports are classified as <span style='color: #ffcc00;'><b>MEDIUM PRIORITY</b></span>.<br><br>"
                "These should be scheduled for the next collection cycle. "
                "Standard resolution time is 24-48 hours.";
     }
 
-    if (lowerMsg.contains("recycling") || lowerMsg.contains("recycle")) {
+    if (containsAny(lowerMsg, {"recycling", "recycle"})) {
         return "♻️ <b>Recycling Issues</b> are classified as <span style='color: #00cc66;'><b>NORMAL PRIORITY</b></span>.<br><br>"
                "These can be addressed during regular operational hours. "
                "Resolution time typically within 3-5 business days.";
     }
 
     // Help query
-    if (lowerMsg.contains("help") || lowerMsg.contains("what can you do")) {
+    if (containsAny(lowerMsg, {"help", "what can you do"})) {
         return "I can help you with:<br><br>"
                "&#128202; <b>Priority Analysis</b> - Current report priorities<br>"
                "&#128302; <b>Predictive Analytics</b> - Forecast next week's reports<br>"
@@ -1263,12 +1279,12 @@ QString AdvancedFeatures::processUserMessage(const QString &message)
 
     // Default response
     return "I understand you're asking about: <i>" + message + "</i><br><br>"
-                                                               "I can help with:<br>"
-                                                               "- Priority detection for reports<br>"
-                                                               "- Predictive analytics and trends<br>"
-                                                               "- Escalation risk assessment<br>"
-                                                               "- Actionable recommendations<br><br>"
-                                                               "Try the <b>Predictive Analytics</b> button!";
+                                                               "Try one of these:<br>"
+                                                               "- <b>Total reports</b><br>"
+                                                               "- <b>Pending reports</b><br>"
+                                                               "- <b>Show critical reports</b><br>"
+                                                               "- <b>Predict next week</b><br>"
+                                                               "- <b>Show escalation risks</b>";
 }
 
 QString AdvancedFeatures::getPriorityForReportType(const QString &reportType)

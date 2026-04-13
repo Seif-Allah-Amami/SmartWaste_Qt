@@ -95,7 +95,6 @@ private:
 
     QLineEdit *searchFilterEdit_;
     QComboBox *statusFilterCombo_;
-    QComboBox *typeFilterCombo_;
     QDateEdit *fromDateFilterEdit_;
     QDateEdit *toDateFilterEdit_;
 

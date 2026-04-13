@@ -1,0 +1,4 @@
+customer_id,name,email,phone,address,report_type,report_date,status,priority
+888,"safe","safe@esprit.com","+216 58956445","tunis","Missed Waste Collection",2026-03-25,solved,MEDIUM
+5555,"mohamed","mohamed@gmail.com","+216 27999666","beja","Garbage Overflow",2026-03-25,solved,HIGH
+5554,"ali555","kel@gmail.com","+216 58944566","manouba","Garbage Overflow",2026-03-25,in progress,CRITICAL
