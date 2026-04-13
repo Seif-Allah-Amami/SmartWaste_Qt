@@ -13,7 +13,10 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
+<<<<<<< HEAD
+=======
 #include <QtWidgets/QGridLayout>
+>>>>>>> origin/vehicle
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
@@ -35,6 +38,8 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QStackedWidget *stackedwidget;
+<<<<<<< HEAD
+=======
     QWidget *connection;
     QVBoxLayout *loginLayout;
     QSpacerItem *verticalSpacer_login1;
@@ -202,15 +207,21 @@ public:
 <<<<<<< HEAD
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+>>>>>>> origin/vehicle
     QWidget *vehiclePage;
     QGroupBox *sidebarGroup_3;
     QVBoxLayout *sidebarLayout_3;
     QHBoxLayout *logoContainerLayout_3;
     QSpacerItem *horizontalSpacer_logoLeft_3;
+<<<<<<< HEAD
+    QSpacerItem *horizontalSpacer_logoRight_3;
+    QLabel *sidebarLogo_6;
+=======
     QLabel *sidebarLogo_2;
     QSpacerItem *horizontalSpacer_logoRight_3;
     QLabel *sidebarTitle_2;
     QSpacerItem *verticalSpacer_4;
+>>>>>>> origin/vehicle
     QPushButton *btnDashboard_2;
     QPushButton *btnEmployee_2;
     QPushButton *btnCustomer_2;
@@ -231,6 +242,10 @@ public:
     QPushButton *btnViewVehicles;
     QPushButton *btnAddVehicle;
     QPushButton *btnCalendar;
+<<<<<<< HEAD
+    QPushButton *statistic_btn;
+=======
+>>>>>>> origin/vehicle
     QSpacerItem *horizontalSpacer_4;
     QWidget *searchFilterWidget_2;
     QVBoxLayout *searchFilterLayout_2;
@@ -249,6 +264,8 @@ public:
     QPushButton *btnClearSelection_2;
     QSpacerItem *verticalSpacer_6;
     QPushButton *btnExportPDF_2;
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -346,13 +363,18 @@ public:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+>>>>>>> origin/vehicle
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
+<<<<<<< HEAD
+        MainWindow->resize(1362, 756);
+=======
         MainWindow->resize(1357, 740);
+>>>>>>> origin/vehicle
         MainWindow->setStyleSheet(QString::fromUtf8("/* ===== Global ===== */\n"
 "QWidget {\n"
 "    background-color: #050d0a;\n"
@@ -682,6 +704,9 @@ public:
         centralwidget->setObjectName("centralwidget");
         stackedwidget = new QStackedWidget(centralwidget);
         stackedwidget->setObjectName("stackedwidget");
+<<<<<<< HEAD
+        stackedwidget->setGeometry(QRect(10, 10, 1357, 711));
+=======
         stackedwidget->setGeometry(QRect(0, 0, 1357, 711));
         connection = new QWidget();
         connection->setObjectName("connection");
@@ -2281,6 +2306,7 @@ public:
 <<<<<<< HEAD
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+>>>>>>> origin/vehicle
         vehiclePage = new QWidget();
         vehiclePage->setObjectName("vehiclePage");
         sidebarGroup_3 = new QGroupBox(vehiclePage);
@@ -2298,6 +2324,8 @@ public:
 
         logoContainerLayout_3->addItem(horizontalSpacer_logoLeft_3);
 
+<<<<<<< HEAD
+=======
         sidebarLogo_2 = new QLabel(sidebarGroup_3);
         sidebarLogo_2->setObjectName("sidebarLogo_2");
         sidebarLogo_2->setMinimumSize(QSize(180, 80));
@@ -2312,6 +2340,7 @@ public:
 
         logoContainerLayout_3->addWidget(sidebarLogo_2);
 
+>>>>>>> origin/vehicle
         horizontalSpacer_logoRight_3 = new QSpacerItem(0, 0, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
         logoContainerLayout_3->addItem(horizontalSpacer_logoRight_3);
@@ -2319,6 +2348,17 @@ public:
 
         sidebarLayout_3->addLayout(logoContainerLayout_3);
 
+<<<<<<< HEAD
+        sidebarLogo_6 = new QLabel(sidebarGroup_3);
+        sidebarLogo_6->setObjectName("sidebarLogo_6");
+        sidebarLogo_6->setMinimumSize(QSize(0, 100));
+        sidebarLogo_6->setMaximumSize(QSize(16777215, 100));
+        sidebarLogo_6->setPixmap(QPixmap(QString::fromUtf8(":/image/image/images/logo.png")));
+        sidebarLogo_6->setScaledContents(false);
+        sidebarLogo_6->setAlignment(Qt::AlignmentFlag::AlignCenter);
+
+        sidebarLayout_3->addWidget(sidebarLogo_6);
+=======
         sidebarTitle_2 = new QLabel(sidebarGroup_3);
         sidebarTitle_2->setObjectName("sidebarTitle_2");
 
@@ -2327,6 +2367,7 @@ public:
         verticalSpacer_4 = new QSpacerItem(20, 20, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
 
         sidebarLayout_3->addItem(verticalSpacer_4);
+>>>>>>> origin/vehicle
 
         btnDashboard_2 = new QPushButton(sidebarGroup_3);
         btnDashboard_2->setObjectName("btnDashboard_2");
@@ -2582,6 +2623,26 @@ public:
 
         topActionsLayout_2->addWidget(btnCalendar);
 
+<<<<<<< HEAD
+        statistic_btn = new QPushButton(mainContentWidget_2);
+        statistic_btn->setObjectName("statistic_btn");
+        statistic_btn->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #00ff9c;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #00ff9c;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(0, 255, 156, 0.1);\n"
+"}"));
+
+        topActionsLayout_2->addWidget(statistic_btn);
+
+=======
+>>>>>>> origin/vehicle
         horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
         topActionsLayout_2->addItem(horizontalSpacer_4);
@@ -2640,6 +2701,24 @@ public:
         vehiclesTable = new QTableWidget(mainContentWidget_2);
         if (vehiclesTable->columnCount() < 6)
             vehiclesTable->setColumnCount(6);
+<<<<<<< HEAD
+        QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(0, __qtablewidgetitem);
+        QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(1, __qtablewidgetitem1);
+        QTableWidgetItem *__qtablewidgetitem2 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(2, __qtablewidgetitem2);
+        QTableWidgetItem *__qtablewidgetitem3 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(3, __qtablewidgetitem3);
+        QTableWidgetItem *__qtablewidgetitem4 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(4, __qtablewidgetitem4);
+        QTableWidgetItem *__qtablewidgetitem5 = new QTableWidgetItem();
+        vehiclesTable->setHorizontalHeaderItem(5, __qtablewidgetitem5);
+        vehiclesTable->setObjectName("vehiclesTable");
+        QSizePolicy sizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+=======
         QTableWidgetItem *__qtablewidgetitem15 = new QTableWidgetItem();
         vehiclesTable->setHorizontalHeaderItem(0, __qtablewidgetitem15);
         QTableWidgetItem *__qtablewidgetitem16 = new QTableWidgetItem();
@@ -2653,6 +2732,7 @@ public:
         QTableWidgetItem *__qtablewidgetitem20 = new QTableWidgetItem();
         vehiclesTable->setHorizontalHeaderItem(5, __qtablewidgetitem20);
         vehiclesTable->setObjectName("vehiclesTable");
+>>>>>>> origin/vehicle
         sizePolicy.setHeightForWidth(vehiclesTable->sizePolicy().hasHeightForWidth());
         vehiclesTable->setSizePolicy(sizePolicy);
         vehiclesTable->setMinimumSize(QSize(600, 0));
@@ -2663,6 +2743,12 @@ public:
 
         actionsPanel_2 = new QFrame(mainContentWidget_2);
         actionsPanel_2->setObjectName("actionsPanel_2");
+<<<<<<< HEAD
+        QSizePolicy sizePolicy1(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Preferred);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+=======
+>>>>>>> origin/vehicle
         sizePolicy1.setHeightForWidth(actionsPanel_2->sizePolicy().hasHeightForWidth());
         actionsPanel_2->setSizePolicy(sizePolicy1);
         actionsPanel_2->setMinimumSize(QSize(200, 0));
@@ -2792,6 +2878,8 @@ public:
         mainContentLayout_2->addLayout(tableActionsLayout_2);
 
         stackedwidget->addWidget(vehiclePage);
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -3782,6 +3870,7 @@ public:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+>>>>>>> origin/vehicle
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -3789,6 +3878,9 @@ public:
 
         retranslateUi(MainWindow);
 
+<<<<<<< HEAD
+        stackedwidget->setCurrentIndex(0);
+=======
 <<<<<<< HEAD
         stackedwidget->setCurrentIndex(8);
 =======
@@ -3802,6 +3894,7 @@ public:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+>>>>>>> origin/vehicle
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -3809,6 +3902,11 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
+<<<<<<< HEAD
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+        sidebarGroup_3->setTitle(QString());
+        sidebarLogo_6->setText(QString());
+=======
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "ReGen Management System", nullptr));
         loginLogo->setText(QString());
         loginTitle->setText(QCoreApplication::translate("MainWindow", "Welcome to ReGen", nullptr));
@@ -3936,12 +4034,17 @@ public:
         sidebarGroup_3->setTitle(QString());
         sidebarLogo_2->setText(QString());
         sidebarTitle_2->setText(QCoreApplication::translate("MainWindow", "ReGen", nullptr));
+>>>>>>> origin/vehicle
         btnDashboard_2->setText(QCoreApplication::translate("MainWindow", "Dashboard", nullptr));
         btnEmployee_2->setText(QCoreApplication::translate("MainWindow", "Employee Management", nullptr));
         btnCustomer_2->setText(QCoreApplication::translate("MainWindow", "Customer Management", nullptr));
         btnWaste_2->setText(QCoreApplication::translate("MainWindow", "Waste Management", nullptr));
         btnVehicle_2->setText(QCoreApplication::translate("MainWindow", "Vehicle Management", nullptr));
+<<<<<<< HEAD
+        btnMachines_2->setText(QCoreApplication::translate("MainWindow", "Vehicles Management", nullptr));
+=======
         btnMachines_2->setText(QCoreApplication::translate("MainWindow", "Machines Management", nullptr));
+>>>>>>> origin/vehicle
         btnSupplier_2->setText(QCoreApplication::translate("MainWindow", "Supplier Management", nullptr));
         btnLogout_2->setText(QCoreApplication::translate("MainWindow", "Log Out \360\237\232\252", nullptr));
         pageTitle_2->setText(QCoreApplication::translate("MainWindow", "Vehicles", nullptr));
@@ -3949,6 +4052,10 @@ public:
         btnViewVehicles->setText(QCoreApplication::translate("MainWindow", "View Vehicles", nullptr));
         btnAddVehicle->setText(QCoreApplication::translate("MainWindow", "Add Vehicle", nullptr));
         btnCalendar->setText(QCoreApplication::translate("MainWindow", "Maintenance Calendar", nullptr));
+<<<<<<< HEAD
+        statistic_btn->setText(QCoreApplication::translate("MainWindow", "vehicless statistic", nullptr));
+=======
+>>>>>>> origin/vehicle
         lblVehiclesList->setText(QCoreApplication::translate("MainWindow", "Vehicles List", nullptr));
         searchBox_2->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search by ID / Plate / Model...", nullptr));
         sortComboBox_2->setItemText(0, QCoreApplication::translate("MainWindow", "Sort: ID", nullptr));
@@ -3956,6 +4063,20 @@ public:
         sortComboBox_2->setItemText(2, QCoreApplication::translate("MainWindow", "Sort: Type", nullptr));
         sortComboBox_2->setItemText(3, QCoreApplication::translate("MainWindow", "Sort: Next Maintenance", nullptr));
 
+<<<<<<< HEAD
+        QTableWidgetItem *___qtablewidgetitem = vehiclesTable->horizontalHeaderItem(0);
+        ___qtablewidgetitem->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
+        QTableWidgetItem *___qtablewidgetitem1 = vehiclesTable->horizontalHeaderItem(1);
+        ___qtablewidgetitem1->setText(QCoreApplication::translate("MainWindow", "Num Plate", nullptr));
+        QTableWidgetItem *___qtablewidgetitem2 = vehiclesTable->horizontalHeaderItem(2);
+        ___qtablewidgetitem2->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
+        QTableWidgetItem *___qtablewidgetitem3 = vehiclesTable->horizontalHeaderItem(3);
+        ___qtablewidgetitem3->setText(QCoreApplication::translate("MainWindow", "Model", nullptr));
+        QTableWidgetItem *___qtablewidgetitem4 = vehiclesTable->horizontalHeaderItem(4);
+        ___qtablewidgetitem4->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
+        QTableWidgetItem *___qtablewidgetitem5 = vehiclesTable->horizontalHeaderItem(5);
+        ___qtablewidgetitem5->setText(QCoreApplication::translate("MainWindow", "Next Maintenance", nullptr));
+=======
         QTableWidgetItem *___qtablewidgetitem15 = vehiclesTable->horizontalHeaderItem(0);
         ___qtablewidgetitem15->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
         QTableWidgetItem *___qtablewidgetitem16 = vehiclesTable->horizontalHeaderItem(1);
@@ -3968,12 +4089,15 @@ public:
         ___qtablewidgetitem19->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
         QTableWidgetItem *___qtablewidgetitem20 = vehiclesTable->horizontalHeaderItem(5);
         ___qtablewidgetitem20->setText(QCoreApplication::translate("MainWindow", "Next Maintenance", nullptr));
+>>>>>>> origin/vehicle
         lblActions_2->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
         btnEditVehicle->setText(QCoreApplication::translate("MainWindow", "Edit Vehicle", nullptr));
         btnDeleteVehicle->setText(QCoreApplication::translate("MainWindow", "Delete Vehicle", nullptr));
         btnChatbot->setText(QCoreApplication::translate("MainWindow", "AI Chatbot \360\237\244\226", nullptr));
         btnClearSelection_2->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF_2->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -4070,6 +4194,7 @@ public:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+>>>>>>> origin/vehicle
     } // retranslateUi
 
 };
