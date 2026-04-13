@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 QT       += core gui sql widgets
+=======
+QT       += core gui
+>>>>>>> origin/employee
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,13 +13,19 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+<<<<<<< HEAD
     employee.cpp \
+=======
+>>>>>>> origin/employee
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+<<<<<<< HEAD
     connection.h \
     employee.h \
+=======
+>>>>>>> origin/employee
     mainwindow.h
 
 FORMS += \

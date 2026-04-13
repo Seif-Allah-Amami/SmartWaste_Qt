@@ -1,11 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+<<<<<<< HEAD
 #include "employee.h"
 #include <QMainWindow>
 
 class QCloseEvent;
 
+=======
+#include <QMainWindow>
+
+>>>>>>> origin/employee
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -31,6 +36,7 @@ private:
     void showEmployeePage();
     void showCustomerPage();
     void showWastePage();
+<<<<<<< HEAD
 
     // Employee DB helpers
     bool initializeDatabase();
@@ -60,6 +66,27 @@ private:
 
     QList<Employee> m_cachedEmployees;
     bool m_databaseReady;
+=======
+<<<<<<< HEAD
+    void showVehiclePage();
+    void showMachinePage();
+    void showSupplierPage();
+=======
+<<<<<<< HEAD
+    void showVehiclePage();
+    void showMachinePage();
+=======
+<<<<<<< HEAD
+    void showVehiclePage();
+=======
+>>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
+>>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
+>>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+
+    // Logic methods
+    void onLoginClicked();
+    void onVerifyClicked();
+>>>>>>> origin/employee
 };
 
 #endif // MAINWINDOW_H
