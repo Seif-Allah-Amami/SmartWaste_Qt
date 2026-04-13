@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-<<<<<<< HEAD
 #include <QCoreApplication>
 #include <QHeaderView>
 #include <QInputDialog>
@@ -19,6 +18,7 @@
 #include <QFormLayout>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QDateTimeEdit>
 #include <QDoubleSpinBox>
 #include <QDateEdit>
 #include <QRegularExpression>
@@ -26,11 +26,27 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QTextEdit>
+#include <QTableWidget>
 #include <QMap>
 #include <QHBoxLayout>
 #include <QFrame>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QFile>
+#include <QDir>
+#include <QSet>
+#include <QHash>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrlQuery>
+#include <QEventLoop>
+#include <QTimer>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QMouseEvent>
+#include <QWheelEvent>
 
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QBarSeries>
@@ -43,16 +59,237 @@
 
 #include <algorithm>
 
+class OSMTileMapWidget : public QWidget
+{
+public:
+    explicit OSMTileMapWidget(QWidget *parent = nullptr)
+        : QWidget(parent)
+        , m_network(new QNetworkAccessManager(this))
+    {
+        setMouseTracking(true);
+        setMinimumSize(900, 600);
+
+        connect(m_network, &QNetworkAccessManager::finished, this, [this](QNetworkReply *reply) {
+            const QString key = reply->property("tileKey").toString();
+            m_pending.remove(key);
+
+            if (reply->error() == QNetworkReply::NoError) {
+                QPixmap pix;
+                pix.loadFromData(reply->readAll());
+                if (!pix.isNull()) {
+                    m_tileCache.insert(key, pix);
+                }
+            }
+
+            reply->deleteLater();
+            update();
+        });
+    }
+
+    void setMarker(double lat, double lon, const QString &name)
+    {
+        m_markerLat = lat;
+        m_markerLon = lon;
+        m_markerName = name;
+        m_centerLat = lat;
+        m_centerLon = lon;
+        m_initialLat = lat;
+        m_initialLon = lon;
+        m_zoom = 13;
+        update();
+    }
+
+    void resetView()
+    {
+        m_centerLat = m_initialLat;
+        m_centerLon = m_initialLon;
+        m_zoom = 13;
+        update();
+    }
+
+    void zoomIn()
+    {
+        m_zoom = qMin(19, m_zoom + 1);
+        update();
+    }
+
+    void zoomOut()
+    {
+        m_zoom = qMax(3, m_zoom - 1);
+        update();
+    }
+
+protected:
+    void paintEvent(QPaintEvent *) override
+    {
+        QPainter painter(this);
+        painter.fillRect(rect(), QColor("#031912"));
+
+        const int tileSize = 256;
+        const int n = 1 << m_zoom;
+
+        const QPointF centerWorld = geoToWorld(m_centerLat, m_centerLon, m_zoom);
+        const double startX = centerWorld.x() - width() / 2.0;
+        const double startY = centerWorld.y() - height() / 2.0;
+
+        const int minTileX = static_cast<int>(std::floor(startX / tileSize));
+        const int maxTileX = static_cast<int>(std::floor((startX + width()) / tileSize));
+        const int minTileY = static_cast<int>(std::floor(startY / tileSize));
+        const int maxTileY = static_cast<int>(std::floor((startY + height()) / tileSize));
+
+        for (int tileY = minTileY; tileY <= maxTileY; ++tileY) {
+            if (tileY < 0 || tileY >= n) {
+                continue;
+            }
+
+            for (int tileX = minTileX; tileX <= maxTileX; ++tileX) {
+                const int wrappedX = ((tileX % n) + n) % n;
+                const QString key = QString("%1/%2/%3").arg(m_zoom).arg(wrappedX).arg(tileY);
+
+                const int drawX = static_cast<int>(tileX * tileSize - startX);
+                const int drawY = static_cast<int>(tileY * tileSize - startY);
+                const QRect tileRect(drawX, drawY, tileSize, tileSize);
+
+                if (m_tileCache.contains(key)) {
+                    painter.drawPixmap(tileRect, m_tileCache.value(key));
+                } else {
+                    painter.fillRect(tileRect, QColor("#0b2a20"));
+                    painter.setPen(QColor("#1f5845"));
+                    painter.drawRect(tileRect);
+                    requestTile(m_zoom, wrappedX, tileY, key);
+                }
+            }
+        }
+
+        const QPointF markerWorld = geoToWorld(m_markerLat, m_markerLon, m_zoom);
+        const int markerX = static_cast<int>(markerWorld.x() - startX);
+        const int markerY = static_cast<int>(markerWorld.y() - startY);
+
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setBrush(QColor("#00d084"));
+        painter.setPen(QPen(QColor("#043b2b"), 2));
+        painter.drawEllipse(QPoint(markerX, markerY), 9, 9);
+
+        painter.setPen(QColor("#d8fff1"));
+        painter.drawText(markerX + 12, markerY - 12, m_markerName);
+    }
+
+    void mousePressEvent(QMouseEvent *event) override
+    {
+        if (event->button() == Qt::LeftButton) {
+            m_dragging = true;
+            m_lastPos = event->pos();
+        }
+    }
+
+    void mouseMoveEvent(QMouseEvent *event) override
+    {
+        if (!m_dragging) {
+            return;
+        }
+
+        const QPoint delta = event->pos() - m_lastPos;
+        m_lastPos = event->pos();
+
+        QPointF world = geoToWorld(m_centerLat, m_centerLon, m_zoom);
+        world.rx() -= delta.x();
+        world.ry() -= delta.y();
+
+        const QPair<double, double> geo = worldToGeo(world.x(), world.y(), m_zoom);
+        m_centerLat = qBound(-85.0511, geo.first, 85.0511);
+        m_centerLon = geo.second;
+        update();
+    }
+
+    void mouseReleaseEvent(QMouseEvent *event) override
+    {
+        if (event->button() == Qt::LeftButton) {
+            m_dragging = false;
+        }
+    }
+
+    void wheelEvent(QWheelEvent *event) override
+    {
+        const int delta = event->angleDelta().y();
+        if (delta > 0) {
+            zoomIn();
+        } else if (delta < 0) {
+            zoomOut();
+        }
+        event->accept();
+    }
+
+private:
+    static QPointF geoToWorld(double lat, double lon, int zoom)
+    {
+        const double tileSize = 256.0;
+        const double n = static_cast<double>(1 << zoom);
+        const double x = (lon + 180.0) / 360.0 * n * tileSize;
+        const double latRad = lat * M_PI / 180.0;
+        const double y = (1.0 - std::log(std::tan(latRad) + 1.0 / std::cos(latRad)) / M_PI) / 2.0 * n * tileSize;
+        return QPointF(x, y);
+    }
+
+    static QPair<double, double> worldToGeo(double worldX, double worldY, int zoom)
+    {
+        const double tileSize = 256.0;
+        const double n = static_cast<double>(1 << zoom);
+        const double worldSize = n * tileSize;
+
+        while (worldX < 0.0) {
+            worldX += worldSize;
+        }
+        while (worldX >= worldSize) {
+            worldX -= worldSize;
+        }
+
+        worldY = qBound(0.0, worldY, worldSize);
+
+        const double lon = worldX / worldSize * 360.0 - 180.0;
+        const double mercN = M_PI - (2.0 * M_PI * worldY) / worldSize;
+        const double lat = 180.0 / M_PI * std::atan(0.5 * (std::exp(mercN) - std::exp(-mercN)));
+        return qMakePair(lat, lon);
+    }
+
+    void requestTile(int z, int x, int y, const QString &key)
+    {
+        if (m_pending.contains(key)) {
+            return;
+        }
+
+        m_pending.insert(key);
+        QUrl url(QString("https://tile.openstreetmap.org/%1/%2/%3.png").arg(z).arg(x).arg(y));
+        QNetworkRequest request(url);
+        request.setRawHeader("User-Agent", "ManarWasteApp/1.0 (educational project)");
+
+        QNetworkReply *reply = m_network->get(request);
+        reply->setProperty("tileKey", key);
+    }
+
+    QNetworkAccessManager *m_network;
+    QHash<QString, QPixmap> m_tileCache;
+    QSet<QString> m_pending;
+
+    double m_markerLat = 36.8065;
+    double m_markerLon = 10.1815;
+    QString m_markerName = "Location";
+
+    double m_centerLat = 36.8065;
+    double m_centerLon = 10.1815;
+    double m_initialLat = 36.8065;
+    double m_initialLon = 10.1815;
+    int m_zoom = 13;
+
+    bool m_dragging = false;
+    QPoint m_lastPos;
+};
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , m_nextPickupTicket(1000)
     , m_databaseReady(false)
     , m_searchHintLabel(nullptr)
-=======
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
->>>>>>> origin/waste
 {
     ui->setupUi(this);
 
@@ -61,13 +298,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Connect all navigation buttons
     setupConnections();
-<<<<<<< HEAD
 
     setupWasteTable();
-    m_databaseReady = initializeDatabase() && ensureWasteTable();
+    m_databaseReady = initializeDatabase() && ensureWasteTable() && ensurePickupScheduleTable();
+    if (m_databaseReady) {
+        loadScheduledPickupsFromDb();
+    }
     onViewWasteClicked();
-=======
->>>>>>> origin/waste
 }
 
 MainWindow::~MainWindow()
@@ -97,19 +334,14 @@ void MainWindow::setupConnections()
     // Employee Page Sidebar Navigation
     connect(ui->btnEmpDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnEmpLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
-<<<<<<< HEAD
     connect(ui->btnEmpEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
     connect(ui->btnEmpCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
     connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
 
-=======
-    connect(ui->btnEmpCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
->>>>>>> origin/waste
     // Waste Management Sidebar Navigation
     connect(ui->btnDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
     connect(ui->btnLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
-<<<<<<< HEAD
     connect(ui->btnWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
     connect(ui->btnViewWaste, &QPushButton::clicked, this, &MainWindow::onViewWasteClicked);
     connect(ui->btnAddWaste, &QPushButton::clicked, this, &MainWindow::onAddWasteClicked);
@@ -117,6 +349,8 @@ void MainWindow::setupConnections()
     connect(ui->btnEditWaste, &QPushButton::clicked, this, &MainWindow::onEditWasteClicked);
     connect(ui->btnDeleteWaste, &QPushButton::clicked, this, &MainWindow::onDeleteWasteClicked);
     connect(ui->btnExportPDF, &QPushButton::clicked, this, &MainWindow::onExportWastePdfClicked);
+    connect(ui->btnViewMaps, &QPushButton::clicked, this, &MainWindow::onViewOnMapClicked);
+    connect(ui->btnRate, &QPushButton::clicked, this, &MainWindow::onSmartPickupSchedulerClicked);
     connect(ui->btnClearSelection, &QPushButton::clicked, this, &MainWindow::onClearWasteClicked);
     connect(ui->btnClearSelection, &QPushButton::clicked, this, &MainWindow::on_btnClearSelection_clicked);
     connect(ui->btnEmpClear, &QPushButton::clicked, this, &MainWindow::on_btnEmpClear_clicked);
@@ -207,6 +441,104 @@ bool MainWindow::ensureWasteTable()
         qDebug() << "WASTE table not found. Please ensure it's created in Oracle.";
         return false;  // Table must be created in SQL Developer, not here
     }
+}
+
+bool MainWindow::ensurePickupScheduleTable()
+{
+    QSqlDatabase db = m_connection.getDatabase();
+    if (!db.isOpen()) {
+        qDebug() << "Database not open in ensurePickupScheduleTable";
+        return false;
+    }
+
+    QSqlQuery existsQuery(db);
+    existsQuery.exec("SELECT table_name FROM user_tables WHERE table_name='PICKUP_SCHEDULE'");
+    if (existsQuery.next()) {
+        return true;
+    }
+
+    QSqlQuery createQuery(db);
+    const QString createSql =
+        "BEGIN "
+        "  EXECUTE IMMEDIATE 'CREATE TABLE PICKUP_SCHEDULE ("
+        "    TICKET VARCHAR2(30) PRIMARY KEY, "
+        "    WASTE_TYPE VARCHAR2(100) NOT NULL, "
+        "    LOCATION VARCHAR2(120) NOT NULL, "
+        "    URGENCY VARCHAR2(20) NOT NULL, "
+        "    PRIORITY VARCHAR2(60) NOT NULL, "
+        "    WINDOW_TEXT VARCHAR2(120) NOT NULL, "
+        "    DEADLINE_AT DATE NOT NULL, "
+        "    CREATED_AT DATE DEFAULT SYSDATE"
+        "  )'; "
+        "EXCEPTION WHEN OTHERS THEN "
+        "  IF SQLCODE != -955 THEN RAISE; END IF; "
+        "END;";
+
+    if (!createQuery.exec(createSql)) {
+        qDebug() << "Failed to create PICKUP_SCHEDULE:" << createQuery.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+void MainWindow::loadScheduledPickupsFromDb()
+{
+    m_scheduledPickups.clear();
+
+    QSqlQuery query;
+    query.prepare("SELECT TICKET, WASTE_TYPE, LOCATION, URGENCY, PRIORITY, WINDOW_TEXT, "
+                  "TO_CHAR(DEADLINE_AT, 'YYYY-MM-DD HH24:MI') AS DEADLINE_AT "
+                  "FROM PICKUP_SCHEDULE ORDER BY CREATED_AT ASC");
+
+    if (!query.exec()) {
+        qDebug() << "LOAD PICKUP_SCHEDULE ERROR:" << query.lastError().text();
+        return;
+    }
+
+    int maxTicketNumber = 999;
+    while (query.next()) {
+        ScheduledPickup pickup;
+        pickup.ticket = query.value("TICKET").toString();
+        pickup.type = query.value("WASTE_TYPE").toString();
+        pickup.location = query.value("LOCATION").toString();
+        pickup.urgency = query.value("URGENCY").toString();
+        pickup.priority = query.value("PRIORITY").toString();
+        pickup.window = query.value("WINDOW_TEXT").toString();
+        pickup.deadline = QDateTime::fromString(query.value("DEADLINE_AT").toString(), "yyyy-MM-dd HH:mm");
+        m_scheduledPickups.append(pickup);
+
+        if (pickup.ticket.startsWith("PK-")) {
+            bool ok = false;
+            const int ticketNumber = pickup.ticket.mid(3).toInt(&ok);
+            if (ok) {
+                maxTicketNumber = qMax(maxTicketNumber, ticketNumber);
+            }
+        }
+    }
+
+    m_nextPickupTicket = maxTicketNumber + 1;
+}
+
+bool MainWindow::saveScheduledPickupToDb(const ScheduledPickup &pickup)
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO PICKUP_SCHEDULE (TICKET, WASTE_TYPE, LOCATION, URGENCY, PRIORITY, WINDOW_TEXT, DEADLINE_AT) "
+                  "VALUES (:ticket, :waste_type, :location, :urgency, :priority, :window_text, TO_DATE(:deadline_at, 'YYYY-MM-DD HH24:MI'))");
+    query.bindValue(":ticket", pickup.ticket);
+    query.bindValue(":waste_type", pickup.type);
+    query.bindValue(":location", pickup.location);
+    query.bindValue(":urgency", pickup.urgency);
+    query.bindValue(":priority", pickup.priority);
+    query.bindValue(":window_text", pickup.window);
+    query.bindValue(":deadline_at", pickup.deadline.toString("yyyy-MM-dd HH:mm"));
+
+    if (!query.exec()) {
+        qDebug() << "SAVE PICKUP_SCHEDULE ERROR:" << query.lastError().text();
+        return false;
+    }
+
+    return true;
 }
 
 void MainWindow::setupWasteTable()
@@ -734,6 +1066,279 @@ void MainWindow::onWasteStatsClicked()
     statsDialog.exec();
 }
 
+void MainWindow::onSmartPickupSchedulerClicked()
+{
+    if (!m_databaseReady) {
+        QMessageBox::critical(this, "Smart Pickup Scheduler", "Database is not ready.");
+        return;
+    }
+
+    loadScheduledPickupsFromDb();
+
+    const QList<Waste> records = Waste::readAll();
+
+    QStringList knownTypes;
+    QStringList knownLocations;
+    for (const Waste &waste : records) {
+        if (!waste.type().trimmed().isEmpty() && !knownTypes.contains(waste.type())) {
+            knownTypes << waste.type();
+        }
+        if (!waste.location().trimmed().isEmpty() && !knownLocations.contains(waste.location())) {
+            knownLocations << waste.location();
+        }
+    }
+
+    if (knownTypes.isEmpty()) {
+        knownTypes << "General" << "Recyclable" << "Organic" << "Hazardous";
+    }
+
+    if (knownLocations.isEmpty()) {
+        knownLocations << "Zone A" << "Zone B" << "Zone C";
+    }
+
+    QDialog dialog(this);
+    dialog.setWindowTitle("Smart Pickup Scheduler");
+    dialog.resize(980, 650);
+    dialog.setStyleSheet(
+        "QDialog { background-color: #020f0b; color: #e7fff6; }"
+        "QLabel { color: #cffff0; }"
+        "QComboBox, QSpinBox, QDateTimeEdit {"
+        "  min-height: 30px;"
+        "  border: 1px solid #0f6b50;"
+        "  border-radius: 6px;"
+        "  padding: 4px 8px;"
+        "  background-color: #063022;"
+        "  color: #d7fff0;"
+        "}"
+        "QComboBox::drop-down { border: none; width: 24px; }"
+        "QComboBox QAbstractItemView {"
+        "  background-color: #073a2a;"
+        "  color: #d7fff0;"
+        "  border: 1px solid #0f6b50;"
+        "  outline: 0;"
+        "  selection-background-color: #00d184;"
+        "  selection-color: #02160f;"
+        "}"
+        "QComboBox QAbstractItemView::item { min-height: 28px; padding: 6px 8px; }");
+
+    QVBoxLayout *rootLayout = new QVBoxLayout(&dialog);
+
+    QLabel *title = new QLabel("Smart Pickup Scheduler + Priority Engine", &dialog);
+    title->setStyleSheet("QLabel { font-size: 20px; font-weight: 700; color: #00ff9c; }");
+
+    QLabel *subtitle = new QLabel("Set a real deadline, then calculate priority and live SLA status (On Track / Warning / Delayed).", &dialog);
+    subtitle->setWordWrap(true);
+    subtitle->setStyleSheet("QLabel { font-size: 13px; color: #b8fbe4; }");
+
+    QFrame *formCard = new QFrame(&dialog);
+    formCard->setObjectName("schedulerFormCard");
+    formCard->setStyleSheet("#schedulerFormCard { border: 1px solid #00ff9c; border-radius: 10px; background: rgba(0, 255, 156, 0.05); }");
+    QFormLayout *form = new QFormLayout(formCard);
+
+    QComboBox *typeCombo = new QComboBox(formCard);
+    typeCombo->addItems(knownTypes);
+    typeCombo->setMaxVisibleItems(8);
+
+    QComboBox *locationCombo = new QComboBox(formCard);
+    locationCombo->addItems(knownLocations);
+    locationCombo->setMaxVisibleItems(8);
+
+    QSpinBox *quantitySpin = new QSpinBox(formCard);
+    quantitySpin->setRange(1, 10000);
+    quantitySpin->setValue(10);
+
+    QComboBox *urgencyCombo = new QComboBox(formCard);
+    urgencyCombo->addItems(QStringList() << "Low" << "Normal" << "High" << "Critical");
+    urgencyCombo->setCurrentText("Normal");
+    urgencyCombo->setMaxVisibleItems(8);
+
+    QDateTimeEdit *deadlineEdit = new QDateTimeEdit(QDateTime::currentDateTime().addSecs(2 * 60 * 60), formCard);
+    deadlineEdit->setDisplayFormat("yyyy-MM-dd HH:mm");
+    deadlineEdit->setCalendarPopup(true);
+
+    QLabel *priorityLabel = new QLabel("Priority Score: 0 (Low)", formCard);
+    priorityLabel->setStyleSheet("QLabel { color: #00ff9c; font-weight: 600; }");
+
+    QLabel *windowLabel = new QLabel("Suggested Pickup Window: Pending calculation", formCard);
+    windowLabel->setStyleSheet("QLabel { color: #9ef6d9; font-weight: 500; }");
+
+    QLabel *deadlineHint = new QLabel("Deadline = exact due time. SLA: On Track (>15 min left), Warning (<=15 min), Delayed (past deadline).", formCard);
+    deadlineHint->setWordWrap(true);
+    deadlineHint->setStyleSheet("QLabel { color: #8feecf; font-size: 11px; }");
+
+    form->addRow("Waste Type:", typeCombo);
+    form->addRow("Location:", locationCombo);
+    form->addRow("Quantity:", quantitySpin);
+    form->addRow("Urgency:", urgencyCombo);
+    form->addRow("Deadline:", deadlineEdit);
+    form->addRow(deadlineHint);
+    form->addRow(priorityLabel);
+    form->addRow(windowLabel);
+
+    QHBoxLayout *actionRow = new QHBoxLayout();
+    QPushButton *btnEvaluate = new QPushButton("Evaluate Priority", &dialog);
+    QPushButton *btnAddToQueue = new QPushButton("Schedule Pickup", &dialog);
+    btnEvaluate->setStyleSheet("QPushButton { border: 1px solid #00ff9c; color: #00ff9c; padding: 8px 14px; border-radius: 7px; }");
+    btnAddToQueue->setStyleSheet("QPushButton { border: 1px solid #00ff9c; color: #020f0b; background: #00ff9c; padding: 8px 14px; border-radius: 7px; font-weight: 700; }");
+    actionRow->addWidget(btnEvaluate);
+    actionRow->addWidget(btnAddToQueue);
+    actionRow->addStretch();
+
+    QTableWidget *queueTable = new QTableWidget(&dialog);
+    queueTable->setColumnCount(7);
+    queueTable->setHorizontalHeaderLabels(QStringList() << "Ticket" << "Type" << "Location" << "Urgency" << "Priority" << "Window" << "SLA");
+    queueTable->horizontalHeader()->setStretchLastSection(true);
+    queueTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    queueTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    queueTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    queueTable->setStyleSheet("QTableWidget { background-color: #031912; color: #d7fff0; gridline-color: #0f4534; border: 1px solid #0f4534; }");
+
+    auto slaFromDeadline = [](const QDateTime &deadline) {
+        const QDateTime now = QDateTime::currentDateTime();
+        const qint64 remainingMinutes = now.secsTo(deadline) / 60;
+        if (now > deadline) {
+            return QString("Delayed");
+        }
+        if (remainingMinutes <= 15) {
+            return QString("Warning");
+        }
+        return QString("On Track");
+    };
+
+    auto appendScheduledRow = [=](const ScheduledPickup &pickup) {
+        const int row = queueTable->rowCount();
+        queueTable->insertRow(row);
+        queueTable->setItem(row, 0, new QTableWidgetItem(pickup.ticket));
+        queueTable->setItem(row, 1, new QTableWidgetItem(pickup.type));
+        queueTable->setItem(row, 2, new QTableWidgetItem(pickup.location));
+        queueTable->setItem(row, 3, new QTableWidgetItem(pickup.urgency));
+        queueTable->setItem(row, 4, new QTableWidgetItem(pickup.priority));
+        queueTable->setItem(row, 5, new QTableWidgetItem(QString("%1 | Deadline: %2")
+                                                          .arg(pickup.window)
+                                                          .arg(pickup.deadline.toString("yyyy-MM-dd HH:mm"))));
+        queueTable->setItem(row, 6, new QTableWidgetItem(slaFromDeadline(pickup.deadline)));
+    };
+
+    for (const ScheduledPickup &pickup : m_scheduledPickups) {
+        appendScheduledRow(pickup);
+    }
+
+    auto evaluatePriority = [=]() {
+        const QString typeText = typeCombo->currentText().toLower();
+        const QString urgencyText = urgencyCombo->currentText();
+        const int quantity = quantitySpin->value();
+        const QDateTime now = QDateTime::currentDateTime();
+        const QDateTime deadline = deadlineEdit->dateTime();
+        const qint64 minutesToDeadline = now.secsTo(deadline) / 60;
+
+        int typeWeight = 35;
+        if (typeText.contains("hazard") || typeText.contains("chemical") || typeText.contains("medical")) {
+            typeWeight = 65;
+        } else if (typeText.contains("recycl")) {
+            typeWeight = 45;
+        } else if (typeText.contains("organic")) {
+            typeWeight = 40;
+        }
+
+        int urgencyWeight = 20;
+        if (urgencyText == "Critical") {
+            urgencyWeight = 60;
+        } else if (urgencyText == "High") {
+            urgencyWeight = 45;
+        } else if (urgencyText == "Normal") {
+            urgencyWeight = 30;
+        }
+
+        const int quantityWeight = qMin(20, quantity / 25);
+        int deadlinePressureWeight = 0;
+        if (minutesToDeadline <= 60) {
+            deadlinePressureWeight = 20;
+        } else if (minutesToDeadline <= 180) {
+            deadlinePressureWeight = 12;
+        } else if (minutesToDeadline <= 360) {
+            deadlinePressureWeight = 6;
+        }
+
+        const int score = qBound(1, typeWeight + urgencyWeight + quantityWeight + deadlinePressureWeight, 100);
+
+        QString priorityBand = "Low";
+        QString timeWindow = "Within 24 hours";
+        QString slaState = "On Track";
+
+        if (score >= 80) {
+            priorityBand = "Critical";
+            timeWindow = "Within 2 hours";
+        } else if (score >= 60) {
+            priorityBand = "High";
+            timeWindow = "Within 6 hours";
+        } else if (score >= 40) {
+            priorityBand = "Medium";
+            timeWindow = "Within 12 hours";
+        }
+
+        slaState = slaFromDeadline(deadline);
+
+        priorityLabel->setText(QString("Priority Score: %1 (%2)").arg(score).arg(priorityBand));
+        windowLabel->setText(QString("Suggested Pickup Window: %1 | Deadline: %2 | SLA: %3")
+                     .arg(timeWindow)
+                     .arg(deadline.toString("yyyy-MM-dd HH:mm"))
+                     .arg(slaState));
+
+        return QPair<QPair<int, QString>, QPair<QString, QString>>(
+            QPair<int, QString>(score, priorityBand),
+            QPair<QString, QString>(timeWindow, slaState));
+    };
+
+    connect(btnEvaluate, &QPushButton::clicked, &dialog, [=]() {
+        evaluatePriority();
+    });
+
+    connect(btnAddToQueue, &QPushButton::clicked, &dialog, [=, &dialog]() {
+        const auto evaluation = evaluatePriority();
+        const int score = evaluation.first.first;
+        const QString band = evaluation.first.second;
+        const QString window = evaluation.second.first;
+        const QString sla = evaluation.second.second;
+
+        ScheduledPickup pickup;
+        pickup.ticket = QString("PK-%1").arg(m_nextPickupTicket++);
+        pickup.type = typeCombo->currentText();
+        pickup.location = locationCombo->currentText();
+        pickup.urgency = urgencyCombo->currentText();
+        pickup.priority = QString("%1 (%2)").arg(score).arg(band);
+        pickup.window = window;
+        pickup.deadline = deadlineEdit->dateTime();
+
+        if (!saveScheduledPickupToDb(pickup)) {
+            QMessageBox::critical(&dialog,
+                                  "Smart Pickup Scheduler",
+                                  "Could not save this pickup to database.");
+            return;
+        }
+
+        m_scheduledPickups.append(pickup);
+        appendScheduledRow(pickup);
+
+        QTableWidgetItem *slaItem = queueTable->item(queueTable->rowCount() - 1, 6);
+        if (slaItem) {
+            slaItem->setText(sla);
+        }
+    });
+
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Close, &dialog);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+
+    rootLayout->addWidget(title);
+    rootLayout->addWidget(subtitle);
+    rootLayout->addWidget(formCard);
+    rootLayout->addLayout(actionRow);
+    rootLayout->addWidget(queueTable, 1);
+    rootLayout->addWidget(buttons);
+
+    dialog.exec();
+}
+
 void MainWindow::onEditWasteClicked()
 {
     if (!m_databaseReady) {
@@ -904,6 +1509,138 @@ void MainWindow::onExportWastePdfClicked()
     QMessageBox::information(this, "Export PDF", QString("Export completed:\n%1").arg(targetPath));
 }
 
+void MainWindow::onViewOnMapClicked()
+{
+        if (!ui->wasteTable || !ui->wasteTable->selectionModel()) {
+                QMessageBox::warning(this, "View on Map", "Waste table is not ready.");
+                return;
+        }
+
+        const QModelIndexList selectedRows = ui->wasteTable->selectionModel()->selectedRows();
+        if (selectedRows.isEmpty()) {
+                QMessageBox::warning(this, "View on Map", "Please select a row first.");
+                return;
+        }
+
+        const int row = selectedRows.first().row();
+        QTableWidgetItem *locationItem = ui->wasteTable->item(row, 6);
+        const QString locationName = locationItem ? locationItem->text().trimmed() : QString();
+        if (locationName.isEmpty()) {
+                QMessageBox::warning(this, "View on Map", "Selected row has no location value.");
+                return;
+        }
+
+        const QMap<QString, QPair<double, double>> cityCoords = {
+                {"tunis", {36.8065, 10.1815}},
+                {"ariana", {36.8665, 10.1647}},
+                {"nabeul", {36.4561, 10.7376}},
+                {"sousse", {35.8256, 10.6084}},
+                {"sfax", {34.7406, 10.7603}},
+                {"bizerta", {37.2744, 9.8739}},
+                {"monastir", {35.7643, 10.8113}},
+                {"kairouan", {35.6781, 10.0963}},
+                {"gabes", {33.8815, 10.0982}},
+                {"beja", {36.7333, 9.1833}}
+        };
+
+        const QString key = locationName.trimmed().toLower();
+        double latitude = 0.0;
+        double longitude = 0.0;
+        bool hasCoordinates = false;
+
+        if (cityCoords.contains(key)) {
+            latitude = cityCoords.value(key).first;
+            longitude = cityCoords.value(key).second;
+            hasCoordinates = true;
+        } else {
+            QNetworkAccessManager network;
+            QUrl url("https://nominatim.openstreetmap.org/search");
+            QUrlQuery query;
+            query.addQueryItem("q", locationName + ", Tunisia");
+            query.addQueryItem("format", "json");
+            query.addQueryItem("limit", "1");
+            query.addQueryItem("countrycodes", "tn");
+            url.setQuery(query);
+
+            QNetworkRequest request(url);
+            request.setRawHeader("User-Agent", "ManarWasteApp/1.0 (educational project)");
+
+            QNetworkReply *reply = network.get(request);
+            QEventLoop loop;
+            QTimer timeout;
+            timeout.setSingleShot(true);
+            QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+            QObject::connect(&timeout, &QTimer::timeout, &loop, &QEventLoop::quit);
+            timeout.start(7000);
+            loop.exec();
+
+            if (timeout.isActive() && reply->error() == QNetworkReply::NoError) {
+                const QByteArray body = reply->readAll();
+                const QJsonDocument jsonDoc = QJsonDocument::fromJson(body);
+                if (jsonDoc.isArray()) {
+                    const QJsonArray results = jsonDoc.array();
+                    if (!results.isEmpty()) {
+                        const QJsonObject first = results.first().toObject();
+                        bool latOk = false;
+                        bool lonOk = false;
+                        latitude = first.value("lat").toString().toDouble(&latOk);
+                        longitude = first.value("lon").toString().toDouble(&lonOk);
+                        hasCoordinates = latOk && lonOk;
+                    }
+                }
+            }
+
+            reply->deleteLater();
+        }
+
+        if (!hasCoordinates) {
+            QMessageBox::warning(this,
+                         "View on Map",
+                         QString("Could not find coordinates for '%1' in Tunisia.\n"
+                             "Tip: check spelling (e.g. Korba, Kelibia, Mahdia).")
+                         .arg(locationName));
+            return;
+        }
+
+        QDialog *mapDialog = new QDialog(this);
+        mapDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        mapDialog->setWindowTitle(QString("Map - %1").arg(locationName));
+        mapDialog->resize(940, 700);
+
+        QVBoxLayout *layout = new QVBoxLayout(mapDialog);
+        layout->setContentsMargins(8, 8, 8, 8);
+        layout->setSpacing(8);
+
+        QLabel *hint = new QLabel("Use mouse wheel to zoom and left-drag to move the map.", mapDialog);
+        hint->setStyleSheet("QLabel { color: #9ef6d9; font-size: 12px; }");
+
+        QHBoxLayout *toolbar = new QHBoxLayout();
+        QPushButton *zoomInBtn = new QPushButton("+", mapDialog);
+        QPushButton *zoomOutBtn = new QPushButton("-", mapDialog);
+        QPushButton *resetBtn = new QPushButton("Reset", mapDialog);
+        const QString btnStyle = "QPushButton { min-width: 34px; min-height: 30px; border: 1px solid #00d084; color: #d8fff1; background-color: #06241b; border-radius: 6px; }"
+                                "QPushButton:hover { background-color: #0b3327; }";
+        zoomInBtn->setStyleSheet(btnStyle);
+        zoomOutBtn->setStyleSheet(btnStyle);
+        resetBtn->setStyleSheet(btnStyle);
+        toolbar->addWidget(zoomInBtn);
+        toolbar->addWidget(zoomOutBtn);
+        toolbar->addWidget(resetBtn);
+        toolbar->addStretch();
+
+        OSMTileMapWidget *mapWidget = new OSMTileMapWidget(mapDialog);
+        mapWidget->setMarker(latitude, longitude, locationName);
+
+        QObject::connect(zoomInBtn, &QPushButton::clicked, mapWidget, [mapWidget]() { mapWidget->zoomIn(); });
+        QObject::connect(zoomOutBtn, &QPushButton::clicked, mapWidget, [mapWidget]() { mapWidget->zoomOut(); });
+        QObject::connect(resetBtn, &QPushButton::clicked, mapWidget, [mapWidget]() { mapWidget->resetView(); });
+
+        layout->addLayout(toolbar);
+        layout->addWidget(hint);
+        layout->addWidget(mapWidget, 1);
+        mapDialog->show();
+}
+
 void MainWindow::on_btnClearSelection_clicked()
 {
     onClearWasteClicked();
@@ -1002,28 +1739,12 @@ void MainWindow::onWasteSortChanged(int index)
 
     applyWasteSearchAndSort();
 }
-=======
-
-
-    // ✅ ADD THIS LINE ONLY
-    connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
-}
-
-
-// ================= ADD THIS FUNCTION ONLY =================
->>>>>>> origin/waste
 
 void MainWindow::showWastePage()
 {
     ui->stackedwidget->setCurrentWidget(ui->wastemanagement);
 }
 
-<<<<<<< HEAD
-=======
-
-// ================= YOUR ORIGINAL FUNCTIONS =================
-
->>>>>>> origin/waste
 void MainWindow::showLoginPage()
 {
     ui->stackedwidget->setCurrentWidget(ui->connection);

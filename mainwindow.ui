@@ -2980,7 +2980,7 @@ QPushButton:hover {
 }</string>
               </property>
               <property name="text">
-               <string>Rate Service</string>
+               <string>Smart Scheduler</string>
               </property>
              </widget>
             </item>

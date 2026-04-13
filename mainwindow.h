@@ -1,20 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-<<<<<<< HEAD
 #include "connection.h"
 #include "waste.h"
 
 #include <QMainWindow>
+#include <QDateTime>
 
 class QLabel;
 
 class QCloseEvent;
-
-=======
-#include <QMainWindow>
-
->>>>>>> origin/waste
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -30,6 +25,16 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    struct ScheduledPickup {
+        QString ticket;
+        QString type;
+        QString location;
+        QString urgency;
+        QString priority;
+        QString window;
+        QDateTime deadline;
+    };
+
     void setupConnections();
 
     // Navigation methods
@@ -41,10 +46,12 @@ private:
     void showCustomerPage();
     void showWastePage();
 
-<<<<<<< HEAD
     // Waste CRUD helpers
     bool initializeDatabase();
     bool ensureWasteTable();
+    bool ensurePickupScheduleTable();
+    void loadScheduledPickupsFromDb();
+    bool saveScheduledPickupToDb(const ScheduledPickup &pickup);
     void setupWasteTable();
     void loadWasteToTable(const QList<Waste> &records);
     void applyWasteSearchAndSort();
@@ -58,7 +65,9 @@ private:
     void onDeleteWasteClicked();
     void onClearWasteClicked();
     void onExportWastePdfClicked();
+    void onViewOnMapClicked();
     void onWasteStatsClicked();
+    void onSmartPickupSchedulerClicked();
     void onWasteSearchChanged(const QString &text);
     void onWasteSortChanged(int index);
 
@@ -73,14 +82,11 @@ private slots:
 private:
 
     QList<Waste> m_cachedWaste;
+    QList<ScheduledPickup> m_scheduledPickups;
+    int m_nextPickupTicket;
     bool m_databaseReady;
     Connection m_connection;  // Keep connection alive
     QLabel *m_searchHintLabel;
-=======
-    // Logic methods
-    void onLoginClicked();
-    void onVerifyClicked();
->>>>>>> origin/waste
 };
 
 #endif // MAINWINDOW_H

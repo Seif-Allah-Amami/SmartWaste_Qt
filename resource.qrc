@@ -9,4 +9,7 @@
         <file>images/waste-removebg-preview.png</file>
     </qresource>
     <qresource prefix="/new/prefix1"/>
+    <qresource prefix="/qml">
+        <file>qml/EmbeddedMap.qml</file>
+    </qresource>
 </RCC>
