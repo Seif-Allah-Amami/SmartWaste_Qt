@@ -50,6 +50,7 @@ public:
     // Error handling
     static QString lastError();
 
+<<<<<<< HEAD
     // Validation helpers (public)
     static bool machineExists(int machineId);
     static bool supplierExists(int supplierId);
@@ -58,6 +59,8 @@ public:
     static bool isValidHireDate(const QDate &hireDate);
     static bool isValidName(const QString &name);
 
+=======
+>>>>>>> origin/employee
 private:
     int     m_id;
     QString m_fullName;
@@ -70,6 +73,13 @@ private:
     int     m_idSupplier;
 
     static QString m_lastError;
+<<<<<<< HEAD
+=======
+
+    // Validation helpers
+    static bool machineExists(int machineId);
+    static bool supplierExists(int supplierId);
+>>>>>>> origin/employee
 };
 
 #endif // EMPLOYEE_H

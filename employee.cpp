@@ -3,8 +3,11 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QVariant>
+<<<<<<< HEAD
 #include <QRegularExpression>
 #include <QDate>
+=======
+>>>>>>> origin/employee
 
 Employee::Employee()
     : m_id(-1)
@@ -82,6 +85,7 @@ bool Employee::supplierExists(int supplierId)
     return query.value(0).toInt() > 0;
 }
 
+<<<<<<< HEAD
 bool Employee::isValidEmail(const QString &email)
 {
     // Email format validation: must contain @ and at least one . after @
@@ -110,6 +114,8 @@ bool Employee::isValidName(const QString &name)
     return nameRegex.match(name).hasMatch();
 }
 
+=======
+>>>>>>> origin/employee
 bool Employee::create() const
 {
     if (m_id <= 0) {
@@ -148,8 +154,13 @@ bool Employee::create() const
     query.bindValue(":department",  m_department);
     query.bindValue(":hire_date",   m_hireDate);
     query.bindValue(":salary",      m_salary);
+<<<<<<< HEAD
     query.bindValue(":id_machine",  m_idMachine > 0 ? QVariant(m_idMachine) : QVariant());
     query.bindValue(":id_supplier", m_idSupplier > 0 ? QVariant(m_idSupplier) : QVariant());
+=======
+    query.bindValue(":id_machine",  m_idMachine > 0 ? QVariant(m_idMachine) : QVariant(QVariant::Int));
+    query.bindValue(":id_supplier", m_idSupplier > 0 ? QVariant(m_idSupplier) : QVariant(QVariant::Int));
+>>>>>>> origin/employee
 
     if (!query.exec()) {
         m_lastError = query.lastError().text();
@@ -189,8 +200,13 @@ bool Employee::update() const
     query.bindValue(":department",  m_department);
     query.bindValue(":hire_date",   m_hireDate);
     query.bindValue(":salary",      m_salary);
+<<<<<<< HEAD
     query.bindValue(":id_machine",  m_idMachine > 0 ? QVariant(m_idMachine) : QVariant());
     query.bindValue(":id_supplier", m_idSupplier > 0 ? QVariant(m_idSupplier) : QVariant());
+=======
+    query.bindValue(":id_machine",  m_idMachine > 0 ? QVariant(m_idMachine) : QVariant(QVariant::Int));
+    query.bindValue(":id_supplier", m_idSupplier > 0 ? QVariant(m_idSupplier) : QVariant(QVariant::Int));
+>>>>>>> origin/employee
 
     if (!query.exec()) {
         m_lastError = query.lastError().text();
