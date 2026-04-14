@@ -1,7 +1,6 @@
 customer_id,name,email,phone,address,report_type,report_date,status
 555,"emna","emna@gmail.com","+216 99645789","sidibou","Recycling Issue",2026-04-14,in progress
-59,"habiba","habiba@yahoo.com","+216 58926446","bardo","Illegal Dumping",2026-03-31,rejected
-888,"safe","safe@esprit.com","+216 58956445","tunis","Missed Waste Collection",2026-03-25,solved
+888,"safe","safe@esprit.com","+216 58956445","tunis","Missed Waste Collection",2026-03-25,rejected
 88,"alessandrou","sandro@gmail.com","+216 98741523","nasser","Missed Waste Collection",2026-04-14,pending
 5555,"mohamed","mohamed@gmail.com","+216 27999666","beja","Garbage Overflow",2026-03-25,solved
 5554,"ali555","kel@gmail.com","+216 58944566","manouba","Garbage Overflow",2026-03-25,in progress

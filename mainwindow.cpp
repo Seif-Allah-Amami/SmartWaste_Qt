@@ -36,7 +36,7 @@ QString normalizeStatusValue(const QString &status)
 bool applyAutoArchiveForOldReports()
 {
     const QDate today = QDate::currentDate();
-    const QDate cutoffDate = today.addDays(-30);
+    const QDate cutoffDate = today.addDays(-60);
     const QDateTime restoreCutoff = QDateTime::currentDateTime().addSecs(-15 * 60);
 
     QSqlQuery query;
@@ -44,8 +44,7 @@ bool applyAutoArchiveForOldReports()
         "UPDATE CUSTOMER "
         "SET ARCHIVED = 1, ARCHIVE_DATE = :archive_date "
         "WHERE (ARCHIVED IS NULL OR ARCHIVED = 0) "
-        "AND ((ARCHIVE_DATE IS NULL AND ((REPORT_DATE IS NOT NULL AND REPORT_DATE <= :cutoff_date) "
-        "OR LOWER(TRIM(STATUS)) = 'rejected')) "
+        "AND ((ARCHIVE_DATE IS NULL AND (REPORT_DATE IS NOT NULL AND REPORT_DATE <= :cutoff_date)) "
         "OR (ARCHIVE_DATE IS NOT NULL AND ARCHIVE_DATE <= :restore_cutoff))");
     query.bindValue(":archive_date", today);
     query.bindValue(":cutoff_date", cutoffDate);
@@ -61,23 +60,22 @@ void rearchiveRestoredReportAfterStatusEdit(const Customer &beforeEdit, const Cu
 {
     Q_UNUSED(beforeEdit);
 
-    const bool forceOnRejected = (normalizeStatusValue(afterEdit.status()) == "rejected");
+    // Only re-archive restored reports that are at least 60 days old.
+    const QDate cutoffDate = QDate::currentDate().addDays(-60);
 
-    // Only re-archive records that had been restored earlier (ARCHIVE_DATE kept as marker).
     QSqlQuery query;
     QString sql =
         "UPDATE CUSTOMER "
         "SET ARCHIVED = 1, ARCHIVE_DATE = :archive_date "
         "WHERE CUSTOMER_ID = :customer_id "
         "AND ARCHIVED = 0";
-
-    if (!forceOnRejected) {
-        sql += " AND ARCHIVE_DATE IS NOT NULL";
-    }
+    sql += " AND ARCHIVE_DATE IS NOT NULL";
+    sql += " AND REPORT_DATE IS NOT NULL AND REPORT_DATE <= :cutoff_date";
 
     query.prepare(sql);
     query.bindValue(":archive_date", QDate::currentDate());
     query.bindValue(":customer_id", afterEdit.customerId());
+    query.bindValue(":cutoff_date", cutoffDate);
     query.exec();
 }
 }

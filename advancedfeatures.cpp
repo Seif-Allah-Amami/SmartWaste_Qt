@@ -601,7 +601,7 @@ void AdvancedFeatures::onManageArchivedReports()
     if (table->rowCount() == 0) {
         QMessageBox::information(&dialog,
                                  "Archived Reports",
-                                 "No archived reports found yet.\n\nAuto-archive rule: report 30+ days old.");
+                                 "No archived reports found yet.\n\nAuto-archive rule: report 60+ days old.");
     }
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout();
@@ -821,7 +821,8 @@ void AdvancedFeatures::autoArchiveOldReports()
             continue;
         }
 
-        if (status == "rejected" || calculateReportAgeDays(c) >= 30) {
+        const int ageDays = calculateReportAgeDays(c);
+        if (ageDays >= 60) {
             if (updateArchiveStateInStorage(id, true, QString(), today)) {
                 archivedCustomerIds_.insert(id);
                 archiveDates_[id] = today;
@@ -832,7 +833,7 @@ void AdvancedFeatures::autoArchiveOldReports()
     }
 
     if (archivedNow > 0) {
-        addMessage(QString("Auto-archived %1 report(s): rejected or 30+ days old.").arg(archivedNow), false);
+        addMessage(QString("Auto-archived %1 report(s): 60+ days old.").arg(archivedNow), false);
     }
 }
 
