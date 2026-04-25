@@ -2212,7 +2212,7 @@ QPushButton:hover {
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="resource.qrc">:/image/image/images/logo.png</pixmap>
+          <pixmap resource="source.qrc">:/image/image/images/logo.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>false</bool>
@@ -6242,7 +6242,7 @@ QPushButton:hover {
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="source.qrc"/>
  </resources>
  <connections/>
 </ui>
