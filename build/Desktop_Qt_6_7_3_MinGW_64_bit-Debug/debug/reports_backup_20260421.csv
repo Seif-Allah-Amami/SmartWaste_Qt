@@ -1,0 +1,5 @@
+customer_id,name,email,phone,address,report_type,report_date,status
+555,"emna","emna@gmail.com","+216 99645789","sidibou","Recycling Issue",2026-04-14,in progress
+88,"alessandrou","sandro@gmail.com","+216 98741523","nasser","Missed Waste Collection",2026-04-14,pending
+5554,"ali555","kel@gmail.com","+216 58944566","manouba","Garbage Overflow",2026-03-25,in progress
+999,"mahdi bali","mahdib@gmail.com","+216 57484123","ezahraa","Illegal Dumping",2026-04-20,pending
