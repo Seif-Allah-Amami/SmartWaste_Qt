@@ -28,7 +28,7 @@ Customer::Customer(int customerId,
 #include <QIntValidator>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QSpinBox>
+#include <QComboBox>
 
 #include <QVBoxLayout>
 #include <QRegularExpression>
@@ -172,16 +172,16 @@ bool Customer::add(QString *errorMessage) const
     query.prepare(
         "INSERT INTO CUSTOMER (CUSTOMER_ID, NAME, EMAIL, PHONE, ADDRESS, REPORT_TYPE, REPORT_DATE, "
         "EMPLOYEE_ID, STATUS) "
-        "VALUES (:customer_id, :name, :email, :phone, :address, :report_type, :report_date, "
+        "VALUES (CUSTOMER_SEQ.NEXTVAL, :name, :email, :phone, :address, :report_type, TO_DATE(:report_date, 'YYYY-MM-DD'), "
         ":employee_id, :status)");
 
-    query.bindValue(":customer_id", customerId_);
+
     query.bindValue(":name", name_);
     query.bindValue(":email", email_);
     query.bindValue(":phone", phone_);
     query.bindValue(":address", address_);
     query.bindValue(":report_type", reportType_);
-    query.bindValue(":report_date", reportDate_);
+    query.bindValue(":report_date", reportDate_.toString("yyyy-MM-dd"));
     if (employeeId_ > 0) {
         query.bindValue(":employee_id", employeeId_);
     } else {
@@ -374,14 +374,14 @@ void AddCustomerDialog::buildUi()
     reportDateEdit_->setDisplayFormat("yyyy-MM-dd");
     reportDateEdit_->setDate(QDate::currentDate());
 
-    employeeIdEdit_ = new QSpinBox(this);
-    employeeIdEdit_->setRange(0, 1000000000);
-    employeeIdEdit_->setSpecialValueText("(none)");
+    employeeIdEdit_ = new QComboBox(this);
+    populateEmployeeList();
 
     statusEdit_ = new QComboBox(this);
     statusEdit_->addItems({"pending", "in progress", "solved", "rejected"});
 
-    formLayout->addRow("Customer ID", customerIdEdit_);
+    // Customer ID is auto-generated
+    customerIdEdit_->setVisible(false);
     formLayout->addRow("Name", nameEdit_);
     formLayout->addRow("Email", emailEdit_);
     formLayout->addRow("Phone", phoneEdit_);
@@ -403,6 +403,24 @@ void AddCustomerDialog::buildUi()
     layout->addWidget(buttonBox_);
 }
 
+void AddCustomerDialog::populateEmployeeList()
+{
+    employeeIdEdit_->clear();
+    employeeIdEdit_->addItem("(none)", 0);
+
+    QSqlQuery query;
+    if (!query.exec("SELECT EMPLOYEE_ID, FULL_NAME FROM EMPLOYEE ORDER BY FULL_NAME")) {
+        QMessageBox::warning(this, "Employees", "Failed to load employees.\n" + query.lastError().text());
+        return;
+    }
+
+    while (query.next()) {
+        const int id = query.value(0).toInt();
+        const QString name = query.value(1).toString();
+        employeeIdEdit_->addItem(QString("%1 - %2").arg(id).arg(name), id);
+    }
+}
+
 void AddCustomerDialog::onClearClicked()
 {
     clearFields();
@@ -417,7 +435,7 @@ void AddCustomerDialog::clearFields()
     addressEdit_->clear();
     reportTypeEdit_->setCurrentIndex(0);
     reportDateEdit_->setDate(QDate::currentDate());
-    employeeIdEdit_->setValue(0);
+    employeeIdEdit_->setCurrentIndex(0);
     statusEdit_->setCurrentIndex(0);
 }
 
@@ -454,7 +472,16 @@ void AddCustomerDialog::setCustomer(const Customer &customer)
     if (customer.reportDate().isValid()) {
         reportDateEdit_->setDate(customer.reportDate());
     }
-    employeeIdEdit_->setValue(customer.employeeId());
+    const int employeeId = customer.employeeId();
+    int employeeIdx = employeeIdEdit_->findData(employeeId);
+    if (employeeIdx >= 0) {
+        employeeIdEdit_->setCurrentIndex(employeeIdx);
+    } else if (employeeId > 0) {
+        employeeIdEdit_->addItem(QString("%1 - (not found)").arg(employeeId), employeeId);
+        employeeIdEdit_->setCurrentIndex(employeeIdEdit_->count() - 1);
+    } else {
+        employeeIdEdit_->setCurrentIndex(0);
+    }
 }
 
 Customer AddCustomerDialog::customer() const
@@ -467,7 +494,7 @@ Customer AddCustomerDialog::customer() const
         addressEdit_->text().trimmed(),
         reportTypeEdit_->currentText().trimmed(),
         reportDateEdit_->date(),
-        employeeIdEdit_->value(),
+        employeeIdEdit_->currentData().toInt(),
         statusEdit_->currentText().trimmed());
 }
 
@@ -495,10 +522,7 @@ void AddCustomerDialog::onPhoneTextChanged(const QString &text)
 
 bool AddCustomerDialog::validateInput()
 {
-    if (customerIdEdit_->text().trimmed().isEmpty()) {
-        QMessageBox::warning(this, "Validation", "Customer ID is required.");
-        return false;
-    }
+
 
     if (nameEdit_->text().trimmed().isEmpty()) {
         QMessageBox::warning(this, "Validation", "Name is required.");

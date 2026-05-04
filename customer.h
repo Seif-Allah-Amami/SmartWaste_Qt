@@ -92,7 +92,6 @@ private:
 
 class QLineEdit;
 class QDateEdit;
-class QSpinBox;
 class QDialogButtonBox;
 
 class AddCustomerDialog : public QDialog
@@ -112,6 +111,7 @@ private slots:
 
 private:
     void buildUi();
+    void populateEmployeeList();
     bool validateInput();
     void clearFields();
 
@@ -122,7 +122,7 @@ private:
     QLineEdit *addressEdit_;
     QComboBox *reportTypeEdit_;
     QDateEdit *reportDateEdit_;
-    QSpinBox *employeeIdEdit_;
+    QComboBox *employeeIdEdit_;
     QComboBox *statusEdit_;
     QDialogButtonBox *buttonBox_;
     QPushButton *clearButton_;
