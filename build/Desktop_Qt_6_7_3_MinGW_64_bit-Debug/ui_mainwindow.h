@@ -176,6 +176,10 @@ public:
     QPushButton *btnViewWaste;
     QPushButton *btnAddWaste;
     QPushButton *btnWasteStats;
+<<<<<<< HEAD
+=======
+    QPushButton *btnSensorDetails;
+>>>>>>> 5be580a (waste X Arduino)
     QSpacerItem *horizontalSpacer_2;
     QWidget *searchFilterWidget;
     QVBoxLayout *searchFilterLayout;
@@ -195,6 +199,7 @@ public:
     QPushButton *btnClearSelection;
     QSpacerItem *verticalSpacer_3;
     QPushButton *btnExportPDF;
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -346,6 +351,8 @@ public:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+=======
+>>>>>>> 5be580a (waste X Arduino)
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -2034,6 +2041,26 @@ public:
 
         topActionsLayout->addWidget(btnWasteStats);
 
+<<<<<<< HEAD
+=======
+        btnSensorDetails = new QPushButton(mainContentWidget);
+        btnSensorDetails->setObjectName("btnSensorDetails");
+        btnSensorDetails->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid #6bffb8;\n"
+"    border-radius: 10px;\n"
+"    padding: 10px 20px;\n"
+"    color: #6bffb8;\n"
+"    font-weight: 600;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(107, 255, 184, 0.1);\n"
+"}"));
+
+        topActionsLayout->addWidget(btnSensorDetails);
+
+>>>>>>> 5be580a (waste X Arduino)
         horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
         topActionsLayout->addItem(horizontalSpacer_2);
@@ -2090,8 +2117,13 @@ public:
         tableActionsLayout->setSpacing(20);
         tableActionsLayout->setObjectName("tableActionsLayout");
         wasteTable = new QTableWidget(mainContentWidget);
+<<<<<<< HEAD
         if (wasteTable->columnCount() < 8)
             wasteTable->setColumnCount(8);
+=======
+        if (wasteTable->columnCount() < 10)
+            wasteTable->setColumnCount(10);
+>>>>>>> 5be580a (waste X Arduino)
         QTableWidgetItem *__qtablewidgetitem7 = new QTableWidgetItem();
         wasteTable->setHorizontalHeaderItem(0, __qtablewidgetitem7);
         QTableWidgetItem *__qtablewidgetitem8 = new QTableWidgetItem();
@@ -2108,6 +2140,13 @@ public:
         wasteTable->setHorizontalHeaderItem(6, __qtablewidgetitem13);
         QTableWidgetItem *__qtablewidgetitem14 = new QTableWidgetItem();
         wasteTable->setHorizontalHeaderItem(7, __qtablewidgetitem14);
+<<<<<<< HEAD
+=======
+        QTableWidgetItem *__qtablewidgetitem15 = new QTableWidgetItem();
+        wasteTable->setHorizontalHeaderItem(8, __qtablewidgetitem15);
+        QTableWidgetItem *__qtablewidgetitem16 = new QTableWidgetItem();
+        wasteTable->setHorizontalHeaderItem(9, __qtablewidgetitem16);
+>>>>>>> 5be580a (waste X Arduino)
         wasteTable->setObjectName("wasteTable");
         QSizePolicy sizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
         sizePolicy.setHorizontalStretch(0);
@@ -2274,6 +2313,7 @@ public:
         mainContentLayout->addLayout(tableActionsLayout);
 
         stackedwidget->addWidget(wastemanagement);
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -3782,6 +3822,8 @@ public:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+=======
+>>>>>>> 5be580a (waste X Arduino)
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -3789,6 +3831,7 @@ public:
 
         retranslateUi(MainWindow);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         stackedwidget->setCurrentIndex(8);
 =======
@@ -3802,6 +3845,9 @@ public:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+=======
+        stackedwidget->setCurrentIndex(5);
+>>>>>>> 5be580a (waste X Arduino)
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -3896,6 +3942,10 @@ public:
         btnViewWaste->setText(QCoreApplication::translate("MainWindow", "View Waste Records", nullptr));
         btnAddWaste->setText(QCoreApplication::translate("MainWindow", "Add Waste Record", nullptr));
         btnWasteStats->setText(QCoreApplication::translate("MainWindow", "Waste Statistics", nullptr));
+<<<<<<< HEAD
+=======
+        btnSensorDetails->setText(QCoreApplication::translate("MainWindow", "Sensor Details", nullptr));
+>>>>>>> 5be580a (waste X Arduino)
         lblWasteList->setText(QCoreApplication::translate("MainWindow", "Waste Records", nullptr));
         searchBox->setPlaceholderText(QCoreApplication::translate("MainWindow", "Search by ID / Type / Location...", nullptr));
         sortComboBox->setItemText(0, QCoreApplication::translate("MainWindow", "Sort: Date (Newest)", nullptr));
@@ -3914,11 +3964,23 @@ public:
         QTableWidgetItem *___qtablewidgetitem11 = wasteTable->horizontalHeaderItem(4);
         ___qtablewidgetitem11->setText(QCoreApplication::translate("MainWindow", "Weight (kg)", nullptr));
         QTableWidgetItem *___qtablewidgetitem12 = wasteTable->horizontalHeaderItem(5);
+<<<<<<< HEAD
         ___qtablewidgetitem12->setText(QCoreApplication::translate("MainWindow", "Collection Date", nullptr));
         QTableWidgetItem *___qtablewidgetitem13 = wasteTable->horizontalHeaderItem(6);
         ___qtablewidgetitem13->setText(QCoreApplication::translate("MainWindow", "Location", nullptr));
         QTableWidgetItem *___qtablewidgetitem14 = wasteTable->horizontalHeaderItem(7);
         ___qtablewidgetitem14->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
+=======
+        ___qtablewidgetitem12->setText(QCoreApplication::translate("MainWindow", "Nouvelle colonne", nullptr));
+        QTableWidgetItem *___qtablewidgetitem13 = wasteTable->horizontalHeaderItem(6);
+        ___qtablewidgetitem13->setText(QCoreApplication::translate("MainWindow", "Distance (cm)", nullptr));
+        QTableWidgetItem *___qtablewidgetitem14 = wasteTable->horizontalHeaderItem(7);
+        ___qtablewidgetitem14->setText(QCoreApplication::translate("MainWindow", "Collection Date", nullptr));
+        QTableWidgetItem *___qtablewidgetitem15 = wasteTable->horizontalHeaderItem(8);
+        ___qtablewidgetitem15->setText(QCoreApplication::translate("MainWindow", "Location", nullptr));
+        QTableWidgetItem *___qtablewidgetitem16 = wasteTable->horizontalHeaderItem(9);
+        ___qtablewidgetitem16->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
+>>>>>>> 5be580a (waste X Arduino)
         lblActions->setText(QCoreApplication::translate("MainWindow", "Actions", nullptr));
         btnEditWaste->setText(QCoreApplication::translate("MainWindow", "Edit Record", nullptr));
         btnDeleteWaste->setText(QCoreApplication::translate("MainWindow", "Delete Record", nullptr));
@@ -3926,6 +3988,7 @@ public:
         btnRate->setText(QCoreApplication::translate("MainWindow", "Smart Scheduler", nullptr));
         btnClearSelection->setText(QCoreApplication::translate("MainWindow", "Clear", nullptr));
         btnExportPDF->setText(QCoreApplication::translate("MainWindow", "Export PDF", nullptr));
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -4070,6 +4133,8 @@ public:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+=======
+>>>>>>> 5be580a (waste X Arduino)
     } // retranslateUi
 
 };

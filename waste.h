@@ -16,7 +16,13 @@ public:
           double weightKg,
           const QDate &collectionDate,
           const QString &location,
+<<<<<<< HEAD
           const QString &status);
+=======
+          const QString &status,
+          int humidityPercent,
+          int distanceCm);
+>>>>>>> 5be580a (waste X Arduino)
 
     int id() const;
     QString type() const;
@@ -26,6 +32,11 @@ public:
     QDate collectionDate() const;
     QString location() const;
     QString status() const;
+<<<<<<< HEAD
+=======
+    int humidityPercent() const;
+    int distanceCm() const;
+>>>>>>> 5be580a (waste X Arduino)
 
     void setId(int id);
     void setType(const QString &type);
@@ -35,6 +46,11 @@ public:
     void setCollectionDate(const QDate &collectionDate);
     void setLocation(const QString &location);
     void setStatus(const QString &status);
+<<<<<<< HEAD
+=======
+    void setHumidityPercent(int humidityPercent);
+    void setDistanceCm(int distanceCm);
+>>>>>>> 5be580a (waste X Arduino)
 
     bool create() const;
     bool update() const;
@@ -50,6 +66,11 @@ private:
     QDate m_collectionDate;
     QString m_location;
     QString m_status;
+<<<<<<< HEAD
+=======
+    int m_humidityPercent;
+    int m_distanceCm;
+>>>>>>> 5be580a (waste X Arduino)
 };
 
 #endif // WASTE_H

@@ -3,13 +3,22 @@
 
 #include "connection.h"
 #include "waste.h"
+<<<<<<< HEAD
+=======
+#include "arduinosensor.h"          // ← NEW
+>>>>>>> 5be580a (waste X Arduino)
 
 #include <QMainWindow>
 #include <QDateTime>
 
 class QLabel;
+<<<<<<< HEAD
 
 class QCloseEvent;
+=======
+class QCloseEvent;
+
+>>>>>>> 5be580a (waste X Arduino)
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -46,6 +55,7 @@ private:
     void showCustomerPage();
     void showWastePage();
 <<<<<<< HEAD
+<<<<<<< HEAD
     void showVehiclePage();
     void showMachinePage();
     void showSupplierPage();
@@ -60,6 +70,8 @@ private:
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+=======
+>>>>>>> 5be580a (waste X Arduino)
 
     // Waste CRUD helpers
     bool initializeDatabase();
@@ -90,10 +102,20 @@ private:
     void onLoginClicked();
     void onVerifyClicked();
 
+<<<<<<< HEAD
+=======
+    // ── Arduino sensor helpers ────────────────────────────────────────────────
+    void setupArduinoSensor();
+    void onArduinoConnect();
+    void onArduinoDisconnect();
+    // ─────────────────────────────────────────────────────────────────────────
+
+>>>>>>> 5be580a (waste X Arduino)
 private slots:
     void on_btnClearSelection_clicked();
     void on_btnEmpClear_clicked();
 
+<<<<<<< HEAD
 private:
 
     QList<Waste> m_cachedWaste;
@@ -102,6 +124,27 @@ private:
     bool m_databaseReady;
     Connection m_connection;  // Keep connection alive
     QLabel *m_searchHintLabel;
+=======
+    // ── Arduino slots ─────────────────────────────────────────────────────────
+    void onArduinoConnectionChanged(bool connected);
+    void onSensorAutoSave(ArduinoSensor::Reading reading);
+    void onSensorDetailsClicked();
+    // ─────────────────────────────────────────────────────────────────────────
+
+private:
+    QList<Waste>          m_cachedWaste;
+    QList<ScheduledPickup> m_scheduledPickups;
+    int                   m_nextPickupTicket;
+    bool                  m_databaseReady;
+    bool                  m_suppressArduinoAutoSave = false;
+    Connection            m_connection;
+    QLabel               *m_searchHintLabel;
+
+    // ── Arduino members ───────────────────────────────────────────────────────
+    ArduinoSensor        *m_arduino        = nullptr;
+    QLabel               *m_arduinoStatus  = nullptr;  // status-bar widget
+    // ─────────────────────────────────────────────────────────────────────────
+>>>>>>> 5be580a (waste X Arduino)
 };
 
 #endif // MAINWINDOW_H

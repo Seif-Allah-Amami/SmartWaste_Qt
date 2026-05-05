@@ -23,8 +23,13 @@ public:
         db = QSqlDatabase::addDatabase("QODBC");
 
         db.setDatabaseName("Driver={Oracle in XE};DBQ=XE;");
+<<<<<<< HEAD
         db.setUserName("Manar");
         db.setPassword("root");
+=======
+        db.setUserName("saaida");
+        db.setPassword("0000");
+>>>>>>> 5be580a (waste X Arduino)
 
         if(db.open())
         {

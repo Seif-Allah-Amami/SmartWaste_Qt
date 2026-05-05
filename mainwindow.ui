@@ -345,6 +345,7 @@ QStatusBar {
     </property>
     <property name="currentIndex">
 <<<<<<< HEAD
+<<<<<<< HEAD
      <number>8</number>
 =======
 <<<<<<< HEAD
@@ -357,6 +358,9 @@ QStatusBar {
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+=======
+     <number>5</number>
+>>>>>>> 5be580a (waste X Arduino)
     </property>
     <widget class="QWidget" name="connection">
      <layout class="QVBoxLayout" name="loginLayout">
@@ -2660,6 +2664,30 @@ QPushButton:hover {
           </widget>
          </item>
          <item>
+<<<<<<< HEAD
+=======
+          <widget class="QPushButton" name="btnSensorDetails">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: transparent;
+    border: 1px solid #6bffb8;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: #6bffb8;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: rgba(107, 255, 184, 0.1);
+}</string>
+           </property>
+           <property name="text">
+            <string>Sensor Details</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+>>>>>>> 5be580a (waste X Arduino)
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
@@ -2820,12 +2848,20 @@ QPushButton:hover {
            </column>
            <column>
             <property name="text">
+<<<<<<< HEAD
              <string>Collection Date</string>
+=======
+                         <string>Collection Date</string>
+>>>>>>> 5be580a (waste X Arduino)
             </property>
            </column>
            <column>
             <property name="text">
+<<<<<<< HEAD
              <string>Location</string>
+=======
+                         <string>Location</string>
+>>>>>>> 5be580a (waste X Arduino)
             </property>
            </column>
            <column>
@@ -3073,6 +3109,7 @@ QPushButton:hover {
       </layout>
      </widget>
     </widget>
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -5547,6 +5584,8 @@ QPushButton:hover {
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+=======
+>>>>>>> 5be580a (waste X Arduino)
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

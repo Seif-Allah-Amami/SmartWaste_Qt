@@ -59,6 +59,11 @@
 
 #include <algorithm>
 
+<<<<<<< HEAD
+=======
+#include "arduinosensor.h"
+
+>>>>>>> 5be580a (waste X Arduino)
 class OSMTileMapWidget : public QWidget
 {
 public:
@@ -293,11 +298,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+<<<<<<< HEAD
     // Start on login page
     ui->stackedwidget->setCurrentIndex(0);
 
     // Connect all navigation buttons
     setupConnections();
+=======
+    // Start directly on Waste Management (module selection disabled)
+    ui->stackedwidget->setCurrentWidget(ui->wastemanagement);
+
+    // Connect all navigation buttons
+    setupConnections();
+    setupArduinoSensor(); // Arduino sensor init
+>>>>>>> 5be580a (waste X Arduino)
 
     setupWasteTable();
     m_databaseReady = initializeDatabase() && ensureWasteTable() && ensurePickupScheduleTable();
@@ -327,6 +341,7 @@ void MainWindow::setupConnections()
     connect(ui->btnVerifyCancel, &QPushButton::clicked, this, &MainWindow::showLoginPage);
 
     // Main Menu Navigation
+<<<<<<< HEAD
     connect(ui->btnMenuEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
     connect(ui->btnMenuCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
     connect(ui->btnMenuWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
@@ -378,10 +393,44 @@ void MainWindow::setupConnections()
     connect(ui->btnLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
     connect(ui->btnEmployee, &QPushButton::clicked, this, &MainWindow::showEmployeePage);
 <<<<<<< HEAD
+=======
+    connect(ui->btnMenuCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
+    connect(ui->btnMenuWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+
+    // Employee Page Sidebar Navigation
+    ui->searchBox->setValidator(new QRegularExpressionValidator(QRegularExpression("^[A-Za-z0-9 \\\\-]{0,10}$"), this));
+    connect(ui->btnEmpLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
+    connect(ui->btnEmpCustomer, &QPushButton::clicked, this, &MainWindow::showCustomerPage);
+    connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
+
+    // Waste Management Sidebar Navigation
+    connect(ui->btnDashboard, &QPushButton::clicked, this, &MainWindow::showMainMenu);
+    connect(ui->btnLogout, &QPushButton::clicked, this, &MainWindow::showLoginPage);
+>>>>>>> 5be580a (waste X Arduino)
     connect(ui->btnWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
     connect(ui->btnViewWaste, &QPushButton::clicked, this, &MainWindow::onViewWasteClicked);
     connect(ui->btnAddWaste, &QPushButton::clicked, this, &MainWindow::onAddWasteClicked);
     connect(ui->btnWasteStats, &QPushButton::clicked, this, &MainWindow::onWasteStatsClicked);
+<<<<<<< HEAD
+=======
+
+    // Sensor Details button — created in code to avoid ui_mainwindow.h regeneration issues
+    QPushButton *btnSensorDetails = new QPushButton("Sensor Details", this);
+    btnSensorDetails->setStyleSheet(
+        "QPushButton {"
+        "  background-color: transparent;"
+        "  border: 1px solid #6bffb8;"
+        "  border-radius: 10px;"
+        "  padding: 10px 20px;"
+        "  color: #6bffb8;"
+        "  font-weight: 600;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: rgba(107, 255, 184, 0.1);"
+        "}");
+    ui->topActionsLayout->insertWidget(3, btnSensorDetails);
+    connect(btnSensorDetails, &QPushButton::clicked, this, &MainWindow::onSensorDetailsClicked);
+>>>>>>> 5be580a (waste X Arduino)
     connect(ui->btnEditWaste, &QPushButton::clicked, this, &MainWindow::onEditWasteClicked);
     connect(ui->btnDeleteWaste, &QPushButton::clicked, this, &MainWindow::onDeleteWasteClicked);
     connect(ui->btnExportPDF, &QPushButton::clicked, this, &MainWindow::onExportWastePdfClicked);
@@ -395,6 +444,7 @@ void MainWindow::setupConnections()
             qOverload<int>(&QComboBox::currentIndexChanged),
             this,
             &MainWindow::onWasteSortChanged);
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
     connect(ui->btnVehicle, &QPushButton::clicked, this, &MainWindow::showVehiclePage);
@@ -448,6 +498,8 @@ void MainWindow::setupConnections()
 =======
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> origin/waste
+=======
+>>>>>>> 5be580a (waste X Arduino)
 
     ui->sortComboBox->setItemData(0, "date_desc");
     ui->sortComboBox->setItemData(1, "type_asc");
@@ -455,6 +507,9 @@ void MainWindow::setupConnections()
     ui->sortComboBox->setItemData(3, "status_asc");
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5be580a (waste X Arduino)
     if (ui->sortComboBox->findText("Sort: ID") < 0) {
         ui->sortComboBox->addItem("Sort: ID");
     }
@@ -464,13 +519,18 @@ void MainWindow::setupConnections()
     }
 
     ui->searchBox->setMaxLength(10);
+<<<<<<< HEAD
     ui->searchBox->setValidator(new QRegularExpressionValidator(QRegularExpression("^[0-9-]{0,10}$"), this));
+=======
+    ui->searchBox->setValidator(new QRegularExpressionValidator(QRegularExpression(R"(^[A-Za-z0-9 \-]{0,10}$)"), this));
+>>>>>>> 5be580a (waste X Arduino)
 
     connect(ui->searchBox, &QLineEdit::inputRejected, this, [this]() {
         if (!m_searchHintLabel) {
             return;
         }
 
+<<<<<<< HEAD
         QString sortMode = ui->sortComboBox->currentData().toString();
         if (sortMode.isEmpty()) {
             const QString sortText = ui->sortComboBox->currentText().toLower();
@@ -496,6 +556,13 @@ void MainWindow::setupConnections()
             m_searchHintLabel->setText("Invalid character. Date search accepts digits and '-'.");
         } else {
             m_searchHintLabel->setText("Invalid character. This search accepts letters and spaces only.");
+=======
+        m_searchHintLabel->setVisible(true);
+        if (ui->searchBox->text().length() >= ui->searchBox->maxLength()) {
+            m_searchHintLabel->setText("Maximum 10 characters reached.");
+        } else {
+            m_searchHintLabel->setText("Invalid character. Use letters, numbers, spaces, '-' only.");
+>>>>>>> 5be580a (waste X Arduino)
         }
         m_searchHintLabel->setStyleSheet("QLabel { color: #ff6666; font-size: 11px; }");
     });
@@ -505,12 +572,15 @@ void MainWindow::setupConnections()
     m_searchHintLabel->setStyleSheet("QLabel { color: #8feecf; font-size: 11px; }");
     m_searchHintLabel->setVisible(false);
     ui->searchFilterLayout->insertWidget(2, m_searchHintLabel);
+<<<<<<< HEAD
 =======
     // ✅ ADD THIS LINE ONLY
     connect(ui->btnEmpWaste, &QPushButton::clicked, this, &MainWindow::showWastePage);
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
 >>>>>>> origin/waste
+=======
+>>>>>>> 5be580a (waste X Arduino)
 }
 
 bool MainWindow::initializeDatabase()
@@ -529,7 +599,11 @@ bool MainWindow::ensureWasteTable()
     // For Oracle: just verify table exists by querying user_tables
     QSqlQuery query(db);
     query.exec("SELECT table_name FROM user_tables WHERE table_name='WASTE'");
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 5be580a (waste X Arduino)
     if (query.next()) {
         qDebug() << "WASTE table exists in Oracle";
         return true;
@@ -581,6 +655,10 @@ bool MainWindow::ensurePickupScheduleTable()
 void MainWindow::loadScheduledPickupsFromDb()
 {
     m_scheduledPickups.clear();
+<<<<<<< HEAD
+=======
+    QStringList ticketsToDelete;
+>>>>>>> 5be580a (waste X Arduino)
 
     QSqlQuery query;
     query.prepare("SELECT TICKET, WASTE_TYPE, LOCATION, URGENCY, PRIORITY, WINDOW_TEXT, "
@@ -602,6 +680,16 @@ void MainWindow::loadScheduledPickupsFromDb()
         pickup.priority = query.value("PRIORITY").toString();
         pickup.window = query.value("WINDOW_TEXT").toString();
         pickup.deadline = QDateTime::fromString(query.value("DEADLINE_AT").toString(), "yyyy-MM-dd HH:mm");
+<<<<<<< HEAD
+=======
+
+        // Remove old scheduler rows created before percentage formatting (e.g. "78 (High)").
+        if (!pickup.priority.contains('%')) {
+            ticketsToDelete << pickup.ticket;
+            continue;
+        }
+
+>>>>>>> 5be580a (waste X Arduino)
         m_scheduledPickups.append(pickup);
 
         if (pickup.ticket.startsWith("PK-")) {
@@ -613,6 +701,18 @@ void MainWindow::loadScheduledPickupsFromDb()
         }
     }
 
+<<<<<<< HEAD
+=======
+    for (const QString &ticket : ticketsToDelete) {
+        QSqlQuery deleteQuery;
+        deleteQuery.prepare("DELETE FROM PICKUP_SCHEDULE WHERE TICKET = :ticket");
+        deleteQuery.bindValue(":ticket", ticket);
+        if (!deleteQuery.exec()) {
+            qDebug() << "DELETE legacy PICKUP_SCHEDULE row ERROR:" << ticket << deleteQuery.lastError().text();
+        }
+    }
+
+>>>>>>> 5be580a (waste X Arduino)
     m_nextPickupTicket = maxTicketNumber + 1;
 }
 
@@ -640,6 +740,18 @@ bool MainWindow::saveScheduledPickupToDb(const ScheduledPickup &pickup)
 void MainWindow::setupWasteTable()
 {
     ui->wasteTable->setColumnCount(8);
+<<<<<<< HEAD
+=======
+    ui->wasteTable->setHorizontalHeaderLabels(QStringList()
+                                              << "ID"
+                                              << "Type"
+                                              << "Category"
+                                              << "Quantity"
+                                              << "Weight (kg)"
+                                              << "Collection Date"
+                                              << "Location"
+                                              << "Status");
+>>>>>>> 5be580a (waste X Arduino)
     ui->wasteTable->horizontalHeader()->setStretchLastSection(true);
     ui->wasteTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
@@ -756,6 +868,11 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     QString defaultCollectionDate = QDate::currentDate().toString("yyyy-MM-dd");
     QString defaultLocation;
     QString defaultStatus;
+<<<<<<< HEAD
+=======
+    int defaultHumidity = 0;
+    int defaultDistance = 0;
+>>>>>>> 5be580a (waste X Arduino)
 
     if (forEdit) {
         if (!selectedWasteId(wasteId)) {
@@ -763,6 +880,35 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
             return false;
         }
 
+<<<<<<< HEAD
+=======
+        bool sensorFieldsResolved = false;
+        for (const Waste &record : m_cachedWaste) {
+            if (record.id() == wasteId) {
+                defaultHumidity = record.humidityPercent();
+                defaultDistance = record.distanceCm();
+                sensorFieldsResolved = true;
+                break;
+            }
+        }
+
+        if (!sensorFieldsResolved && m_databaseReady) {
+            const QList<Waste> fresh = Waste::readAll();
+            for (const Waste &record : fresh) {
+                if (record.id() == wasteId) {
+                    defaultHumidity = record.humidityPercent();
+                    defaultDistance = record.distanceCm();
+                    break;
+                }
+            }
+        }
+    } else {
+        defaultHumidity = 0;
+        defaultDistance = 0;
+    }
+
+    if (forEdit) {
+>>>>>>> 5be580a (waste X Arduino)
         const int row = ui->wasteTable->currentRow();
         defaultType = ui->wasteTable->item(row, 1)->text();
         defaultCategory = ui->wasteTable->item(row, 2)->text();
@@ -797,6 +943,7 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     QSpinBox *quantitySpin = new QSpinBox(&dialog);
     QDoubleSpinBox *weightSpin = new QDoubleSpinBox(&dialog);
     QDateEdit *dateEdit = new QDateEdit(&dialog);
+<<<<<<< HEAD
     QLineEdit *locationEdit = new QLineEdit(defaultLocation, &dialog);
     QComboBox *statusCombo = new QComboBox(&dialog);
 
@@ -805,13 +952,71 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
 
     locationEdit->setMaxLength(10);
     locationEdit->setValidator(lettersValidator);
+=======
+    QComboBox *locationCombo = new QComboBox(&dialog);
+    QComboBox *statusCombo = new QComboBox(&dialog);
+
+    locationCombo->setEditable(true);
+    locationCombo->setInsertPolicy(QComboBox::NoInsert);
+    locationCombo->setMaxVisibleItems(12);
+
+    const QStringList tunisiaLocations = {
+        "Ariana",
+        "Beja",
+        "Ben Arous",
+        "Bizerte",
+        "Gabes",
+        "Gafsa",
+        "Jendouba",
+        "Kairouan",
+        "Kasserine",
+        "Kebili",
+        "Kef",
+        "Mahdia",
+        "Manouba",
+        "Medenine",
+        "Monastir",
+        "Nabeul",
+        "Sfax",
+        "Sidi Bouzid",
+        "Siliana",
+        "Sousse",
+        "Tataouine",
+        "Tozeur",
+        "Tunis",
+        "Zaghouan"
+    };
+    locationCombo->addItems(tunisiaLocations);
+
+    QLineEdit *locationEdit = locationCombo->lineEdit();
+    const QRegularExpression locationRegex(R"(^[A-Za-z \-]{0,100}$)");
+    auto *locationValidator = new QRegularExpressionValidator(locationRegex, &dialog);
+    locationEdit->setMaxLength(100);
+    locationEdit->setValidator(locationValidator);
+>>>>>>> 5be580a (waste X Arduino)
 
     const QStringList typeChoices = {"Organic", "Plastic", "Metal", "Glass"};
     typeCombo->addItem("-- Select Type --");
     typeCombo->addItems(typeChoices);
     typeCombo->setCurrentIndex(0);
 
+<<<<<<< HEAD
     const QStringList categoryChoices = {"Household", "Industrial", "Medical", "Electronic"};
+=======
+    const QStringList categoryChoices = {
+        "Household",
+        "Food",
+        "Industrial",
+        "Medical",
+        "Electronic",
+        "Construction",
+        "Agricultural",
+        "Textile",
+        "Chemical",
+        "Paper",
+        "Hazardous"
+    };
+>>>>>>> 5be580a (waste X Arduino)
     categoryCombo->addItem("-- Select Category --");
     categoryCombo->addItems(categoryChoices);
     categoryCombo->setCurrentIndex(0);
@@ -834,6 +1039,19 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     statusCombo->setCurrentIndex(0);
 
     if (forEdit) {
+<<<<<<< HEAD
+=======
+        QLabel *sensorInfoLabel = new QLabel(
+            QString("Humidity: %1% | Distance: %2 cm").arg(defaultHumidity).arg(defaultDistance),
+            &dialog);
+        sensorInfoLabel->setWordWrap(true);
+        sensorInfoLabel->setStyleSheet(
+            "QLabel { background: #0a1f18; color: #6bffb8; padding: 8px 10px; border-radius: 6px; border: 1px solid #1a3d2e; font-weight: 600; }");
+        formLayout->addRow("Sensor info:", sensorInfoLabel);
+    }
+
+    if (forEdit) {
+>>>>>>> 5be580a (waste X Arduino)
         const int typeIndex = typeCombo->findText(defaultType, Qt::MatchFixedString);
         if (typeIndex >= 0) {
             typeCombo->setCurrentIndex(typeIndex);
@@ -848,10 +1066,27 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
         if (statusIndex >= 0) {
             statusCombo->setCurrentIndex(statusIndex);
         }
+<<<<<<< HEAD
     }
 
     formLayout->addRow("Type:", makeFieldWithHint(typeCombo, "Choose 1 of 4 options."));
     formLayout->addRow("Category:", makeFieldWithHint(categoryCombo, "Choose 1 of 4 options."));
+=======
+
+        if (!defaultLocation.trimmed().isEmpty()) {
+            if (locationCombo->findText(defaultLocation, Qt::MatchFixedString) < 0) {
+                locationCombo->addItem(defaultLocation);
+            }
+            locationCombo->setCurrentText(defaultLocation);
+        }
+    } else {
+        locationCombo->setCurrentIndex(-1);
+        locationEdit->clear();
+    }
+
+    formLayout->addRow("Type:", makeFieldWithHint(typeCombo, "Choose 1 of 4 options."));
+    formLayout->addRow("Category:", makeFieldWithHint(categoryCombo, QString("Choose 1 of %1 options.").arg(categoryChoices.size())));
+>>>>>>> 5be580a (waste X Arduino)
     formLayout->addRow("Quantity:", makeFieldWithHint(quantitySpin, "Numbers only."));
     formLayout->addRow("Weight (kg):", makeFieldWithHint(weightSpin, "Decimal number, up to 2 digits after decimal."));
     formLayout->addRow("Collection Date:", makeFieldWithHint(dateEdit, "Pick a valid date."));
@@ -860,8 +1095,13 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     QVBoxLayout *locationLayout = new QVBoxLayout(locationContainer);
     locationLayout->setContentsMargins(0, 0, 0, 0);
     locationLayout->setSpacing(2);
+<<<<<<< HEAD
     locationLayout->addWidget(locationEdit);
     QLabel *locationHint = new QLabel("Location hint: letters/spaces only, max 10 characters.", locationContainer);
+=======
+    locationLayout->addWidget(locationCombo);
+    QLabel *locationHint = new QLabel("Location hint: select a Tunisia location or type your own (letters/spaces/hyphen), max 100 characters.", locationContainer);
+>>>>>>> 5be580a (waste X Arduino)
     locationHint->setStyleSheet("QLabel { color: #8feecf; font-size: 10px; }");
     locationHint->setVisible(false);
     locationLayout->addWidget(locationHint);
@@ -874,7 +1114,11 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
 
         if (value.length() >= locationEdit->maxLength()) {
             locationHint->setVisible(true);
+<<<<<<< HEAD
             locationHint->setText("Maximum 10 characters reached.");
+=======
+            locationHint->setText("Maximum 100 characters reached.");
+>>>>>>> 5be580a (waste X Arduino)
             locationHint->setStyleSheet("QLabel { color: #ff6666; font-size: 10px; }");
             return;
         }
@@ -885,9 +1129,15 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     QObject::connect(locationEdit, &QLineEdit::inputRejected, [locationHint, locationEdit]() {
         locationHint->setVisible(true);
         if (locationEdit->text().length() >= locationEdit->maxLength()) {
+<<<<<<< HEAD
             locationHint->setText("Maximum 10 characters reached.");
         } else {
             locationHint->setText("Invalid character not allowed. Use letters and spaces only.");
+=======
+            locationHint->setText("Maximum 100 characters reached.");
+        } else {
+            locationHint->setText("Invalid character not allowed. Use letters, spaces, and hyphen only.");
+>>>>>>> 5be580a (waste X Arduino)
         }
         locationHint->setStyleSheet("QLabel { color: #ff6666; font-size: 10px; }");
     });
@@ -899,11 +1149,19 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     formLayout->addRow(buttonBox);
 
     QPushButton *okButton = buttonBox->button(QDialogButtonBox::Ok);
+<<<<<<< HEAD
     auto updateOkEnabled = [okButton, typeCombo, categoryCombo, statusCombo, locationEdit]() {
         const bool valid = typeCombo->currentIndex() > 0
                            && categoryCombo->currentIndex() > 0
                            && statusCombo->currentIndex() > 0
                            && !locationEdit->text().trimmed().isEmpty();
+=======
+    auto updateOkEnabled = [okButton, typeCombo, categoryCombo, statusCombo, locationCombo]() {
+        const bool valid = typeCombo->currentIndex() > 0
+                           && categoryCombo->currentIndex() > 0
+                           && statusCombo->currentIndex() > 0
+                           && !locationCombo->currentText().trimmed().isEmpty();
+>>>>>>> 5be580a (waste X Arduino)
         okButton->setEnabled(valid);
     };
 
@@ -914,8 +1172,13 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     QObject::connect(locationEdit, &QLineEdit::textChanged, &dialog, [updateOkEnabled](const QString &) { updateOkEnabled(); });
 
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+<<<<<<< HEAD
     QObject::connect(buttonBox, &QDialogButtonBox::accepted, [&dialog, typeCombo, categoryCombo, statusCombo, locationEdit]() {
         const QString location = locationEdit->text().trimmed();
+=======
+    QObject::connect(buttonBox, &QDialogButtonBox::accepted, [&dialog, typeCombo, categoryCombo, statusCombo, locationCombo]() {
+        const QString location = locationCombo->currentText().trimmed();
+>>>>>>> 5be580a (waste X Arduino)
 
         if (typeCombo->currentIndex() <= 0 || categoryCombo->currentIndex() <= 0 || statusCombo->currentIndex() <= 0 || location.isEmpty()) {
             QMessageBox::warning(&dialog, "Validation", "Please choose Type, Category, Status and fill Location.");
@@ -934,7 +1197,11 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     const int quantity = quantitySpin->value();
     const double weightKg = weightSpin->value();
     const QDate collectionDate = dateEdit->date();
+<<<<<<< HEAD
     const QString location = locationEdit->text().trimmed();
+=======
+    const QString location = locationCombo->currentText().trimmed();
+>>>>>>> 5be580a (waste X Arduino)
     const QString status = statusCombo->currentText();
 
     waste.setId(wasteId);
@@ -945,6 +1212,11 @@ bool MainWindow::collectWasteData(Waste &waste, bool forEdit)
     waste.setCollectionDate(collectionDate);
     waste.setLocation(location);
     waste.setStatus(status);
+<<<<<<< HEAD
+=======
+    waste.setHumidityPercent(defaultHumidity);
+    waste.setDistanceCm(defaultDistance);
+>>>>>>> 5be580a (waste X Arduino)
     return true;
 }
 
@@ -1020,7 +1292,18 @@ void MainWindow::onWasteStatsClicked()
         byLocation[waste.location()] += 1;
     }
 
+<<<<<<< HEAD
     const double averageWeightPerRecord = records.isEmpty() ? 0.0 : (totalWeight / static_cast<double>(records.size()));
+=======
+    const int totalRecords = records.size();
+    const double averageWeightPerRecord = records.isEmpty() ? 0.0 : (totalWeight / static_cast<double>(records.size()));
+    auto toPercent = [totalRecords](int count) {
+        if (totalRecords <= 0) {
+            return 0.0;
+        }
+        return (100.0 * static_cast<double>(count)) / static_cast<double>(totalRecords);
+    };
+>>>>>>> 5be580a (waste X Arduino)
 
     QDialog statsDialog(this);
     statsDialog.setWindowTitle("Waste Statistics");
@@ -1050,6 +1333,7 @@ void MainWindow::onWasteStatsClicked()
 
     auto *statusSeries = new QPieSeries();
     for (auto it = byStatus.constBegin(); it != byStatus.constEnd(); ++it) {
+<<<<<<< HEAD
         auto *slice = statusSeries->append(it.key(), it.value());
         slice->setLabel(QString("%1 (%2)").arg(it.key(), QString::number(it.value())));
         slice->setLabelVisible(true);
@@ -1061,6 +1345,22 @@ void MainWindow::onWasteStatsClicked()
     statusChart->setAnimationOptions(QChart::AllAnimations);
     statusChart->legend()->setVisible(true);
     statusChart->legend()->setAlignment(Qt::AlignBottom);
+=======
+        const double percent = toPercent(it.value());
+        auto *slice = statusSeries->append(it.key(), percent);
+        slice->setLabel(QString("%1 (%2%)").arg(it.key(), QString::number(percent, 'f', 1)));
+        slice->setLabelPosition(QPieSlice::LabelOutside);
+        slice->setLabelVisible(true);
+    }
+    statusSeries->setPieSize(0.5);
+
+    auto *statusChart = new QChart();
+    statusChart->addSeries(statusSeries);
+    statusChart->setTitle("Status Distribution (%)");
+    statusChart->setAnimationOptions(QChart::AllAnimations);
+    statusChart->legend()->setVisible(false);
+    statusChart->setMargins(QMargins(22, 22, 22, 22));
+>>>>>>> 5be580a (waste X Arduino)
     statusChart->setBackgroundBrush(QColor("#021a13"));
     statusChart->setTitleBrush(QBrush(QColor("#cffff0")));
 
@@ -1070,6 +1370,7 @@ void MainWindow::onWasteStatsClicked()
     statusChartView->setMinimumHeight(240);
     statusChartView->setMinimumWidth(360);
 
+<<<<<<< HEAD
     auto *typeSet = new QBarSet("Type Count");
     QStringList typeCategories;
     int maxTypeCount = 0;
@@ -1079,6 +1380,13 @@ void MainWindow::onWasteStatsClicked()
         if (it.value() > maxTypeCount) {
             maxTypeCount = it.value();
         }
+=======
+    auto *typeSet = new QBarSet("Type %");
+    QStringList typeCategories;
+    for (auto it = byType.constBegin(); it != byType.constEnd(); ++it) {
+        *typeSet << toPercent(it.value());
+        typeCategories << it.key();
+>>>>>>> 5be580a (waste X Arduino)
     }
 
     auto *typeSeries = new QBarSeries();
@@ -1086,7 +1394,11 @@ void MainWindow::onWasteStatsClicked()
 
     auto *typeChart = new QChart();
     typeChart->addSeries(typeSeries);
+<<<<<<< HEAD
     typeChart->setTitle("Records by Type");
+=======
+    typeChart->setTitle("Type Distribution (%)");
+>>>>>>> 5be580a (waste X Arduino)
     typeChart->setAnimationOptions(QChart::SeriesAnimations);
     typeChart->legend()->setVisible(false);
     typeChart->setBackgroundBrush(QColor("#021a13"));
@@ -1095,8 +1407,14 @@ void MainWindow::onWasteStatsClicked()
     auto *axisX = new QBarCategoryAxis();
     axisX->append(typeCategories);
     auto *axisY = new QValueAxis();
+<<<<<<< HEAD
     axisY->setRange(0, qMax(1, maxTypeCount + 1));
     axisY->setTickCount(qMin(10, qMax(2, maxTypeCount + 2)));
+=======
+    axisY->setRange(0, 100);
+    axisY->setTickCount(6);
+    axisY->setLabelFormat("%.0f%%");
+>>>>>>> 5be580a (waste X Arduino)
 
     typeChart->addAxis(axisX, Qt::AlignBottom);
     typeChart->addAxis(axisY, Qt::AlignLeft);
@@ -1115,6 +1433,7 @@ void MainWindow::onWasteStatsClicked()
 
     auto *categorySeries = new QPieSeries();
     for (auto it = byCategory.constBegin(); it != byCategory.constEnd(); ++it) {
+<<<<<<< HEAD
         auto *slice = categorySeries->append(it.key(), it.value());
         slice->setLabel(QString("%1 (%2)").arg(it.key(), QString::number(it.value())));
         slice->setLabelVisible(true);
@@ -1126,6 +1445,22 @@ void MainWindow::onWasteStatsClicked()
     categoryChart->setAnimationOptions(QChart::AllAnimations);
     categoryChart->legend()->setVisible(true);
     categoryChart->legend()->setAlignment(Qt::AlignBottom);
+=======
+        const double percent = toPercent(it.value());
+        auto *slice = categorySeries->append(it.key(), percent);
+        slice->setLabel(QString("%1 (%2%)").arg(it.key(), QString::number(percent, 'f', 1)));
+        slice->setLabelPosition(QPieSlice::LabelOutside);
+        slice->setLabelVisible(true);
+    }
+    categorySeries->setPieSize(0.5);
+
+    auto *categoryChart = new QChart();
+    categoryChart->addSeries(categorySeries);
+    categoryChart->setTitle("Category Distribution (%)");
+    categoryChart->setAnimationOptions(QChart::AllAnimations);
+    categoryChart->legend()->setVisible(false);
+    categoryChart->setMargins(QMargins(22, 22, 22, 22));
+>>>>>>> 5be580a (waste X Arduino)
     categoryChart->setBackgroundBrush(QColor("#021a13"));
     categoryChart->setTitleBrush(QBrush(QColor("#cffff0")));
 
@@ -1140,7 +1475,12 @@ void MainWindow::onWasteStatsClicked()
         if (!firstLocation) {
             locationBreakdown += " | ";
         }
+<<<<<<< HEAD
         locationBreakdown += QString("%1: %2").arg(it.key(), QString::number(it.value()));
+=======
+        locationBreakdown += QString("%1: %2% (%3)")
+                                 .arg(it.key(), QString::number(toPercent(it.value()), 'f', 1), QString::number(it.value()));
+>>>>>>> 5be580a (waste X Arduino)
         firstLocation = false;
     }
 
@@ -1194,10 +1534,17 @@ void MainWindow::onSmartPickupSchedulerClicked()
 
     QDialog dialog(this);
     dialog.setWindowTitle("Smart Pickup Scheduler");
+<<<<<<< HEAD
     dialog.resize(980, 650);
     dialog.setStyleSheet(
         "QDialog { background-color: #020f0b; color: #e7fff6; }"
         "QLabel { color: #cffff0; }"
+=======
+    dialog.resize(1020, 690);
+    dialog.setStyleSheet(
+        "QDialog { background-color: #020f0b; color: #e7fff6; }"
+        "QLabel { color: #cffff0; background: transparent; }"
+>>>>>>> 5be580a (waste X Arduino)
         "QComboBox, QSpinBox, QDateTimeEdit {"
         "  min-height: 30px;"
         "  border: 1px solid #0f6b50;"
@@ -1215,9 +1562,18 @@ void MainWindow::onSmartPickupSchedulerClicked()
         "  selection-background-color: #00d184;"
         "  selection-color: #02160f;"
         "}"
+<<<<<<< HEAD
         "QComboBox QAbstractItemView::item { min-height: 28px; padding: 6px 8px; }");
 
     QVBoxLayout *rootLayout = new QVBoxLayout(&dialog);
+=======
+        "QComboBox QAbstractItemView::item { min-height: 28px; padding: 6px 8px; }"
+        "QPushButton { min-height: 36px; }");
+
+    QVBoxLayout *rootLayout = new QVBoxLayout(&dialog);
+    rootLayout->setContentsMargins(12, 12, 12, 12);
+    rootLayout->setSpacing(10);
+>>>>>>> 5be580a (waste X Arduino)
 
     QLabel *title = new QLabel("Smart Pickup Scheduler + Priority Engine", &dialog);
     title->setStyleSheet("QLabel { font-size: 20px; font-weight: 700; color: #00ff9c; }");
@@ -1230,6 +1586,21 @@ void MainWindow::onSmartPickupSchedulerClicked()
     formCard->setObjectName("schedulerFormCard");
     formCard->setStyleSheet("#schedulerFormCard { border: 1px solid #00ff9c; border-radius: 10px; background: rgba(0, 255, 156, 0.05); }");
     QFormLayout *form = new QFormLayout(formCard);
+<<<<<<< HEAD
+=======
+    form->setLabelAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    form->setFormAlignment(Qt::AlignTop);
+    form->setHorizontalSpacing(14);
+    form->setVerticalSpacing(9);
+    form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+
+    auto makeRowLabel = [&formCard](const QString &text) {
+        QLabel *label = new QLabel(text, formCard);
+        label->setMinimumWidth(120);
+        label->setStyleSheet("QLabel { color: #d7fff0; font-size: 14px; font-weight: 600; background: transparent; }");
+        return label;
+    };
+>>>>>>> 5be580a (waste X Arduino)
 
     QComboBox *typeCombo = new QComboBox(formCard);
     typeCombo->addItems(knownTypes);
@@ -1252,7 +1623,11 @@ void MainWindow::onSmartPickupSchedulerClicked()
     deadlineEdit->setDisplayFormat("yyyy-MM-dd HH:mm");
     deadlineEdit->setCalendarPopup(true);
 
+<<<<<<< HEAD
     QLabel *priorityLabel = new QLabel("Priority Score: 0 (Low)", formCard);
+=======
+    QLabel *priorityLabel = new QLabel("Priority Score: 0% (Low)", formCard);
+>>>>>>> 5be580a (waste X Arduino)
     priorityLabel->setStyleSheet("QLabel { color: #00ff9c; font-weight: 600; }");
 
     QLabel *windowLabel = new QLabel("Suggested Pickup Window: Pending calculation", formCard);
@@ -1262,11 +1637,19 @@ void MainWindow::onSmartPickupSchedulerClicked()
     deadlineHint->setWordWrap(true);
     deadlineHint->setStyleSheet("QLabel { color: #8feecf; font-size: 11px; }");
 
+<<<<<<< HEAD
     form->addRow("Waste Type:", typeCombo);
     form->addRow("Location:", locationCombo);
     form->addRow("Quantity:", quantitySpin);
     form->addRow("Urgency:", urgencyCombo);
     form->addRow("Deadline:", deadlineEdit);
+=======
+    form->addRow(makeRowLabel("Waste Type:"), typeCombo);
+    form->addRow(makeRowLabel("Location:"), locationCombo);
+    form->addRow(makeRowLabel("Quantity:"), quantitySpin);
+    form->addRow(makeRowLabel("Urgency:"), urgencyCombo);
+    form->addRow(makeRowLabel("Deadline:"), deadlineEdit);
+>>>>>>> 5be580a (waste X Arduino)
     form->addRow(deadlineHint);
     form->addRow(priorityLabel);
     form->addRow(windowLabel);
@@ -1287,7 +1670,27 @@ void MainWindow::onSmartPickupSchedulerClicked()
     queueTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     queueTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     queueTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+<<<<<<< HEAD
     queueTable->setStyleSheet("QTableWidget { background-color: #031912; color: #d7fff0; gridline-color: #0f4534; border: 1px solid #0f4534; }");
+=======
+    queueTable->verticalHeader()->setVisible(false);
+    queueTable->setAlternatingRowColors(true);
+    queueTable->setStyleSheet(
+        "QTableWidget {"
+        "  background-color: #031912;"
+        "  color: #d7fff0;"
+        "  gridline-color: #0f4534;"
+        "  border: 1px solid #0f4534;"
+        "  alternate-background-color: #07271d;"
+        "}"
+        "QHeaderView::section {"
+        "  background-color: #05251b;"
+        "  color: #00ff9c;"
+        "  padding: 6px;"
+        "  border: 1px solid #0f4534;"
+        "  font-weight: 700;"
+        "}");
+>>>>>>> 5be580a (waste X Arduino)
 
     auto slaFromDeadline = [](const QDateTime &deadline) {
         const QDateTime now = QDateTime::currentDateTime();
@@ -1310,8 +1713,13 @@ void MainWindow::onSmartPickupSchedulerClicked()
         queueTable->setItem(row, 3, new QTableWidgetItem(pickup.urgency));
         queueTable->setItem(row, 4, new QTableWidgetItem(pickup.priority));
         queueTable->setItem(row, 5, new QTableWidgetItem(QString("%1 | Deadline: %2")
+<<<<<<< HEAD
                                                           .arg(pickup.window)
                                                           .arg(pickup.deadline.toString("yyyy-MM-dd HH:mm"))));
+=======
+                                                             .arg(pickup.window)
+                                                             .arg(pickup.deadline.toString("yyyy-MM-dd HH:mm"))));
+>>>>>>> 5be580a (waste X Arduino)
         queueTable->setItem(row, 6, new QTableWidgetItem(slaFromDeadline(pickup.deadline)));
     };
 
@@ -1374,11 +1782,19 @@ void MainWindow::onSmartPickupSchedulerClicked()
 
         slaState = slaFromDeadline(deadline);
 
+<<<<<<< HEAD
         priorityLabel->setText(QString("Priority Score: %1 (%2)").arg(score).arg(priorityBand));
         windowLabel->setText(QString("Suggested Pickup Window: %1 | Deadline: %2 | SLA: %3")
                      .arg(timeWindow)
                      .arg(deadline.toString("yyyy-MM-dd HH:mm"))
                      .arg(slaState));
+=======
+        priorityLabel->setText(QString("Priority Score: %1% (%2)").arg(score).arg(priorityBand));
+        windowLabel->setText(QString("Suggested Pickup Window: %1 | Deadline: %2 | SLA: %3")
+                                 .arg(timeWindow)
+                                 .arg(deadline.toString("yyyy-MM-dd HH:mm"))
+                                 .arg(slaState));
+>>>>>>> 5be580a (waste X Arduino)
 
         return QPair<QPair<int, QString>, QPair<QString, QString>>(
             QPair<int, QString>(score, priorityBand),
@@ -1401,7 +1817,11 @@ void MainWindow::onSmartPickupSchedulerClicked()
         pickup.type = typeCombo->currentText();
         pickup.location = locationCombo->currentText();
         pickup.urgency = urgencyCombo->currentText();
+<<<<<<< HEAD
         pickup.priority = QString("%1 (%2)").arg(score).arg(band);
+=======
+        pickup.priority = QString("%1% (%2)").arg(score).arg(band);
+>>>>>>> 5be580a (waste X Arduino)
         pickup.window = window;
         pickup.deadline = deadlineEdit->dateTime();
 
@@ -1607,6 +2027,7 @@ void MainWindow::onExportWastePdfClicked()
 
 void MainWindow::onViewOnMapClicked()
 {
+<<<<<<< HEAD
         if (!ui->wasteTable || !ui->wasteTable->selectionModel()) {
                 QMessageBox::warning(this, "View on Map", "Waste table is not ready.");
                 return;
@@ -1735,6 +2156,136 @@ void MainWindow::onViewOnMapClicked()
         layout->addWidget(hint);
         layout->addWidget(mapWidget, 1);
         mapDialog->show();
+=======
+    if (!ui->wasteTable || !ui->wasteTable->selectionModel()) {
+        QMessageBox::warning(this, "View on Map", "Waste table is not ready.");
+        return;
+    }
+
+    const QModelIndexList selectedRows = ui->wasteTable->selectionModel()->selectedRows();
+    if (selectedRows.isEmpty()) {
+        QMessageBox::warning(this, "View on Map", "Please select a row first.");
+        return;
+    }
+
+    const int row = selectedRows.first().row();
+    QTableWidgetItem *locationItem = ui->wasteTable->item(row, 6);
+    const QString locationName = locationItem ? locationItem->text().trimmed() : QString();
+    if (locationName.isEmpty()) {
+        QMessageBox::warning(this, "View on Map", "Selected row has no location value.");
+        return;
+    }
+
+    const QMap<QString, QPair<double, double>> cityCoords = {
+        {"tunis", {36.8065, 10.1815}},
+        {"ariana", {36.8665, 10.1647}},
+        {"nabeul", {36.4561, 10.7376}},
+        {"sousse", {35.8256, 10.6084}},
+        {"sfax", {34.7406, 10.7603}},
+        {"bizerta", {37.2744, 9.8739}},
+        {"monastir", {35.7643, 10.8113}},
+        {"kairouan", {35.6781, 10.0963}},
+        {"gabes", {33.8815, 10.0982}},
+        {"beja", {36.7333, 9.1833}}
+    };
+
+    const QString key = locationName.trimmed().toLower();
+    double latitude = 0.0;
+    double longitude = 0.0;
+    bool hasCoordinates = false;
+
+    if (cityCoords.contains(key)) {
+        latitude = cityCoords.value(key).first;
+        longitude = cityCoords.value(key).second;
+        hasCoordinates = true;
+    } else {
+        QNetworkAccessManager network;
+        QUrl url("https://nominatim.openstreetmap.org/search");
+        QUrlQuery query;
+        query.addQueryItem("q", locationName + ", Tunisia");
+        query.addQueryItem("format", "json");
+        query.addQueryItem("limit", "1");
+        query.addQueryItem("countrycodes", "tn");
+        url.setQuery(query);
+
+        QNetworkRequest request(url);
+        request.setRawHeader("User-Agent", "ManarWasteApp/1.0 (educational project)");
+
+        QNetworkReply *reply = network.get(request);
+        QEventLoop loop;
+        QTimer timeout;
+        timeout.setSingleShot(true);
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        QObject::connect(&timeout, &QTimer::timeout, &loop, &QEventLoop::quit);
+        timeout.start(7000);
+        loop.exec();
+
+        if (timeout.isActive() && reply->error() == QNetworkReply::NoError) {
+            const QByteArray body = reply->readAll();
+            const QJsonDocument jsonDoc = QJsonDocument::fromJson(body);
+            if (jsonDoc.isArray()) {
+                const QJsonArray results = jsonDoc.array();
+                if (!results.isEmpty()) {
+                    const QJsonObject first = results.first().toObject();
+                    bool latOk = false;
+                    bool lonOk = false;
+                    latitude = first.value("lat").toString().toDouble(&latOk);
+                    longitude = first.value("lon").toString().toDouble(&lonOk);
+                    hasCoordinates = latOk && lonOk;
+                }
+            }
+        }
+
+        reply->deleteLater();
+    }
+
+    if (!hasCoordinates) {
+        QMessageBox::warning(this,
+                             "View on Map",
+                             QString("Could not find coordinates for '%1' in Tunisia.\n"
+                                     "Tip: check spelling (e.g. Korba, Kelibia, Mahdia).")
+                                 .arg(locationName));
+        return;
+    }
+
+    QDialog *mapDialog = new QDialog(this);
+    mapDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    mapDialog->setWindowTitle(QString("Map - %1").arg(locationName));
+    mapDialog->resize(940, 700);
+
+    QVBoxLayout *layout = new QVBoxLayout(mapDialog);
+    layout->setContentsMargins(8, 8, 8, 8);
+    layout->setSpacing(8);
+
+    QLabel *hint = new QLabel("Use mouse wheel to zoom and left-drag to move the map.", mapDialog);
+    hint->setStyleSheet("QLabel { color: #9ef6d9; font-size: 12px; }");
+
+    QHBoxLayout *toolbar = new QHBoxLayout();
+    QPushButton *zoomInBtn = new QPushButton("+", mapDialog);
+    QPushButton *zoomOutBtn = new QPushButton("-", mapDialog);
+    QPushButton *resetBtn = new QPushButton("Reset", mapDialog);
+    const QString btnStyle = "QPushButton { min-width: 34px; min-height: 30px; border: 1px solid #00d084; color: #d8fff1; background-color: #06241b; border-radius: 6px; }"
+                             "QPushButton:hover { background-color: #0b3327; }";
+    zoomInBtn->setStyleSheet(btnStyle);
+    zoomOutBtn->setStyleSheet(btnStyle);
+    resetBtn->setStyleSheet(btnStyle);
+    toolbar->addWidget(zoomInBtn);
+    toolbar->addWidget(zoomOutBtn);
+    toolbar->addWidget(resetBtn);
+    toolbar->addStretch();
+
+    OSMTileMapWidget *mapWidget = new OSMTileMapWidget(mapDialog);
+    mapWidget->setMarker(latitude, longitude, locationName);
+
+    QObject::connect(zoomInBtn, &QPushButton::clicked, mapWidget, [mapWidget]() { mapWidget->zoomIn(); });
+    QObject::connect(zoomOutBtn, &QPushButton::clicked, mapWidget, [mapWidget]() { mapWidget->zoomOut(); });
+    QObject::connect(resetBtn, &QPushButton::clicked, mapWidget, [mapWidget]() { mapWidget->resetView(); });
+
+    layout->addLayout(toolbar);
+    layout->addWidget(hint);
+    layout->addWidget(mapWidget, 1);
+    mapDialog->show();
+>>>>>>> 5be580a (waste X Arduino)
 }
 
 void MainWindow::on_btnClearSelection_clicked()
@@ -1842,6 +2393,7 @@ void MainWindow::showWastePage()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -1867,6 +2419,11 @@ void MainWindow::showSupplierPage()
 void MainWindow::showLoginPage()
 {
     ui->stackedwidget->setCurrentWidget(ui->connection);
+=======
+void MainWindow::showLoginPage()
+{
+    ui->stackedwidget->setCurrentWidget(ui->main);
+>>>>>>> 5be580a (waste X Arduino)
 }
 
 void MainWindow::showRecoveryPage()
@@ -1881,13 +2438,18 @@ void MainWindow::showVerificationPage()
 
 void MainWindow::showMainMenu()
 {
+<<<<<<< HEAD
     ui->stackedwidget->setCurrentWidget(ui->main);
+=======
+    ui->stackedwidget->setCurrentWidget(ui->wastemanagement);
+>>>>>>> 5be580a (waste X Arduino)
 }
 
 void MainWindow::showEmployeePage()
 {
     ui->stackedwidget->setCurrentWidget(ui->employe);
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1907,6 +2469,8 @@ void MainWindow::showVehiclePage()
 >>>>>>> cc7e03e7c193b16524633b58b2f60e0e503c4f03
 >>>>>>> a74b88ee5bbf8c446a6a6d38d8b79c649dad41fb
 >>>>>>> d241421e166fc2265f00b501a6340b3af2200544
+=======
+>>>>>>> 5be580a (waste X Arduino)
 
 void MainWindow::showCustomerPage()
 {
@@ -1936,3 +2500,434 @@ void MainWindow::onVerifyClicked()
 
     showMainMenu();
 }
+<<<<<<< HEAD
+=======
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Arduino Sensor – member function implementations
+// ═══════════════════════════════════════════════════════════════════════════
+
+void MainWindow::setupArduinoSensor()
+{
+    m_arduino = new ArduinoSensor(this);
+
+    m_arduinoStatus = new QLabel("Arduino: not connected", this);
+    m_arduinoStatus->setStyleSheet("color: #ff6b6b; padding: 0 6px;");
+    statusBar()->addPermanentWidget(m_arduinoStatus);
+
+    connect(m_arduino, &ArduinoSensor::connectionChanged,
+            this,      &MainWindow::onArduinoConnectionChanged);
+
+    connect(m_arduino, &ArduinoSensor::readingReady,
+            this,      &MainWindow::onSensorAutoSave);
+
+    // Do not auto-open a serial port at startup — let the user initiate
+    // a connection from the Sensor Details dialog. Auto-opening can fail
+    // when another program (e.g. Arduino IDE) already holds the port.
+}
+
+void MainWindow::onSensorAutoSave(ArduinoSensor::Reading reading)
+{
+    if (!reading.isValid || !m_databaseReady || m_suppressArduinoAutoSave)
+        return;
+
+    Waste waste;
+    waste.setType(reading.isWet ? "Organic" : "Plastic");
+    waste.setCategory("Household");
+    waste.setQuantity(0);
+    waste.setWeightKg(0.0);
+    waste.setCollectionDate(QDate::currentDate());
+    waste.setLocation("Auto");
+    waste.setStatus("Pending");
+    waste.setHumidityPercent(reading.humidity);
+    waste.setDistanceCm(reading.distance);
+
+    if (waste.create()) {
+        qDebug() << "Auto-saved waste from sensor: humidity=" << reading.humidity
+                 << "distance=" << reading.distance;
+        onViewWasteClicked(); // refresh the table
+    } else {
+        qWarning() << "Auto-save failed!";
+    }
+
+    // Request next reading automatically
+    m_arduino->requestReading(8000);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+void MainWindow::onSensorDetailsClicked()
+{
+    if (!m_databaseReady) {
+        QMessageBox::critical(this, "Sensor Details", "Database is not ready.");
+        return;
+    }
+
+    const QList<Waste> all = Waste::readAll();
+    if (all.isEmpty()) {
+        QMessageBox::information(this, "Sensor Details", "No waste records available.");
+        return;
+    }
+
+    int selectedId = -1;
+    if (!selectedWasteId(selectedId)) {
+        selectedId = all.first().id();
+    }
+
+    QHash<int, Waste> wasteById;
+    for (const Waste &waste : all) {
+        wasteById.insert(waste.id(), waste);
+    }
+
+    if (!wasteById.contains(selectedId)) {
+        selectedId = all.first().id();
+    }
+
+    Waste selectedWaste = wasteById.value(selectedId);
+
+    // ── 2. Build dialog ───────────────────────────────────────────────────────
+    QDialog dialog(this);
+    dialog.setWindowTitle("Sensor Details — Waste #" + QString::number(selectedWaste.id()));
+    dialog.setMinimumWidth(500);
+    dialog.setStyleSheet("QDialog { background: #050d0a; }");
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+    mainLayout->setSpacing(14);
+    mainLayout->setContentsMargins(20, 20, 20, 20);
+
+    // Title
+    QLabel *title = new QLabel("Sensor Details — Waste #" + QString::number(selectedWaste.id()), &dialog);
+    title->setStyleSheet("font-size: 16px; font-weight: bold; color: #ffffff; border: none;");
+    mainLayout->addWidget(title);
+
+    QLabel *selectLabel = new QLabel("Select waste (ID or location):", &dialog);
+    selectLabel->setStyleSheet("QLabel { color: #b8fbe4; font-size: 12px; }");
+    mainLayout->addWidget(selectLabel);
+
+    QComboBox *wasteCombo = new QComboBox(&dialog);
+    wasteCombo->setEditable(true);
+    wasteCombo->setInsertPolicy(QComboBox::NoInsert);
+    wasteCombo->setMaxVisibleItems(12);
+    for (const Waste &waste : all) {
+        const QString display = QString("#%1 - %2 (%3)")
+        .arg(waste.id())
+            .arg(waste.location().isEmpty() ? "Unknown" : waste.location())
+            .arg(waste.type().isEmpty() ? "Unknown" : waste.type());
+        wasteCombo->addItem(display, waste.id());
+    }
+    const int initialIndex = wasteCombo->findData(selectedId);
+    if (initialIndex >= 0) {
+        wasteCombo->setCurrentIndex(initialIndex);
+    }
+    mainLayout->addWidget(wasteCombo);
+
+    // Selected waste info banner
+    QLabel *infoBanner = new QLabel(
+        QString("Selected: <b>%1</b> · %2 · %3")
+            .arg(selectedWaste.type(), selectedWaste.category(), selectedWaste.location()),
+        &dialog);
+    infoBanner->setStyleSheet("QLabel { background: #0a1f18; color: #66ffcc; padding: 8px 12px; border-radius: 8px; border: 1px solid #1a3d2e; }");
+    infoBanner->setTextFormat(Qt::RichText);
+    mainLayout->addWidget(infoBanner);
+
+    auto updateSelectedWaste = [&](int id) {
+        if (!wasteById.contains(id)) {
+            return;
+        }
+        selectedId = id;
+        selectedWaste = wasteById.value(id);
+        title->setText("Sensor Details — Waste #" + QString::number(selectedWaste.id()));
+        infoBanner->setText(
+            QString("Selected: <b>%1</b> · %2 · %3")
+                .arg(selectedWaste.type(), selectedWaste.category(), selectedWaste.location()));
+    };
+
+    QObject::connect(wasteCombo, qOverload<int>(&QComboBox::currentIndexChanged), &dialog, [=, &updateSelectedWaste](int) {
+        updateSelectedWaste(wasteCombo->currentData().toInt());
+    });
+
+    QLineEdit *wasteEdit = wasteCombo->lineEdit();
+    QObject::connect(wasteEdit, &QLineEdit::textChanged, &dialog, [=, &updateSelectedWaste](const QString &text) {
+        const QString trimmed = text.trimmed();
+        if (trimmed.isEmpty()) {
+            return;
+        }
+
+        bool ok = false;
+        const int typedId = trimmed.toInt(&ok);
+        if (ok && wasteById.contains(typedId)) {
+            const int idx = wasteCombo->findData(typedId);
+            if (idx >= 0) {
+                wasteCombo->setCurrentIndex(idx);
+            }
+            updateSelectedWaste(typedId);
+            return;
+        }
+
+        for (const Waste &waste : all) {
+            if (waste.location().compare(trimmed, Qt::CaseInsensitive) == 0) {
+                const int idx = wasteCombo->findData(waste.id());
+                if (idx >= 0) {
+                    wasteCombo->setCurrentIndex(idx);
+                }
+                updateSelectedWaste(waste.id());
+                return;
+            }
+        }
+    });
+
+    // ── 3. Sensor reading cards (live) ────────────────────────────────────────
+    QFrame *cardsFrame = new QFrame(&dialog);
+    QHBoxLayout *cardsLayout = new QHBoxLayout(cardsFrame);
+    cardsLayout->setSpacing(10);
+    cardsLayout->setContentsMargins(0, 0, 0, 0);
+
+    QLabel *humCard  = new QLabel("Humidity\n—", &dialog);
+    QLabel *distCard = new QLabel("Distance\n—", &dialog);
+    QLabel *typeCard = new QLabel("Type\n—", &dialog);
+
+    const QString cardStyle = "QLabel { background: #0a1f18; border: 1px solid #1a3d2e; border-radius: 10px; "
+                              "padding: 14px; color: #66ffcc; font-size: 13px; min-width: 110px; }";
+    humCard->setStyleSheet(cardStyle);
+    distCard->setStyleSheet(cardStyle);
+    typeCard->setStyleSheet(cardStyle);
+    humCard->setAlignment(Qt::AlignCenter);
+    distCard->setAlignment(Qt::AlignCenter);
+    typeCard->setAlignment(Qt::AlignCenter);
+
+    cardsLayout->addWidget(humCard);
+    cardsLayout->addWidget(distCard);
+    cardsLayout->addWidget(typeCard);
+    mainLayout->addWidget(cardsFrame);
+
+    // ── 4. Status label ───────────────────────────────────────────────────────
+    const bool arduinoConnected = m_arduino && m_arduino->isConnected();
+    QLabel *statusLabel = new QLabel("", &dialog);
+    statusLabel->setWordWrap(true);
+    statusLabel->setStyleSheet("QLabel { background: transparent; color: #66ffcc; padding: 0; border: none; }");
+    statusLabel->setVisible(false);
+    mainLayout->addWidget(statusLabel);
+
+    // ── 5. "Read Sensor" button ───────────────────────────────────────────────
+    QPushButton *readBtn = new QPushButton(
+        arduinoConnected ? "Read Sensor" : "Plug in Arduino & Read Sensor",
+        &dialog);
+    readBtn->setStyleSheet(
+        "QPushButton { background: #0a1f18; border: 1px solid #00ff9c; border-radius: 10px; "
+        "padding: 12px 20px; color: #00ff9c; font-weight: bold; }"
+        "QPushButton:hover { background: rgba(0,255,156,0.1); }"
+        "QPushButton:disabled { border-color: #1a3d2e; color: #1a3d2e; }");
+    mainLayout->addWidget(readBtn);
+
+    // ── 6. Save button ────────────────────────────────────────────────────────
+    QDialogButtonBox *btnBox = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, &dialog);
+    QPushButton *saveBtn = btnBox->button(QDialogButtonBox::Save);
+    saveBtn->setEnabled(false);
+    saveBtn->setStyleSheet(
+        "QPushButton { background: #00ff9c; color: #050d0a; border-radius: 8px; padding: 10px 24px; font-weight: bold; border: none; }"
+        "QPushButton:hover { background: #33ffcc; }"
+        "QPushButton:disabled { background: #0a1f18; color: #1a3d2e; border: 1px solid #1a3d2e; }");
+    btnBox->button(QDialogButtonBox::Cancel)->setStyleSheet(
+        "QPushButton { background: transparent; color: #ff6666; border: 1px solid #ff6666; border-radius: 8px; padding: 10px 24px; }"
+        "QPushButton:hover { background: rgba(255,102,102,0.1); }");
+    mainLayout->addWidget(btnBox);
+
+    QObject::connect(btnBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    // ── 7. Shared reading state ───────────────────────────────────────────────
+    ArduinoSensor::Reading capturedReading;
+
+    // ── 8. Read button logic ──────────────────────────────────────────────────
+    QObject::connect(readBtn, &QPushButton::clicked, [&]() {
+        m_suppressArduinoAutoSave = true;
+
+        // Try to connect if not already
+        if (!m_arduino->isConnected()) {
+            const QStringList ports = ArduinoSensor::availablePorts();
+            if (ports.isEmpty()) {
+                m_suppressArduinoAutoSave = false;
+                statusLabel->setVisible(true);
+                statusLabel->setText("No serial ports found. Plug in the Arduino and try again.");
+                statusLabel->setStyleSheet("QLabel { background: #1a0000; color: #ff6666; padding: 10px 14px; border-radius: 8px; border: none; }");
+                return;
+            }
+
+            const QString preferredPort = "COM7";
+            if (ports.contains(preferredPort, Qt::CaseInsensitive)) {
+                if (!m_arduino->openPort(preferredPort)) {
+                    m_suppressArduinoAutoSave = false;
+                    statusLabel->setVisible(true);
+                    statusLabel->setText("Failed to open " + preferredPort + ". Check the connection and try again.");
+                    statusLabel->setStyleSheet("QLabel { background: #1a0000; color: #ff6666; padding: 10px 14px; border-radius: 8px; border: none; }");
+                    return;
+                }
+            } else if (ports.size() == 1) {
+                if (!m_arduino->openPort(ports.first())) {
+                    m_suppressArduinoAutoSave = false;
+                    statusLabel->setVisible(true);
+                    statusLabel->setText("Failed to open " + ports.first() + ". Check the connection and try again.");
+                    statusLabel->setStyleSheet("QLabel { background: #1a0000; color: #ff6666; padding: 10px 14px; border-radius: 8px; border: none; }");
+                    return;
+                }
+            } else {
+                onArduinoConnect();
+                if (!m_arduino->isConnected()) {
+                    m_suppressArduinoAutoSave = false;
+                    statusLabel->setVisible(true);
+                    statusLabel->setText("No serial port selected. Please choose a port and try again.");
+                    statusLabel->setStyleSheet("QLabel { background: #1a0000; color: #ff6666; padding: 10px 14px; border-radius: 8px; border: none; }");
+                    return;
+                }
+            }
+        }
+
+        readBtn->setEnabled(false);
+        readBtn->setText("Reading sensor...");
+        statusLabel->setVisible(true);
+        statusLabel->setText("Waiting for sensor reading (up to 12 seconds)...");
+        statusLabel->setStyleSheet("QLabel { background: #0a1f18; color: #66ffcc; padding: 10px 14px; border-radius: 8px; border: none; }");
+
+        capturedReading.isValid = false;
+
+        QEventLoop loop;
+        QTimer::singleShot(12000, &loop, &QEventLoop::quit);
+        const QMetaObject::Connection readConn = QObject::connect(
+            m_arduino,
+            &ArduinoSensor::readingReady,
+            &loop,
+            [&](ArduinoSensor::Reading r) {
+                capturedReading = r;
+                loop.quit();
+            });
+
+        m_arduino->requestReading(12000);
+        loop.exec();
+        QObject::disconnect(readConn);
+
+        if (!capturedReading.isValid) {
+            const QString rawLine = m_arduino->lastRawLine().trimmed();
+            const QString parseError = m_arduino->lastParseError().trimmed();
+            QString diagnostic = "No valid sensor reading received. Check the selected COM port and keep the object in front of the sensor, then try again.";
+            statusLabel->setVisible(true);
+            if (!parseError.isEmpty()) {
+                diagnostic += "\nParse error: " + parseError;
+            }
+            if (!rawLine.isEmpty()) {
+                diagnostic += "\nSerial line: " + rawLine;
+            }
+            readBtn->setEnabled(true);
+            readBtn->setText("Retry — Read Sensor Again");
+            statusLabel->setText(diagnostic);
+            statusLabel->setStyleSheet("QLabel { background: #1a0a00; color: #ffcc66; padding: 10px 14px; border-radius: 8px; border: none; }");
+            return;
+        }
+
+        // Update cards
+        humCard->setText(QString("Humidity\n%1%").arg(capturedReading.humidity));
+        humCard->setStyleSheet(cardStyle + "QLabel { border-color: #00ff9c; color: #00ff9c; font-weight: bold; }");
+        distCard->setText(QString("Distance\n%1 cm").arg(capturedReading.distance));
+        distCard->setStyleSheet(cardStyle + "QLabel { border-color: #00ff9c; color: #00ff9c; font-weight: bold; }");
+
+        const QString wetDry = capturedReading.isWet ? "WET" : "DRY";
+        const QString wetColor = capturedReading.isWet ? "#6bffb8" : "#ffcc66";
+        typeCard->setText(QString("Type\n%1").arg(wetDry));
+        typeCard->setStyleSheet(QString("QLabel { background: #0a1f18; border: 1px solid %1; border-radius: 10px; "
+                                        "padding: 14px; color: %1; font-size: 13px; font-weight: bold; min-width: 110px; }").arg(wetColor));
+
+        // Update status
+        const QString desc = capturedReading.isWet
+                                 ? "WET waste — classified as Organic. Click Save to update this record."
+                                 : "DRY waste — classified as Plastic/Recyclable. Click Save to update this record.";
+        statusLabel->setVisible(true);
+        statusLabel->setText(desc);
+        statusLabel->setStyleSheet(capturedReading.isWet
+                                       ? "QLabel { background: #0d3526; color: #6bffb8; padding: 10px 14px; border-radius: 8px; border: none; font-weight: bold; }"
+                                       : "QLabel { background: #3a2a00; color: #ffcc66; padding: 10px 14px; border-radius: 8px; border: none; font-weight: bold; }");
+
+        readBtn->setText("Read Sensor Again");
+        readBtn->setEnabled(true);
+        saveBtn->setEnabled(true);
+    });
+
+    // ── 9. Save button logic ──────────────────────────────────────────────────
+    QObject::connect(saveBtn, &QPushButton::clicked, [&]() {
+        if (!capturedReading.isValid) return;
+        dialog.accept();
+    });
+
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    // ── 10. Update the selected waste record in Oracle ────────────────────────
+    // Load existing waste to preserve all other fields
+    Waste target;
+    bool found = false;
+    for (const Waste &w : all) {
+        if (w.id() == selectedId) { target = w; found = true; break; }
+    }
+    if (!found) {
+        QMessageBox::critical(this, "Sensor Details", "Could not find waste record #" + QString::number(selectedId));
+        return;
+    }
+
+    // Only update humidity, distance, and type from sensor — keep everything else
+    target.setHumidityPercent(capturedReading.humidity);
+    target.setDistanceCm(capturedReading.distance);
+    target.setType(capturedReading.isWet ? "Organic" : "Plastic");
+
+    if (target.update()) {
+        onViewWasteClicked();
+        qDebug() << "Sensor Details saved: id=" << selectedId
+                 << "humidity=" << capturedReading.humidity
+                 << "distance=" << capturedReading.distance
+                 << "type=" << (capturedReading.isWet ? "Organic" : "Plastic");
+        QMessageBox::information(this, "Sensor Details",
+                                 QString("Waste #%1 updated!\nHumidity: %2%  |  Distance: %3 cm  |  Type: %4")
+                                     .arg(selectedId)
+                                     .arg(capturedReading.humidity)
+                                     .arg(capturedReading.distance)
+                                     .arg(capturedReading.isWet ? "Organic (WET)" : "Plastic (DRY)"));
+    } else {
+        QMessageBox::critical(this, "Sensor Details", "Failed to update record in Oracle.");
+    }
+}
+
+void MainWindow::onArduinoConnect()
+{
+    const QStringList ports = ArduinoSensor::availablePorts();
+    if (ports.isEmpty()) {
+        QMessageBox::warning(this, "Arduino Sensor",
+                             "No serial ports found.\n"
+                             "Make sure the Arduino is plugged in.");
+        return;
+    }
+
+    bool ok = false;
+    const QString chosen = QInputDialog::getItem(
+        this, "Arduino Sensor", "Select serial port:", ports, 0, false, &ok);
+    if (!ok || chosen.isEmpty()) return;
+
+    if (!m_arduino->openPort(chosen)) {
+        QMessageBox::critical(this, "Arduino Sensor",
+                              "Could not open port " + chosen + ".\n"
+                                                                "Check the device is connected and the port is free.");
+    }
+}
+
+void MainWindow::onArduinoDisconnect()
+{
+    m_arduino->closePort();
+}
+
+void MainWindow::onArduinoConnectionChanged(bool connected)
+{
+    if (connected) {
+        m_arduinoStatus->setText("Arduino: " + m_arduino->currentPort());
+        m_arduinoStatus->setStyleSheet("color: #6bffb8; padding: 0 6px;");
+        m_arduino->requestReading(8000);
+    } else {
+        m_arduinoStatus->setText("Arduino: not connected");
+        m_arduinoStatus->setStyleSheet("color: #ff6b6b; padding: 0 6px;");
+    }
+}
+
+>>>>>>> 5be580a (waste X Arduino)
