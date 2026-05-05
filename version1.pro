@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 QT       += core gui sql charts
+=======
+QT       += core gui
+>>>>>>> origin/supplier
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,6 +13,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+<<<<<<< HEAD
     emailsender.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -19,6 +24,13 @@ HEADERS += \
     emailsender.h \
     mainwindow.h \
     supplier.h
+=======
+    main.cpp \
+    mainwindow.cpp
+
+HEADERS += \
+    mainwindow.h
+>>>>>>> origin/supplier
 
 FORMS += \
     mainwindow.ui
